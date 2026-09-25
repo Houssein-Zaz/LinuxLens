@@ -1,0 +1,28 @@
+{
+  "name": "top",
+  "category": "processes",
+  "summary": "Surveille en temps réel les processus et la charge du système.",
+  "description": "Affiche un tableau de bord rafraîchi toutes les 3 secondes : charge moyenne, mémoire, puis la liste des processus triés par utilisation du processeur. top est interactif : q quitte, M trie par mémoire, P par CPU, k envoie un signal à un processus, 1 détaille chaque cœur, h affiche l'aide.",
+  "synopsis": "top [OPTION]...",
+  "options": [
+    { "short": "-d", "description": "Intervalle de rafraîchissement, en secondes.", "takesValue": true, "valueName": "SECONDES" },
+    { "short": "-n", "description": "Nombre de rafraîchissements avant de quitter.", "takesValue": true, "valueName": "N" },
+    { "short": "-b", "description": "Mode « batch » : sortie texte non interactive, utile dans un script ou avec une redirection." },
+    { "short": "-u", "description": "N'affiche que les processus de cet utilisateur.", "takesValue": true, "valueName": "UTILISATEUR" },
+    { "short": "-p", "description": "Surveille uniquement les PID donnés (séparés par des virgules).", "takesValue": true, "valueName": "PID" },
+    { "short": "-o", "description": "Colonne de tri : %MEM, %CPU, TIME+…", "takesValue": true, "valueName": "CHAMP" },
+    { "short": "-H", "description": "Affiche les threads au lieu des processus." }
+  ],
+  "examples": [
+    { "command": "top", "explanation": "Ouvre le moniteur interactif (q pour quitter)." },
+    {
+      "command": "top -b -n 1 | head -12",
+      "explanation": "Un seul relevé en mode texte, limité aux premières lignes.",
+      "output": "top - 10:42:01 up 3 days,  2:11,  1 user,  load average: 0.52, 0.48, 0.40\nTasks: 213 total,   1 running, 212 sleeping,   0 stopped,   0 zombie\nMiB Mem :   7851.2 total,   2143.5 free,   3120.8 used,   2586.9 buff/cache"
+    },
+    { "command": "top -u esprit", "explanation": "Seulement les processus de l'utilisateur esprit." },
+    { "command": "top -o %MEM", "explanation": "Trie les processus par consommation de mémoire." }
+  ],
+  "seeAlso": ["htop", "ps", "kill", "free", "uptime"],
+  "dangerLevel": "safe"
+}

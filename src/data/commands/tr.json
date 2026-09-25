@@ -1,0 +1,26 @@
+{
+  "name": "tr",
+  "category": "text",
+  "summary": "Remplace ou supprime des caractères.",
+  "description": "Translate : lit l'entrée standard et remplace chaque caractère de l'ENSEMBLE1 par le caractère correspondant de l'ENSEMBLE2. Les ensembles acceptent des intervalles (a-z) et des classes ([:upper:], [:digit:], [:space:]). tr ne lit jamais de fichier directement : on lui envoie le texte par un pipe ou une redirection <.",
+  "synopsis": "tr [OPTION]... ENSEMBLE1 [ENSEMBLE2]",
+  "options": [
+    { "short": "-d", "long": "--delete", "description": "Supprime les caractères de l'ENSEMBLE1 au lieu de les remplacer." },
+    { "short": "-s", "long": "--squeeze-repeats", "description": "Réduit les répétitions d'un même caractère à une seule occurrence (plusieurs espaces → un seul)." },
+    { "short": "-c", "long": "--complement", "description": "Utilise le complément de l'ENSEMBLE1 : tous les caractères qui n'y sont pas." },
+    { "short": "-t", "long": "--truncate-set1", "description": "Tronque l'ENSEMBLE1 à la longueur de l'ENSEMBLE2." }
+  ],
+  "arguments": [
+    { "name": "ENSEMBLE1", "description": "Caractères à chercher : 'abc', 'a-z', '[:lower:]'…" },
+    { "name": "ENSEMBLE2", "description": "Caractères de remplacement, dans le même ordre.", "optional": true }
+  ],
+  "examples": [
+    { "command": "echo \"bonjour\" | tr 'a-z' 'A-Z'", "explanation": "Met le texte en majuscules.", "output": "BONJOUR" },
+    { "command": "tr -d '\\r' < windows.txt > unix.txt", "explanation": "Supprime les retours chariot d'un fichier créé sous Windows." },
+    { "command": "tr -s ' ' < colonnes.txt", "explanation": "Remplace les suites d'espaces par un seul espace." },
+    { "command": "echo $PATH | tr ':' '\\n'", "explanation": "Affiche chaque répertoire du PATH sur sa propre ligne." },
+    { "command": "tr -cd '[:alnum:]\\n' < texte.txt", "explanation": "Ne garde que les lettres, les chiffres et les retours à la ligne." }
+  ],
+  "seeAlso": ["sed", "cut", "awk"],
+  "dangerLevel": "safe"
+}

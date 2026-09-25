@@ -1,0 +1,27 @@
+{
+  "name": "killall",
+  "category": "processes",
+  "summary": "Envoie un signal à tous les processus portant un nom donné.",
+  "description": "Comme kill, mais vise les processus par leur nom plutôt que par leur PID : toutes les instances correspondantes reçoivent le signal. Le signal par défaut est SIGTERM (arrêt propre). Le nom doit correspondre exactement au nom du programme ; pour une recherche plus souple, voir pkill.",
+  "synopsis": "killall [OPTION]... NOM...",
+  "options": [
+    { "short": "-s", "long": "--signal", "description": "Signal à envoyer, par nom ou numéro (HUP, KILL, 9…).", "takesValue": true, "valueName": "SIGNAL" },
+    { "short": "-9", "description": "Envoie SIGKILL : arrêt forcé et immédiat." },
+    { "short": "-i", "long": "--interactive", "description": "Demande confirmation avant chaque processus." },
+    { "short": "-u", "long": "--user", "description": "Ne vise que les processus de cet utilisateur.", "takesValue": true, "valueName": "UTILISATEUR" },
+    { "short": "-v", "long": "--verbose", "description": "Indique si le signal a bien été envoyé." },
+    { "short": "-w", "long": "--wait", "description": "Attend que tous les processus visés soient terminés." },
+    { "short": "-I", "long": "--ignore-case", "description": "Ignore la casse du nom." },
+    { "short": "-l", "long": "--list", "description": "Liste les noms de signaux disponibles." }
+  ],
+  "arguments": [{ "name": "NOM", "description": "Nom exact du ou des programmes visés.", "variadic": true }],
+  "examples": [
+    { "command": "killall firefox", "explanation": "Demande à toutes les fenêtres de Firefox de se fermer proprement." },
+    { "command": "killall -9 chrome", "explanation": "Force l'arrêt de tous les processus chrome." },
+    { "command": "sudo killall -s HUP nginx", "explanation": "Demande à nginx de recharger sa configuration." },
+    { "command": "killall -i -u esprit python3", "explanation": "Arrête les processus python3 d'esprit, en demandant confirmation pour chacun." }
+  ],
+  "seeAlso": ["kill", "pkill", "ps"],
+  "dangerLevel": "caution",
+  "dangerNote": "killall vise toutes les instances d'un programme, y compris celles d'autres sessions quand il est lancé avec sudo. Vérifiez d'abord avec ps ou pgrep."
+}

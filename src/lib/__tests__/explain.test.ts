@@ -73,7 +73,8 @@ describe('explainToken', () => {
 
   it('mots spéciaux : joker, variable, guillemets', () => {
     expect(find('rm *.tmp', '*.tmp').detail).toMatch(/joker/);
-    expect(find('echo $HOME', '$HOME').text).toMatch(/variable/);
+    expect(find('echo $HOME', '$HOME')).toMatchObject({ kindLabel: 'Argument · TEXTE', detail: expect.stringMatching(/variable/) });
+    expect(find('frob $HOME', '$HOME').text).toMatch(/variable/);
     expect(find(`grep 'a b' f`, `'a b'`).detail).toMatch(/guillemets simples/);
   });
 
@@ -82,6 +83,20 @@ describe('explainToken', () => {
     expect(find('a && b', '&&').text).toMatch(/réussi/);
     expect(find('ls > out', '>').text).toMatch(/remplaçant/);
     expect(find('ls 2> /dev/null', '/dev/null').text).toMatch(/trou noir/);
+  });
+
+  it('valeurs collées aux options courtes (cut -d: -f1, awk -F:)', () => {
+    const cut = explainAll('cut -d: -f1 /etc/passwd').filter((e) => e.token.kind === 'option');
+    expect(cut.map((e) => [e.token.value, e.token.inlineValue, e.ex.known])).toEqual([
+      ['-d', ':', true],
+      ['-f', '1', true],
+    ]);
+    expect(find('awk -F: "{print $1}" f', '-F:').detail).toMatch(/Valeur : « : »/);
+  });
+
+  it('nohup enveloppe la commande qui suit', () => {
+    const labels = explainAll('nohup python3 serveur.py &').map((e) => `${e.token.kind}:${e.token.value}`);
+    expect(labels).toEqual(['command:nohup', 'command:python3', 'argument:serveur.py', 'chain:&']);
   });
 
   it('affectation', () => {

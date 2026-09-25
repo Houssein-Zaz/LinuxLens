@@ -1,0 +1,18 @@
+{
+  "name": "nohup",
+  "category": "processes",
+  "summary": "Lance une commande qui survit à la fermeture du terminal.",
+  "description": "Exécute une commande en ignorant le signal SIGHUP, envoyé quand on ferme le terminal ou qu'on se déconnecte d'une session SSH. Sans redirection, la sortie est écrite dans nohup.out. On l'associe presque toujours à & pour récupérer la main immédiatement.",
+  "synopsis": "nohup COMMANDE [ARGUMENT]...",
+  "options": [],
+  "arguments": [
+    { "name": "COMMANDE", "description": "Programme à lancer, suivi de ses propres options et arguments." }
+  ],
+  "examples": [
+    { "command": "nohup ./sauvegarde.sh &", "explanation": "Lance le script en arrière-plan ; il continue même si vous fermez le terminal.", "output": "nohup: ignoring input and appending output to 'nohup.out'" },
+    { "command": "nohup python3 serveur.py > serveur.log 2>&1 &", "explanation": "Lance un serveur en arrière-plan en envoyant sa sortie et ses erreurs dans serveur.log." },
+    { "command": "nohup rsync -a donnees/ serveur:/sauvegarde/ &", "explanation": "Une longue copie qui ne s'interrompt pas si la connexion SSH tombe." }
+  ],
+  "seeAlso": ["bg", "jobs", "screen", "tmux"],
+  "dangerLevel": "safe"
+}

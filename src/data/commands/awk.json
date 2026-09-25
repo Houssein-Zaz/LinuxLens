@@ -1,0 +1,25 @@
+{
+  "name": "awk",
+  "category": "text",
+  "summary": "Traite un texte colonne par colonne avec un petit langage.",
+  "description": "awk lit le texte ligne par ligne et découpe chaque ligne en champs : $1 est la première colonne, $2 la deuxième, $0 la ligne entière, NF le nombre de champs et NR le numéro de ligne. Un programme awk est une suite de blocs « motif { action } » : l'action s'exécute sur les lignes qui correspondent au motif. Les blocs BEGIN et END s'exécutent avant et après la lecture.",
+  "synopsis": "awk [OPTION]... 'PROGRAMME' [FICHIER]...",
+  "options": [
+    { "short": "-F", "long": "--field-separator", "description": "Séparateur de champs (par défaut : espaces et tabulations). -F: pour /etc/passwd, -F, pour un CSV simple.", "takesValue": true, "valueName": "SÉP" },
+    { "short": "-v", "long": "--assign", "description": "Définit une variable avant l'exécution : -v seuil=100.", "takesValue": true, "valueName": "VAR=VALEUR" },
+    { "short": "-f", "long": "--file", "description": "Lit le programme awk depuis un fichier au lieu de la ligne de commande.", "takesValue": true, "valueName": "FICHIER" }
+  ],
+  "arguments": [
+    { "name": "PROGRAMME", "description": "Programme awk, entre guillemets simples pour que le shell ne touche pas aux $1, $2… Exemple : '{print $1}'." },
+    { "name": "FICHIER", "description": "Fichier(s) à traiter. Sans fichier : l'entrée standard.", "optional": true, "variadic": true }
+  ],
+  "examples": [
+    { "command": "awk '{print $1}' access.log", "explanation": "Affiche la première colonne de chaque ligne (ici l'adresse IP du client)." },
+    { "command": "awk -F: '{print $1, $7}' /etc/passwd", "explanation": "Avec « : » comme séparateur, affiche le nom de chaque utilisateur et son shell.", "output": "root /bin/bash\ndaemon /usr/sbin/nologin" },
+    { "command": "awk '$3 > 100' notes.txt", "explanation": "Sans action, awk affiche les lignes dont la 3ᵉ colonne dépasse 100." },
+    { "command": "awk '{ total += $2 } END { print total }' ventes.txt", "explanation": "Additionne la 2ᵉ colonne et affiche le total à la fin." },
+    { "command": "ps aux | awk 'NR > 1 { print $2, $11 }'", "explanation": "Saute la ligne d'en-tête (NR > 1) et affiche le PID et la commande de chaque processus." }
+  ],
+  "seeAlso": ["cut", "sed", "grep", "sort"],
+  "dangerLevel": "safe"
+}

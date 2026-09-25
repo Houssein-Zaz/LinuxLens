@@ -1,0 +1,23 @@
+{
+  "name": "htop",
+  "category": "processes",
+  "summary": "Moniteur de processus interactif et coloré.",
+  "description": "Version plus confortable de top : barres colorées pour chaque cœur et pour la mémoire, défilement, sélection à la souris, arbre des processus. Les touches de fonction sont rappelées en bas de l'écran : F3 recherche, F4 filtre, F5 arbre, F6 tri, F9 envoie un signal, F10 ou q quitte. htop n'est pas toujours installé par défaut (sudo apt install htop).",
+  "synopsis": "htop [OPTION]...",
+  "options": [
+    { "short": "-u", "long": "--user", "description": "N'affiche que les processus de cet utilisateur.", "takesValue": true, "valueName": "UTILISATEUR" },
+    { "short": "-p", "long": "--pid", "description": "N'affiche que les PID donnés (séparés par des virgules).", "takesValue": true, "valueName": "PID" },
+    { "short": "-d", "long": "--delay", "description": "Intervalle de rafraîchissement, en dixièmes de seconde.", "takesValue": true, "valueName": "DIXIÈMES" },
+    { "short": "-s", "long": "--sort-key", "description": "Colonne de tri au démarrage (PERCENT_CPU, PERCENT_MEM…).", "takesValue": true, "valueName": "COLONNE" },
+    { "short": "-t", "long": "--tree", "description": "Démarre en vue arborescente (parents et enfants)." },
+    { "short": "-C", "long": "--no-color", "description": "Désactive les couleurs." }
+  ],
+  "examples": [
+    { "command": "htop", "explanation": "Ouvre le moniteur interactif." },
+    { "command": "htop -u esprit", "explanation": "Seulement les processus de l'utilisateur esprit." },
+    { "command": "htop -t", "explanation": "Affiche directement l'arbre des processus." },
+    { "command": "htop -s PERCENT_MEM", "explanation": "Trie par utilisation de la mémoire dès l'ouverture." }
+  ],
+  "seeAlso": ["top", "ps", "kill"],
+  "dangerLevel": "safe"
+}

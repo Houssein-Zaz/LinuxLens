@@ -1,0 +1,25 @@
+{
+  "name": "cut",
+  "category": "text",
+  "summary": "Extrait des colonnes ou des caractères de chaque ligne.",
+  "description": "Garde seulement une partie de chaque ligne : certains champs séparés par un délimiteur (-d et -f), ou certaines positions de caractères (-c). Les listes s'écrivent 1,3 (champs 1 et 3), 2-4 (de 2 à 4) ou 3- (à partir du 3ᵉ). cut ne sait pas gérer plusieurs espaces consécutifs comme un seul séparateur : dans ce cas, préférez awk.",
+  "synopsis": "cut OPTION... [FICHIER]...",
+  "options": [
+    { "short": "-d", "long": "--delimiter", "description": "Caractère séparant les champs (tabulation par défaut).", "takesValue": true, "valueName": "SÉP" },
+    { "short": "-f", "long": "--fields", "description": "Champs à garder : 1, 1,3, 2-4, 3-…", "takesValue": true, "valueName": "LISTE" },
+    { "short": "-c", "long": "--characters", "description": "Positions de caractères à garder : -c1-8 garde les 8 premiers.", "takesValue": true, "valueName": "LISTE" },
+    { "short": "-b", "long": "--bytes", "description": "Positions d'octets à garder (différent de -c pour les caractères accentués).", "takesValue": true, "valueName": "LISTE" },
+    { "short": "-s", "long": "--only-delimited", "description": "Ignore les lignes qui ne contiennent pas le délimiteur." },
+    { "long": "--complement", "description": "Inverse la sélection : garde tout sauf les champs indiqués." },
+    { "long": "--output-delimiter", "description": "Séparateur à utiliser dans la sortie.", "takesValue": true, "valueName": "TEXTE" }
+  ],
+  "arguments": [{ "name": "FICHIER", "description": "Fichier(s) à traiter. Sans fichier : l'entrée standard.", "optional": true, "variadic": true }],
+  "examples": [
+    { "command": "cut -d: -f1 /etc/passwd", "explanation": "Liste les noms d'utilisateurs (1ᵉʳ champ, séparateur « : »).", "output": "root\ndaemon\nbin" },
+    { "command": "cut -d ',' -f 2,4 clients.csv", "explanation": "Garde les colonnes 2 et 4 d'un CSV simple." },
+    { "command": "cut -c1-10 journal.txt", "explanation": "Garde les 10 premiers caractères de chaque ligne." },
+    { "command": "echo $PATH | cut -d: -f1", "explanation": "Affiche le premier répertoire du PATH." }
+  ],
+  "seeAlso": ["awk", "paste", "tr"],
+  "dangerLevel": "safe"
+}
