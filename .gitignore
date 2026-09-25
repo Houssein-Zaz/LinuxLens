@@ -1,0 +1,7 @@
+node_modules
+dist
+*.local
+.vercel
+# Généré par scripts/build-tldr.ts
+public/tldr
+.cache
