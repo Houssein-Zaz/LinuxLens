@@ -7,6 +7,7 @@ import { CommandPage } from './pages/CommandPage';
 import { LsPage } from './pages/LsPage';
 import { ChmodPage } from './pages/ChmodPage';
 import { NotFoundPage } from './pages/NotFoundPage';
+import { PracticePage } from './pages/PracticePage';
 
 export default function App() {
   return (
@@ -25,6 +26,7 @@ export default function App() {
           <Route path="/commande/:name" element={<CommandPage />} />
           <Route path="/ls" element={<LsPage />} />
           <Route path="/chmod" element={<ChmodPage />} />
+          <Route path="/exercices" element={<PracticePage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>

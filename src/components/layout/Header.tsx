@@ -6,6 +6,7 @@ const links = [
   { to: '/explorer', label: 'Explorer', short: 'Explorer', end: false },
   { to: '/ls', label: 'Analyseur ls -l', short: 'ls -l', end: false },
   { to: '/chmod', label: 'Permissions', short: 'chmod', end: false },
+  { to: '/exercices', label: 'S’exercer', short: 'Exos', end: false },
 ];
 
 export function Header() {
@@ -16,7 +17,7 @@ export function Header() {
           <img src="/favicon.svg" alt="" className="size-6" />
           <span className="hidden sm:inline">LinuxLens</span>
         </Link>
-        <nav aria-label="Navigation principale" className="flex flex-1 gap-1 overflow-x-auto">
+        <nav aria-label="Navigation principale" className="flex flex-1 gap-0.5 overflow-x-auto sm:gap-1">
           {links.map((l) => (
             <NavLink
               key={l.to}
@@ -24,7 +25,7 @@ export function Header() {
               end={l.end}
               aria-label={l.label}
               className={({ isActive }) =>
-                `whitespace-nowrap rounded-md px-2 py-1.5 text-sm sm:px-2.5 transition-colors ${
+                `whitespace-nowrap rounded-md px-1 py-1.5 text-[13px] min-[390px]:px-1.5 sm:px-2.5 sm:text-sm transition-colors ${
                   isActive
                     ? 'bg-white text-zinc-900 shadow-sm ring-1 ring-zinc-200 dark:bg-zinc-900 dark:text-zinc-100 dark:ring-zinc-800'
                     : 'text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100'

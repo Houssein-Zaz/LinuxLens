@@ -2,7 +2,7 @@
 
 **Comprendre visuellement les commandes shell Linux, en français.**
 
-LinuxLens découpe une ligne de commande en éléments colorés (commande, options, arguments, pipes, redirections) et explique chacun d’eux. L’application propose aussi un analyseur de sortie `ls -l` et un calculateur de permissions `chmod`. Tout tourne dans le navigateur, sans backend.
+LinuxLens découpe une ligne de commande en éléments colorés (commande, options, arguments, pipes, redirections) et explique chacun d’eux. L’application propose aussi un analyseur de sortie `ls -l`, un calculateur de permissions `chmod` et des exercices corrigés automatiquement. Tout tourne dans le navigateur, sans backend.
 
 ![Explication d’une commande avec pipe et redirections](docs/screenshots/explain.png)
 
@@ -34,6 +34,12 @@ Collez `-rw-rw-r-- 1 esprit esprit 47 juil. 12 21:14 fichier1` : chaque bloc est
 Grille lecture/écriture/exécution × propriétaire/groupe/autres, synchronisée dans les deux sens avec la notation symbolique (`rwxr-x---`), l’octal (`750`) et la commande `chmod`. Il gère aussi les bits spéciaux, propose des modes courants et un testeur de modes symboliques (`u+x`, `g=u`…).
 
 ![Calculateur de permissions](docs/screenshots/chmod.png)
+
+### S’exercer
+Plus de 75 exercices corrigés automatiquement, avec progression mémorisée dans le navigateur :
+- **Écrire la commande** : une consigne en français, avec indice et solution. La correction compare des formes canoniques, donc toutes les écritures équivalentes sont acceptées : `ls -la` = `ls -al` = `ls -l --all`, `head -n5` = `head -n 5`, `chmod 755` = `chmod u=rwx,go=rx`. En cas d’erreur, un message ciblé guide sans donner la réponse (« Il manque une option », « L’option -R n’est pas nécessaire ici »…).
+- **Comprendre** : QCM sur ce que fait une commande (opérateurs, redirections, signaux…).
+- **Permissions** : conversions octal ↔ rwx, bits spéciaux compris.
 
 ### Et aussi
 - Page **Explorer** : toutes les commandes par catégorie, avec une recherche insensible aux accents.
@@ -71,11 +77,11 @@ Importer le dépôt : Vercel détecte Vite (build `npm run build`, sortie `dist`
 scripts/             build-tldr.ts (téléchargement) + tldr-convert.ts (conversion testée)
 src/
   types/             command.ts (schéma des fiches), parser.ts, lsl.ts
-  lib/               parser.ts, explain.ts, permissions.ts, chmod.ts, lsl.ts, registry.ts, schema.ts, search.ts
-  data/              commands/*.json (fiches détaillées), categories.ts, index.ts
-  components/        explain/, permissions/, layout/, ui/
-  hooks/             useTheme, useTldr (chargement à la demande)
-  pages/             Expliquer, Explorer, fiche, ls -l, chmod
+  lib/               parser.ts, explain.ts, exercise.ts, permissions.ts, chmod.ts, lsl.ts, registry.ts, schema.ts, search.ts
+  data/              commands/*.json (fiches détaillées), exercises.ts, categories.ts, index.ts
+  components/        explain/, permissions/, practice/, layout/, ui/
+  hooks/             useTheme, useTldr (chargement à la demande), useProgress
+  pages/             Expliquer, Explorer, fiche, ls -l, chmod, exercices
 ```
 
 ## Choix techniques

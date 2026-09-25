@@ -1,0 +1,115 @@
+import { useId, useState } from 'react';
+import { Link } from 'react-router';
+import type { WriteExercise } from '../../data/exercises';
+import { checkCommand, type CheckResult } from '../../lib/exercise';
+import { buttonClass, Feedback } from './Feedback';
+
+export function WriteCard({ exercise, onSolved }: { exercise: WriteExercise; onSolved(): void }) {
+  const inputId = useId();
+  const [answer, setAnswer] = useState('');
+  const [result, setResult] = useState<CheckResult | null>(null);
+  const [showHint, setShowHint] = useState(false);
+  const [showSolution, setShowSolution] = useState(false);
+
+  const check = () => {
+    const r = checkCommand(answer, exercise.solutions, exercise.ignoreOptions);
+    setResult(r);
+    if (r.ok) onSolved();
+  };
+
+  const others = exercise.solutions.slice(1);
+
+  return (
+    <div className="space-y-5">
+      <p className="text-lg leading-relaxed text-balance">{exercise.prompt}</p>
+
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          check();
+        }}
+        className="space-y-3"
+      >
+        <label htmlFor={inputId} className="sr-only">
+          Votre commande
+        </label>
+        <div className="flex items-center gap-3 rounded-xl border border-zinc-200 bg-white px-4 shadow-sm focus-within:border-indigo-400 focus-within:ring-4 focus-within:ring-indigo-500/10 dark:border-zinc-700 dark:bg-zinc-950 dark:focus-within:border-indigo-500">
+          <span aria-hidden="true" className="select-none font-mono text-indigo-500">
+            $
+          </span>
+          <input
+            id={inputId}
+            value={answer}
+            onChange={(e) => {
+              setAnswer(e.target.value);
+              if (result && !result.ok) setResult(null);
+            }}
+            placeholder="Tapez votre commande…"
+            spellCheck={false}
+            autoCapitalize="off"
+            autoCorrect="off"
+            autoComplete="off"
+            className="h-12 w-full min-w-0 bg-transparent font-mono outline-none placeholder:text-zinc-400 dark:placeholder:text-zinc-500"
+          />
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <button type="submit" className={buttonClass.primary} disabled={!answer.trim()}>
+            Vérifier
+          </button>
+          <button type="button" className={buttonClass.secondary} onClick={() => setShowHint(true)} disabled={showHint}>
+            Indice
+          </button>
+          <button type="button" className={buttonClass.secondary} onClick={() => setShowSolution(true)} disabled={showSolution}>
+            Voir la solution
+          </button>
+        </div>
+      </form>
+
+      {result?.ok && (
+        <Feedback tone="success" title="Bravo, c’est correct !">
+          {result.matched !== answer.trim() && (
+            <p>
+              Solution de référence : <code className="font-mono">{result.matched}</code>
+            </p>
+          )}
+          <Link to={`/?c=${encodeURIComponent(answer)}`} className="mt-1 inline-block underline underline-offset-2">
+            Voir l’explication de votre commande →
+          </Link>
+        </Feedback>
+      )}
+      {result && !result.ok && (
+        <Feedback tone="error" title="Pas encore…">
+          <ul className="list-inside list-disc space-y-0.5">
+            {result.messages.map((m) => (
+              <li key={m}>{m}</li>
+            ))}
+          </ul>
+        </Feedback>
+      )}
+      {showHint && (
+        <Feedback tone="info" title="Indice">
+          {exercise.hint}
+        </Feedback>
+      )}
+      {showSolution && (
+        <Feedback tone="info" title="Solution">
+          <code className="font-mono">{exercise.solutions[0]}</code>
+          {others.length > 0 && (
+            <p className="mt-1">
+              Également acceptées :{' '}
+              {others.map((s, i) => (
+                <span key={s}>
+                  {i > 0 && ', '}
+                  <code className="font-mono">{s}</code>
+                </span>
+              ))}
+            </p>
+          )}
+          <Link to={`/?c=${encodeURIComponent(exercise.solutions[0]!)}`} className="mt-1 inline-block underline underline-offset-2">
+            Comprendre la solution →
+          </Link>
+        </Feedback>
+      )}
+    </div>
+  );
+}
