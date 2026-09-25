@@ -1,0 +1,37 @@
+{
+  "name": "ls",
+  "category": "files",
+  "summary": "Liste le contenu d'un répertoire.",
+  "description": "Affiche les fichiers et sous-répertoires du répertoire courant, ou des chemins donnés. Par défaut, les fichiers cachés (dont le nom commence par un point) ne sont pas affichés et les entrées sont triées par ordre alphabétique.",
+  "synopsis": "ls [OPTION]... [FICHIER]...",
+  "options": [
+    { "short": "-l", "description": "Format long : type et permissions, nombre de liens, propriétaire, groupe, taille, date de modification et nom." },
+    { "short": "-a", "long": "--all", "description": "Affiche aussi les fichiers cachés, y compris « . » (répertoire courant) et « .. » (répertoire parent)." },
+    { "short": "-A", "long": "--almost-all", "description": "Comme -a, mais sans « . » ni « .. »." },
+    { "short": "-h", "long": "--human-readable", "description": "Avec -l, affiche les tailles en unités lisibles (K, M, G) au lieu d'octets." },
+    { "short": "-t", "description": "Trie par date de modification, le plus récent en premier." },
+    { "short": "-r", "long": "--reverse", "description": "Inverse l'ordre de tri." },
+    { "short": "-S", "description": "Trie par taille, le plus gros en premier." },
+    { "short": "-R", "long": "--recursive", "description": "Liste aussi le contenu des sous-répertoires, récursivement." },
+    { "short": "-d", "long": "--directory", "description": "Affiche le répertoire lui-même plutôt que son contenu." },
+    { "short": "-i", "long": "--inode", "description": "Affiche le numéro d'inode de chaque fichier." },
+    { "short": "-1", "description": "Affiche un fichier par ligne." },
+    { "short": "-F", "long": "--classify", "description": "Ajoute un indicateur de type à la fin des noms : / pour un répertoire, * pour un exécutable, @ pour un lien symbolique." },
+    { "long": "--color", "description": "Colore la sortie selon le type de fichier.", "takesValue": true, "valueName": "QUAND", "values": ["auto", "always", "never"] }
+  ],
+  "arguments": [
+    { "name": "FICHIER", "description": "Fichier ou répertoire à lister. Par défaut : le répertoire courant.", "optional": true, "variadic": true }
+  ],
+  "examples": [
+    {
+      "command": "ls -l",
+      "explanation": "Liste détaillée du répertoire courant.",
+      "output": "-rw-rw-r-- 1 esprit esprit   47 juil. 12 21:14 fichier1\ndrwxr-xr-x 2 esprit esprit 4096 juil. 12 21:10 projets"
+    },
+    { "command": "ls -la ~", "explanation": "Tout le contenu du répertoire personnel, fichiers cachés compris, en format long." },
+    { "command": "ls -lhS /var/log", "explanation": "Fichiers de /var/log triés du plus gros au plus petit, tailles lisibles." },
+    { "command": "ls -lt | head -5", "explanation": "Les cinq fichiers modifiés le plus récemment (la première ligne est le total)." }
+  ],
+  "seeAlso": ["tree", "stat", "find", "cd"],
+  "dangerLevel": "safe"
+}

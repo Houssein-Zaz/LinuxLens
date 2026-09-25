@@ -1,0 +1,21 @@
+{
+  "name": "head",
+  "category": "reading",
+  "summary": "Affiche le début d'un fichier.",
+  "description": "Affiche les premières lignes (10 par défaut) de chaque fichier. Très utile en fin de pipe pour limiter une sortie longue.",
+  "synopsis": "head [OPTION]... [FICHIER]...",
+  "options": [
+    { "short": "-n", "long": "--lines", "description": "Nombre de lignes à afficher. Avec un signe moins (-n -5), affiche tout sauf les 5 dernières.", "takesValue": true, "valueName": "N" },
+    { "short": "-c", "long": "--bytes", "description": "Nombre d'octets à afficher au lieu de lignes.", "takesValue": true, "valueName": "N" },
+    { "short": "-q", "long": "--quiet", "description": "N'affiche pas l'en-tête « ==> fichier <== » avec plusieurs fichiers." },
+    { "short": "-v", "long": "--verbose", "description": "Affiche toujours l'en-tête avec le nom du fichier." }
+  ],
+  "arguments": [{ "name": "FICHIER", "description": "Fichier(s) à lire. Sans fichier : l'entrée standard.", "optional": true, "variadic": true }],
+  "examples": [
+    { "command": "head fichier.csv", "explanation": "Les 10 premières lignes d'un fichier." },
+    { "command": "head -n 3 /etc/passwd", "explanation": "Les 3 premières lignes.", "output": "root:x:0:0:root:/root:/bin/bash\ndaemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin\nbin:x:2:2:bin:/bin:/usr/sbin/nologin" },
+    { "command": "ls -t | head -1", "explanation": "Le fichier modifié le plus récemment." }
+  ],
+  "seeAlso": ["tail", "cat", "less"],
+  "dangerLevel": "safe"
+}

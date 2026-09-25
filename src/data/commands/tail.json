@@ -1,0 +1,25 @@
+{
+  "name": "tail",
+  "category": "reading",
+  "summary": "Affiche la fin d'un fichier, éventuellement en continu.",
+  "description": "Affiche les dernières lignes (10 par défaut) de chaque fichier. Avec -f, reste ouvert et affiche les nouvelles lignes au fur et à mesure : c'est l'outil classique pour suivre un journal (log).",
+  "synopsis": "tail [OPTION]... [FICHIER]...",
+  "options": [
+    { "short": "-n", "long": "--lines", "description": "Nombre de lignes à afficher. Avec un signe plus (-n +5), affiche à partir de la ligne 5.", "takesValue": true, "valueName": "N" },
+    { "short": "-c", "long": "--bytes", "description": "Nombre d'octets à afficher au lieu de lignes.", "takesValue": true, "valueName": "N" },
+    { "short": "-f", "long": "--follow", "description": "Suit le fichier : affiche les lignes ajoutées en temps réel. Ctrl+C pour arrêter." },
+    { "short": "-F", "description": "Comme -f, mais continue si le fichier est renommé ou recréé (rotation des logs)." },
+    { "short": "-q", "long": "--quiet", "description": "N'affiche pas les en-têtes de nom de fichier." },
+    { "short": "-s", "long": "--sleep-interval", "description": "Avec -f, intervalle en secondes entre deux vérifications.", "takesValue": true, "valueName": "N" },
+    { "long": "--pid", "description": "Avec -f, s'arrête quand le processus donné se termine.", "takesValue": true, "valueName": "PID" }
+  ],
+  "arguments": [{ "name": "FICHIER", "description": "Fichier(s) à lire. Sans fichier : l'entrée standard.", "optional": true, "variadic": true }],
+  "examples": [
+    { "command": "tail /var/log/syslog", "explanation": "Les 10 dernières lignes du journal système." },
+    { "command": "tail -n 50 app.log", "explanation": "Les 50 dernières lignes." },
+    { "command": "tail -f /var/log/nginx/access.log", "explanation": "Suit en direct les requêtes reçues par nginx." },
+    { "command": "tail -n +2 data.csv", "explanation": "Tout le fichier sauf la ligne d'en-tête." }
+  ],
+  "seeAlso": ["head", "less", "journalctl"],
+  "dangerLevel": "safe"
+}

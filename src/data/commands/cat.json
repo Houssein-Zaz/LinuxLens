@@ -1,0 +1,23 @@
+{
+  "name": "cat",
+  "category": "reading",
+  "summary": "Affiche et concatène le contenu de fichiers.",
+  "description": "Lit les fichiers dans l'ordre et écrit leur contenu sur la sortie standard. Sans fichier, ou avec « - », lit l'entrée standard. Son nom vient de « concatenate » : cat a b > c fusionne deux fichiers.",
+  "synopsis": "cat [OPTION]... [FICHIER]...",
+  "options": [
+    { "short": "-n", "long": "--number", "description": "Numérote toutes les lignes." },
+    { "short": "-b", "long": "--number-nonblank", "description": "Numérote uniquement les lignes non vides." },
+    { "short": "-s", "long": "--squeeze-blank", "description": "Réduit les suites de lignes vides à une seule." },
+    { "short": "-A", "long": "--show-all", "description": "Rend visibles les caractères invisibles : $ en fin de ligne, ^I pour une tabulation." },
+    { "short": "-E", "long": "--show-ends", "description": "Affiche $ à la fin de chaque ligne." },
+    { "short": "-T", "long": "--show-tabs", "description": "Affiche les tabulations sous la forme ^I." }
+  ],
+  "arguments": [{ "name": "FICHIER", "description": "Fichier(s) à lire. « - » désigne l'entrée standard.", "optional": true, "variadic": true }],
+  "examples": [
+    { "command": "cat notes.txt", "explanation": "Affiche le contenu de notes.txt." },
+    { "command": "cat -n script.sh", "explanation": "Affiche un script avec les numéros de ligne.", "output": "     1\t#!/bin/bash\n     2\techo \"Bonjour\"" },
+    { "command": "cat partie1.txt partie2.txt > complet.txt", "explanation": "Fusionne deux fichiers dans un troisième." }
+  ],
+  "seeAlso": ["less", "head", "tail", "tac"],
+  "dangerLevel": "safe"
+}

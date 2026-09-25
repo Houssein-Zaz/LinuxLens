@@ -1,0 +1,22 @@
+{
+  "name": "cd",
+  "category": "files",
+  "summary": "Change le répertoire courant.",
+  "description": "Commande interne du shell qui déplace le répertoire de travail. Sans argument, elle ramène au répertoire personnel ($HOME). Les chemins peuvent être absolus (/etc) ou relatifs au répertoire courant (../docs).",
+  "synopsis": "cd [-L|-P] [RÉPERTOIRE]",
+  "options": [
+    { "short": "-L", "description": "Suit les liens symboliques de façon logique (comportement par défaut) : « .. » remonte le chemin tel qu'il a été saisi." },
+    { "short": "-P", "description": "Utilise la structure physique du disque : les liens symboliques sont résolus avant de traiter « .. »." }
+  ],
+  "arguments": [
+    { "name": "RÉPERTOIRE", "description": "Destination. « ~ » désigne le répertoire personnel, « .. » le parent, « - » le répertoire précédent.", "optional": true }
+  ],
+  "examples": [
+    { "command": "cd /var/log", "explanation": "Va dans /var/log (chemin absolu)." },
+    { "command": "cd ..", "explanation": "Remonte d'un niveau, dans le répertoire parent." },
+    { "command": "cd", "explanation": "Retourne dans le répertoire personnel." },
+    { "command": "cd -", "explanation": "Revient au répertoire précédent et affiche son chemin.", "output": "/home/esprit/projets" }
+  ],
+  "seeAlso": ["pwd", "ls"],
+  "dangerLevel": "safe"
+}

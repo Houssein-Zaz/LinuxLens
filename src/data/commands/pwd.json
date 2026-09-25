@@ -1,0 +1,17 @@
+{
+  "name": "pwd",
+  "category": "files",
+  "summary": "Affiche le chemin du répertoire courant.",
+  "description": "Print Working Directory : écrit le chemin absolu du répertoire dans lequel se trouve le shell.",
+  "synopsis": "pwd [-L|-P]",
+  "options": [
+    { "short": "-L", "long": "--logical", "description": "Affiche le chemin logique, liens symboliques compris (par défaut dans bash)." },
+    { "short": "-P", "long": "--physical", "description": "Affiche le chemin physique, liens symboliques résolus." }
+  ],
+  "examples": [
+    { "command": "pwd", "explanation": "Affiche le répertoire courant.", "output": "/home/esprit/projets" },
+    { "command": "pwd -P", "explanation": "Affiche le chemin réel si l'on est passé par un lien symbolique." }
+  ],
+  "seeAlso": ["cd", "ls"],
+  "dangerLevel": "safe"
+}

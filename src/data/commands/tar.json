@@ -1,0 +1,30 @@
+{
+  "name": "tar",
+  "category": "archives",
+  "summary": "Crée ou extrait des archives .tar, .tar.gz, .tar.xz.",
+  "description": "Regroupe plusieurs fichiers en une seule archive (tape archive), avec compression éventuelle. On choisit une action (c créer, x extraire, t lister), puis des options ; f est suivi du nom de l'archive et doit donc venir en dernier dans un groupe comme -czvf.",
+  "synopsis": "tar [ACTION][OPTIONS] -f ARCHIVE [FICHIER]...",
+  "options": [
+    { "short": "-c", "long": "--create", "description": "Crée une nouvelle archive." },
+    { "short": "-x", "long": "--extract", "description": "Extrait le contenu d'une archive." },
+    { "short": "-t", "long": "--list", "description": "Liste le contenu d'une archive sans l'extraire." },
+    { "short": "-f", "long": "--file", "description": "Nom du fichier d'archive à créer ou à lire.", "takesValue": true, "valueName": "ARCHIVE" },
+    { "short": "-v", "long": "--verbose", "description": "Affiche les fichiers au fur et à mesure du traitement." },
+    { "short": "-z", "long": "--gzip", "description": "Compresse ou décompresse avec gzip (.tar.gz, .tgz)." },
+    { "short": "-j", "long": "--bzip2", "description": "Compresse ou décompresse avec bzip2 (.tar.bz2)." },
+    { "short": "-J", "long": "--xz", "description": "Compresse ou décompresse avec xz (.tar.xz)." },
+    { "short": "-C", "long": "--directory", "description": "Se place dans ce répertoire avant d'agir (destination de l'extraction).", "takesValue": true, "valueName": "RÉPERTOIRE" },
+    { "short": "-r", "long": "--append", "description": "Ajoute des fichiers à la fin d'une archive existante (non compressée)." },
+    { "long": "--exclude", "description": "Exclut les fichiers correspondant au motif.", "takesValue": true, "valueName": "MOTIF" }
+  ],
+  "arguments": [{ "name": "FICHIER", "description": "Fichiers ou répertoires à archiver, ou à extraire de l'archive.", "optional": true, "variadic": true }],
+  "examples": [
+    { "command": "tar -czvf projet.tar.gz projet/", "explanation": "Crée (c) une archive compressée gzip (z) de projet/, en affichant (v) les fichiers, dans projet.tar.gz (f)." },
+    { "command": "tar -xzvf projet.tar.gz", "explanation": "Extrait l'archive dans le répertoire courant." },
+    { "command": "tar -xf archive.tar.xz -C /opt", "explanation": "Extrait dans /opt ; tar récent détecte seul la compression à l'extraction." },
+    { "command": "tar -tf sauvegarde.tar", "explanation": "Liste le contenu sans extraire." }
+  ],
+  "seeAlso": ["gzip", "zip", "unzip"],
+  "dangerLevel": "caution",
+  "dangerNote": "À l'extraction, les fichiers existants du même nom sont écrasés. Listez d'abord le contenu avec -t en cas de doute."
+}

@@ -1,0 +1,33 @@
+{
+  "name": "cp",
+  "category": "files",
+  "summary": "Copie des fichiers et des répertoires.",
+  "description": "Copie une SOURCE vers une DESTINATION, ou plusieurs sources dans un répertoire. Si la destination existe déjà, elle est écrasée sans confirmation, sauf avec -i ou -n.",
+  "synopsis": "cp [OPTION]... SOURCE... DESTINATION",
+  "options": [
+    { "short": "-r", "long": "--recursive", "description": "Copie les répertoires et tout leur contenu. Indispensable pour copier un dossier. -R est équivalent." },
+    { "short": "-R", "description": "Synonyme de -r." },
+    { "short": "-i", "long": "--interactive", "description": "Demande confirmation avant d'écraser un fichier existant." },
+    { "short": "-n", "long": "--no-clobber", "description": "N'écrase jamais un fichier existant." },
+    { "short": "-v", "long": "--verbose", "description": "Affiche chaque fichier copié." },
+    { "short": "-p", "description": "Préserve le mode, le propriétaire et les dates des fichiers." },
+    { "short": "-a", "long": "--archive", "description": "Mode archive : copie récursive qui préserve tout (liens, permissions, dates). Équivaut à -dR --preserve=all." },
+    { "short": "-u", "long": "--update", "description": "Ne copie que si la source est plus récente que la destination, ou si la destination n'existe pas." },
+    { "short": "-l", "long": "--link", "description": "Crée des liens physiques au lieu de copier." },
+    { "short": "-s", "long": "--symbolic-link", "description": "Crée des liens symboliques au lieu de copier." },
+    { "short": "-t", "long": "--target-directory", "description": "Copie toutes les sources dans ce répertoire.", "takesValue": true, "valueName": "RÉPERTOIRE" }
+  ],
+  "arguments": [
+    { "name": "SOURCE", "description": "Fichier(s) ou répertoire(s) à copier.", "variadic": true },
+    { "name": "DESTINATION", "description": "Nouveau nom de fichier, ou répertoire dans lequel placer les copies." }
+  ],
+  "examples": [
+    { "command": "cp rapport.txt rapport.bak", "explanation": "Crée une copie de rapport.txt sous le nom rapport.bak." },
+    { "command": "cp -r projet/ sauvegarde/", "explanation": "Copie le répertoire projet et tout son contenu." },
+    { "command": "cp -iv *.jpg ~/Images/", "explanation": "Copie les images JPEG dans ~/Images en demandant avant d'écraser et en affichant chaque copie." },
+    { "command": "cp -a /etc/nginx ~/nginx-backup", "explanation": "Sauvegarde fidèle d'une configuration (permissions et dates conservées)." }
+  ],
+  "seeAlso": ["mv", "rsync", "scp", "ln"],
+  "dangerLevel": "caution",
+  "dangerNote": "cp écrase la destination sans prévenir si elle existe déjà. Ajoutez -i pour être averti."
+}

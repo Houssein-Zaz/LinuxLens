@@ -1,0 +1,29 @@
+{
+  "name": "sed",
+  "category": "text",
+  "summary": "Transforme un flux de texte ligne par ligne.",
+  "description": "Stream EDitor : lit le texte ligne par ligne, lui applique un script (substitution, suppression, insertion…) et écrit le résultat. La commande la plus courante est la substitution s/ancien/nouveau/. Par défaut, le fichier d'origine n'est pas modifié : le résultat part sur la sortie standard.",
+  "synopsis": "sed [OPTION]... SCRIPT [FICHIER]...",
+  "options": [
+    { "short": "-i", "long": "--in-place", "description": "Modifie le fichier directement au lieu d'afficher le résultat. -i.bak garde une copie de sauvegarde." },
+    { "short": "-n", "long": "--quiet", "description": "N'affiche pas automatiquement chaque ligne ; seules les lignes demandées avec la commande p sont affichées." },
+    { "short": "-e", "long": "--expression", "description": "Ajoute un script ; permet d'enchaîner plusieurs commandes.", "takesValue": true, "valueName": "SCRIPT" },
+    { "short": "-f", "long": "--file", "description": "Lit le script depuis un fichier.", "takesValue": true, "valueName": "FICHIER" },
+    { "short": "-E", "long": "--regexp-extended", "description": "Expressions régulières étendues (+, ?, |, () sans antislash). -r est équivalent." },
+    { "short": "-r", "description": "Synonyme de -E." }
+  ],
+  "arguments": [
+    { "name": "SCRIPT", "description": "Commandes sed : s/motif/remplacement/g remplace, /motif/d supprime, 5p affiche la ligne 5…" },
+    { "name": "FICHIER", "description": "Fichier(s) à traiter. Sans fichier : l'entrée standard.", "optional": true, "variadic": true }
+  ],
+  "examples": [
+    { "command": "sed 's/chat/chien/' animaux.txt", "explanation": "Remplace la première occurrence de « chat » sur chaque ligne." },
+    { "command": "sed 's/chat/chien/g' animaux.txt", "explanation": "Le drapeau g remplace toutes les occurrences de chaque ligne." },
+    { "command": "sed -i 's/localhost/0.0.0.0/g' config.ini", "explanation": "Modifie directement le fichier de configuration." },
+    { "command": "sed '/^$/d' texte.txt", "explanation": "Supprime les lignes vides." },
+    { "command": "sed -n '10,20p' gros.log", "explanation": "Affiche uniquement les lignes 10 à 20." }
+  ],
+  "seeAlso": ["awk", "grep", "tr"],
+  "dangerLevel": "caution",
+  "dangerNote": "Avec -i, le fichier est modifié sans retour possible. Testez d'abord sans -i, ou utilisez -i.bak pour garder une copie."
+}

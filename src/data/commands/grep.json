@@ -1,0 +1,39 @@
+{
+  "name": "grep",
+  "category": "text",
+  "summary": "Recherche des lignes correspondant à un motif.",
+  "description": "Lit des fichiers (ou l'entrée standard) et affiche les lignes qui contiennent le MOTIF. Le motif est une expression régulière. Avec plusieurs fichiers, chaque ligne est préfixée par le nom du fichier.",
+  "synopsis": "grep [OPTION]... MOTIF [FICHIER]...",
+  "options": [
+    { "short": "-i", "long": "--ignore-case", "description": "Ignore la casse : « Erreur » trouve aussi « erreur » et « ERREUR »." },
+    { "short": "-v", "long": "--invert-match", "description": "Inverse la recherche : affiche les lignes qui ne correspondent pas." },
+    { "short": "-r", "long": "--recursive", "description": "Cherche dans tous les fichiers des répertoires, récursivement." },
+    { "short": "-n", "long": "--line-number", "description": "Préfixe chaque ligne par son numéro." },
+    { "short": "-c", "long": "--count", "description": "Affiche seulement le nombre de lignes trouvées." },
+    { "short": "-l", "long": "--files-with-matches", "description": "Affiche seulement le nom des fichiers qui contiennent le motif." },
+    { "short": "-w", "long": "--word-regexp", "description": "Ne trouve que des mots entiers : « chat » ne correspond pas à « chaton »." },
+    { "short": "-x", "long": "--line-regexp", "description": "La ligne entière doit correspondre au motif." },
+    { "short": "-o", "long": "--only-matching", "description": "N'affiche que la partie correspondante, pas la ligne entière." },
+    { "short": "-E", "long": "--extended-regexp", "description": "Expressions régulières étendues : +, ?, | et () sans antislash." },
+    { "short": "-F", "long": "--fixed-strings", "description": "Motif pris littéralement, sans interpréter les caractères spéciaux." },
+    { "short": "-e", "long": "--regexp", "description": "Motif à chercher ; se répète pour chercher plusieurs motifs.", "takesValue": true, "valueName": "MOTIF" },
+    { "short": "-A", "long": "--after-context", "description": "Affiche aussi N lignes après chaque résultat.", "takesValue": true, "valueName": "N" },
+    { "short": "-B", "long": "--before-context", "description": "Affiche aussi N lignes avant chaque résultat.", "takesValue": true, "valueName": "N" },
+    { "short": "-C", "long": "--context", "description": "Affiche N lignes avant et après chaque résultat.", "takesValue": true, "valueName": "N" },
+    { "long": "--include", "description": "Avec -r, ne cherche que dans les fichiers correspondant au motif (ex. \"*.js\").", "takesValue": true, "valueName": "MOTIF" },
+    { "long": "--color", "description": "Surligne les correspondances.", "takesValue": true, "valueName": "QUAND", "values": ["auto", "always", "never"] }
+  ],
+  "arguments": [
+    { "name": "MOTIF", "description": "Texte ou expression régulière à chercher. Mettez-le entre guillemets s'il contient des espaces ou des caractères spéciaux." },
+    { "name": "FICHIER", "description": "Fichier(s) où chercher. Sans fichier : l'entrée standard.", "optional": true, "variadic": true }
+  ],
+  "examples": [
+    { "command": "grep \"error\" app.log", "explanation": "Lignes de app.log contenant « error »." },
+    { "command": "grep -rn \"TODO\" src/", "explanation": "Tous les TODO du dossier src, avec fichier et numéro de ligne.", "output": "src/main.ts:12:// TODO: gérer les erreurs" },
+    { "command": "ps aux | grep -i nginx", "explanation": "Filtre la liste des processus pour ne garder que nginx." },
+    { "command": "grep -v \"^#\" config.conf", "explanation": "Affiche la configuration sans les lignes de commentaire." },
+    { "command": "grep -c \"GET\" access.log", "explanation": "Compte les requêtes GET.", "output": "1284" }
+  ],
+  "seeAlso": ["sed", "awk", "find", "egrep"],
+  "dangerLevel": "safe"
+}

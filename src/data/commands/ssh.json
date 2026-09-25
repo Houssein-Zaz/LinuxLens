@@ -1,0 +1,33 @@
+{
+  "name": "ssh",
+  "category": "network",
+  "summary": "Se connecte à une machine distante de façon sécurisée.",
+  "description": "Ouvre un shell chiffré sur un serveur distant, ou y exécute une commande. L'authentification se fait par mot de passe ou, de préférence, par clé (ssh-keygen puis ssh-copy-id). Les alias d'hôtes se configurent dans ~/.ssh/config.",
+  "synopsis": "ssh [OPTIONS] [UTILISATEUR@]HÔTE [COMMANDE]",
+  "options": [
+    { "short": "-p", "description": "Port du serveur SSH (22 par défaut).", "takesValue": true, "valueName": "PORT" },
+    { "short": "-i", "description": "Clé privée à utiliser pour l'authentification.", "takesValue": true, "valueName": "FICHIER" },
+    { "short": "-l", "description": "Nom d'utilisateur distant (équivalent de utilisateur@).", "takesValue": true, "valueName": "UTILISATEUR" },
+    { "short": "-L", "description": "Redirection de port locale : -L 8080:localhost:80 rend le port 80 distant accessible sur le port local 8080.", "takesValue": true, "valueName": "LOCAL:HÔTE:DISTANT" },
+    { "short": "-R", "description": "Redirection de port distante : expose un port local sur le serveur.", "takesValue": true, "valueName": "DISTANT:HÔTE:LOCAL" },
+    { "short": "-J", "description": "Passe par un serveur rebond (bastion) avant d'atteindre l'hôte.", "takesValue": true, "valueName": "HÔTE" },
+    { "short": "-o", "description": "Option de configuration ponctuelle, par exemple -o StrictHostKeyChecking=no.", "takesValue": true, "valueName": "OPTION" },
+    { "short": "-v", "description": "Mode verbeux, pour diagnostiquer un problème de connexion (-vvv pour plus de détails)." },
+    { "short": "-N", "description": "N'exécute aucune commande distante (utile pour une simple redirection de port)." },
+    { "short": "-X", "description": "Active le transfert X11 pour lancer des applications graphiques distantes." },
+    { "short": "-C", "description": "Compresse les données échangées." }
+  ],
+  "arguments": [
+    { "name": "UTILISATEUR@HÔTE", "description": "Compte et adresse (nom de domaine, IP ou alias de ~/.ssh/config)." },
+    { "name": "COMMANDE", "description": "Commande à exécuter à distance au lieu d'ouvrir un shell.", "optional": true }
+  ],
+  "examples": [
+    { "command": "ssh esprit@192.168.1.20", "explanation": "Ouvre un shell sur la machine 192.168.1.20 avec le compte esprit." },
+    { "command": "ssh -p 2222 admin@serveur.fr", "explanation": "Connexion sur un port non standard." },
+    { "command": "ssh -i ~/.ssh/cle_projet ubuntu@serveur.fr", "explanation": "Connexion avec une clé privée précise." },
+    { "command": "ssh serveur 'df -h'", "explanation": "Exécute df -h à distance et affiche le résultat localement." },
+    { "command": "ssh -N -L 5432:localhost:5432 serveur", "explanation": "Accède en local à la base PostgreSQL du serveur via un tunnel." }
+  ],
+  "seeAlso": ["scp", "ssh-keygen", "rsync"],
+  "dangerLevel": "safe"
+}

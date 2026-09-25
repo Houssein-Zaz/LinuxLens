@@ -1,0 +1,21 @@
+{
+  "name": "mkdir",
+  "category": "files",
+  "summary": "Crée des répertoires.",
+  "description": "Crée un ou plusieurs répertoires. Par défaut, le répertoire parent doit déjà exister et mkdir échoue si le répertoire existe déjà.",
+  "synopsis": "mkdir [OPTION]... RÉPERTOIRE...",
+  "options": [
+    { "short": "-p", "long": "--parents", "description": "Crée aussi les répertoires parents manquants, sans erreur si le répertoire existe déjà." },
+    { "short": "-m", "long": "--mode", "description": "Définit les permissions du nouveau répertoire (comme chmod).", "takesValue": true, "valueName": "MODE" },
+    { "short": "-v", "long": "--verbose", "description": "Affiche un message pour chaque répertoire créé." }
+  ],
+  "arguments": [{ "name": "RÉPERTOIRE", "description": "Chemin du ou des répertoires à créer.", "variadic": true }],
+  "examples": [
+    { "command": "mkdir photos", "explanation": "Crée le répertoire photos dans le répertoire courant." },
+    { "command": "mkdir -p projet/src/components", "explanation": "Crée toute l'arborescence d'un coup, parents compris." },
+    { "command": "mkdir -m 700 prive", "explanation": "Crée un répertoire accessible uniquement par son propriétaire." },
+    { "command": "mkdir -pv a/b", "explanation": "Crée a puis a/b en affichant chaque création.", "output": "mkdir: création du répertoire 'a'\nmkdir: création du répertoire 'a/b'" }
+  ],
+  "seeAlso": ["rmdir", "touch", "cd"],
+  "dangerLevel": "safe"
+}

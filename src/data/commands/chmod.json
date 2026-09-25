@@ -1,0 +1,27 @@
+{
+  "name": "chmod",
+  "category": "permissions",
+  "summary": "Modifie les permissions de fichiers.",
+  "description": "Change les droits de lecture (r), d'écriture (w) et d'exécution (x) pour le propriétaire (u), le groupe (g) et les autres (o). Le MODE s'écrit en octal (755 : chaque chiffre additionne r=4, w=2, x=1) ou en symbolique (u+x ajoute l'exécution au propriétaire, go-w retire l'écriture au groupe et aux autres).",
+  "synopsis": "chmod [OPTION]... MODE FICHIER...",
+  "options": [
+    { "short": "-R", "long": "--recursive", "description": "Applique le changement aux répertoires et à tout leur contenu." },
+    { "short": "-v", "long": "--verbose", "description": "Affiche un message pour chaque fichier traité." },
+    { "short": "-c", "long": "--changes", "description": "Comme -v, mais seulement quand un changement a réellement lieu." },
+    { "short": "-f", "long": "--silent", "description": "Supprime la plupart des messages d'erreur." },
+    { "long": "--reference", "description": "Copie les permissions d'un autre fichier au lieu de donner un MODE.", "takesValue": true, "valueName": "FICHIER" }
+  ],
+  "arguments": [
+    { "name": "MODE", "description": "Nouvelles permissions : octal (644, 755) ou symbolique (u+x, go-w, a=r)." },
+    { "name": "FICHIER", "description": "Fichier(s) ou répertoire(s) à modifier.", "variadic": true }
+  ],
+  "examples": [
+    { "command": "chmod u+x script.sh", "explanation": "Rend le script exécutable par son propriétaire." },
+    { "command": "chmod 755 script.sh", "explanation": "rwxr-xr-x : le propriétaire fait tout, les autres lisent et exécutent." },
+    { "command": "chmod 600 ~/.ssh/id_ed25519", "explanation": "rw------- : clé privée lisible uniquement par son propriétaire (exigé par SSH)." },
+    { "command": "chmod -R go-w partage/", "explanation": "Retire l'écriture au groupe et aux autres sur tout un répertoire." }
+  ],
+  "seeAlso": ["chown", "chgrp", "umask", "ls"],
+  "dangerLevel": "caution",
+  "dangerNote": "chmod 777 donne tous les droits à tout le monde : c'est presque toujours une mauvaise idée. Avec -R, une erreur s'applique à toute l'arborescence."
+}

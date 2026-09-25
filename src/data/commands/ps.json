@@ -1,0 +1,32 @@
+{
+  "name": "ps",
+  "category": "processes",
+  "summary": "Affiche un instantané des processus en cours.",
+  "description": "Liste les processus au moment de l'appel. ps accepte deux syntaxes : BSD, sans tiret (ps aux), et UNIX, avec tiret (ps -ef). Pour un affichage qui se rafraîchit en continu, utilisez top ou htop.",
+  "synopsis": "ps [OPTIONS]",
+  "options": [
+    { "short": "-e", "description": "Tous les processus du système (syntaxe UNIX). -A est équivalent." },
+    { "short": "-A", "description": "Synonyme de -e." },
+    { "short": "-f", "description": "Format complet : UID, PID, PPID (processus parent), heure de début, commande complète." },
+    { "short": "-u", "description": "Processus de l'utilisateur donné.", "takesValue": true, "valueName": "UTILISATEUR" },
+    { "short": "-p", "description": "Processus dont le PID est donné.", "takesValue": true, "valueName": "PID" },
+    { "short": "-o", "description": "Colonnes à afficher, par exemple -o pid,user,%cpu,cmd.", "takesValue": true, "valueName": "FORMAT" },
+    { "long": "--sort", "description": "Trie selon une colonne ; un « - » devant inverse l'ordre (--sort=-%mem).", "takesValue": true, "valueName": "CLÉ" },
+    { "long": "--forest", "description": "Affiche l'arbre des processus parents et enfants." }
+  ],
+  "arguments": [
+    { "name": "aux", "description": "Syntaxe BSD : a (tous les utilisateurs), u (format orienté utilisateur, avec %CPU et %MEM), x (y compris les processus sans terminal).", "optional": true }
+  ],
+  "examples": [
+    {
+      "command": "ps aux",
+      "explanation": "Tous les processus avec utilisation CPU et mémoire.",
+      "output": "USER    PID %CPU %MEM    VSZ   RSS TTY  STAT START TIME COMMAND\nroot      1  0.0  0.1 167588 11808 ?    Ss   09:12 0:02 /sbin/init"
+    },
+    { "command": "ps -ef --forest", "explanation": "Tous les processus sous forme d'arbre." },
+    { "command": "ps aux --sort=-%mem | head", "explanation": "Les processus qui consomment le plus de mémoire." },
+    { "command": "ps -u esprit", "explanation": "Les processus de l'utilisateur esprit." }
+  ],
+  "seeAlso": ["top", "htop", "kill", "pgrep"],
+  "dangerLevel": "safe"
+}

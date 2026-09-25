@@ -1,0 +1,27 @@
+{
+  "name": "rm",
+  "category": "files",
+  "summary": "Supprime des fichiers ou des répertoires.",
+  "description": "Supprime définitivement les fichiers indiqués. Il n'y a pas de corbeille : un fichier supprimé avec rm ne peut en général pas être récupéré. Par défaut, rm refuse de supprimer un répertoire.",
+  "synopsis": "rm [OPTION]... FICHIER...",
+  "options": [
+    { "short": "-r", "long": "--recursive", "description": "Supprime les répertoires et tout leur contenu, récursivement. -R est équivalent." },
+    { "short": "-R", "description": "Synonyme de -r." },
+    { "short": "-f", "long": "--force", "description": "Ne demande jamais de confirmation et ignore les fichiers inexistants." },
+    { "short": "-i", "description": "Demande confirmation avant chaque suppression." },
+    { "short": "-I", "description": "Demande une seule confirmation avant de supprimer plus de trois fichiers ou en mode récursif." },
+    { "short": "-d", "long": "--dir", "description": "Supprime les répertoires vides." },
+    { "short": "-v", "long": "--verbose", "description": "Affiche chaque fichier supprimé." },
+    { "long": "--preserve-root", "description": "Refuse d'opérer sur « / » (comportement par défaut)." }
+  ],
+  "arguments": [{ "name": "FICHIER", "description": "Fichier(s) ou répertoire(s) à supprimer.", "variadic": true }],
+  "examples": [
+    { "command": "rm vieux.log", "explanation": "Supprime un fichier." },
+    { "command": "rm -i *.tmp", "explanation": "Supprime les fichiers .tmp en demandant confirmation pour chacun." },
+    { "command": "rm -r build/", "explanation": "Supprime le répertoire build et tout son contenu." },
+    { "command": "rm -- -fichier-bizarre", "explanation": "Supprime un fichier dont le nom commence par un tiret : « -- » indique la fin des options." }
+  ],
+  "seeAlso": ["rmdir", "mv", "find"],
+  "dangerLevel": "danger",
+  "dangerNote": "La suppression est définitive. rm -rf supprime tout sans confirmation : vérifiez toujours le chemin, surtout avec des variables ou des jokers (*)."
+}

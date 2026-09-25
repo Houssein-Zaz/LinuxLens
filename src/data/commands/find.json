@@ -1,0 +1,39 @@
+{
+  "name": "find",
+  "category": "files",
+  "summary": "Recherche des fichiers dans une arborescence.",
+  "description": "Parcourt récursivement les répertoires donnés et applique des tests (nom, type, taille, date…) à chaque fichier. Les fichiers qui passent tous les tests sont affichés, ou soumis à une action (-delete, -exec). Particularité : ses options s'écrivent avec un seul tiret mais sont des mots entiers (-name, -type).",
+  "synopsis": "find [CHEMIN...] [EXPRESSION]",
+  "options": [
+    { "short": "-name", "description": "Nom du fichier correspondant au motif (jokers * ? [ ] autorisés, à mettre entre guillemets).", "takesValue": true, "valueName": "MOTIF" },
+    { "short": "-iname", "description": "Comme -name, sans tenir compte de la casse.", "takesValue": true, "valueName": "MOTIF" },
+    { "short": "-type", "description": "Type de fichier : f (fichier), d (répertoire), l (lien symbolique).", "takesValue": true, "valueName": "TYPE", "values": ["f", "d", "l", "b", "c", "p", "s"] },
+    { "short": "-size", "description": "Taille : +10M (plus de 10 Mio), -1k (moins de 1 Kio), 100c (exactement 100 octets).", "takesValue": true, "valueName": "N" },
+    { "short": "-mtime", "description": "Modifié il y a N jours : -7 (moins de 7 jours), +30 (plus de 30 jours).", "takesValue": true, "valueName": "N" },
+    { "short": "-mmin", "description": "Modifié il y a N minutes.", "takesValue": true, "valueName": "N" },
+    { "short": "-user", "description": "Appartenant à l'utilisateur donné.", "takesValue": true, "valueName": "UTILISATEUR" },
+    { "short": "-perm", "description": "Permissions exactes (644) ou au moins ces permissions (-u+x).", "takesValue": true, "valueName": "MODE" },
+    { "short": "-maxdepth", "description": "Descend au plus N niveaux sous les chemins de départ.", "takesValue": true, "valueName": "N" },
+    { "short": "-mindepth", "description": "N'applique les tests qu'à partir de N niveaux de profondeur.", "takesValue": true, "valueName": "N" },
+    { "short": "-empty", "description": "Fichiers ou répertoires vides." },
+    { "short": "-newer", "description": "Modifié plus récemment que le fichier donné.", "takesValue": true, "valueName": "FICHIER" },
+    { "short": "-exec", "description": "Exécute une commande sur chaque résultat ; {} est remplacé par le fichier, la commande se termine par \\; (un appel par fichier) ou + (un appel groupé)." },
+    { "short": "-delete", "description": "Supprime les fichiers trouvés. À utiliser en dernier, après avoir vérifié les résultats sans cette option." },
+    { "short": "-print", "description": "Affiche le chemin (action par défaut)." },
+    { "short": "-not", "description": "Inverse le test suivant (équivalent de !)." },
+    { "short": "-o", "description": "OU logique entre deux tests (par défaut, les tests sont combinés par ET)." }
+  ],
+  "arguments": [
+    { "name": "CHEMIN", "description": "Répertoire(s) de départ. Par défaut : le répertoire courant.", "optional": true, "variadic": true }
+  ],
+  "examples": [
+    { "command": "find . -name \"*.log\"", "explanation": "Tous les fichiers .log sous le répertoire courant." },
+    { "command": "find /home -type d -name node_modules", "explanation": "Tous les répertoires node_modules sous /home." },
+    { "command": "find . -type f -size +100M", "explanation": "Les fichiers de plus de 100 Mio." },
+    { "command": "find /tmp -type f -mtime +7 -delete", "explanation": "Supprime les fichiers de /tmp non modifiés depuis plus de 7 jours." },
+    { "command": "find . -name \"*.sh\" -exec chmod u+x {} \\;", "explanation": "Rend exécutables tous les scripts .sh." }
+  ],
+  "seeAlso": ["locate", "grep", "xargs", "ls"],
+  "dangerLevel": "caution",
+  "dangerNote": "Avec -delete ou -exec rm, une erreur de motif peut supprimer beaucoup de fichiers. Lancez d'abord la commande sans l'action pour vérifier la liste."
+}

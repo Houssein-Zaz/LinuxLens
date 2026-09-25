@@ -1,0 +1,28 @@
+{
+  "name": "mv",
+  "category": "files",
+  "summary": "Déplace ou renomme des fichiers.",
+  "description": "Déplace une ou plusieurs sources vers une destination. Sur un même système de fichiers, l'opération est instantanée : seul le nom ou l'emplacement change. Renommer un fichier, c'est simplement le « déplacer » vers un nouveau nom.",
+  "synopsis": "mv [OPTION]... SOURCE... DESTINATION",
+  "options": [
+    { "short": "-i", "long": "--interactive", "description": "Demande confirmation avant d'écraser un fichier existant." },
+    { "short": "-n", "long": "--no-clobber", "description": "N'écrase jamais un fichier existant." },
+    { "short": "-f", "long": "--force", "description": "N'avertit jamais avant d'écraser." },
+    { "short": "-v", "long": "--verbose", "description": "Affiche chaque déplacement effectué." },
+    { "short": "-u", "long": "--update", "description": "Ne déplace que si la source est plus récente que la destination." },
+    { "short": "-b", "long": "--backup", "description": "Sauvegarde le fichier de destination (suffixe ~) avant de l'écraser." },
+    { "short": "-t", "long": "--target-directory", "description": "Déplace toutes les sources dans ce répertoire.", "takesValue": true, "valueName": "RÉPERTOIRE" }
+  ],
+  "arguments": [
+    { "name": "SOURCE", "description": "Fichier(s) ou répertoire(s) à déplacer.", "variadic": true },
+    { "name": "DESTINATION", "description": "Nouveau nom, ou répertoire de destination." }
+  ],
+  "examples": [
+    { "command": "mv brouillon.txt final.txt", "explanation": "Renomme brouillon.txt en final.txt." },
+    { "command": "mv *.pdf ~/Documents/", "explanation": "Déplace tous les PDF du répertoire courant dans ~/Documents." },
+    { "command": "mv -iv ancien/ nouveau/", "explanation": "Renomme un répertoire, avec confirmation et affichage." }
+  ],
+  "seeAlso": ["cp", "rm", "rename"],
+  "dangerLevel": "caution",
+  "dangerNote": "Si la destination existe, elle est remplacée sans confirmation. Utilisez -i ou -n pour l'éviter."
+}

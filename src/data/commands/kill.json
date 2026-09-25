@@ -1,0 +1,27 @@
+{
+  "name": "kill",
+  "category": "processes",
+  "summary": "Envoie un signal à un processus.",
+  "description": "Malgré son nom, kill envoie un signal, qui ne tue pas forcément le processus. Le signal par défaut est SIGTERM (15) : une demande polie d'arrêt, que le programme peut intercepter pour se fermer proprement. SIGKILL (9) arrête le processus immédiatement, sans lui laisser le temps de sauvegarder.",
+  "synopsis": "kill [-SIGNAL] PID...",
+  "options": [
+    { "short": "-s", "description": "Signal à envoyer, par nom (TERM, KILL, HUP) ou par numéro.", "takesValue": true, "valueName": "SIGNAL" },
+    { "short": "-l", "description": "Liste les noms de signaux disponibles." },
+    { "short": "-9", "description": "SIGKILL : arrêt immédiat et forcé, impossible à intercepter. En dernier recours." },
+    { "short": "-15", "description": "SIGTERM : demande d'arrêt propre (signal par défaut)." },
+    { "short": "-1", "description": "SIGHUP : souvent utilisé pour demander à un service de relire sa configuration." },
+    { "short": "-2", "description": "SIGINT : interruption, comme Ctrl+C." }
+  ],
+  "arguments": [
+    { "name": "PID", "description": "Identifiant du ou des processus visés (voir ps ou pgrep). %1 désigne le job 1 du shell.", "variadic": true }
+  ],
+  "examples": [
+    { "command": "kill 1234", "explanation": "Demande au processus 1234 de s'arrêter proprement (SIGTERM)." },
+    { "command": "kill -9 1234", "explanation": "Force l'arrêt immédiat du processus 1234." },
+    { "command": "kill -HUP $(pgrep nginx)", "explanation": "Demande à nginx de recharger sa configuration." },
+    { "command": "kill -l", "explanation": "Liste les signaux.", "output": " 1) SIGHUP\t 2) SIGINT\t 3) SIGQUIT\t 4) SIGILL\t 5) SIGTRAP\n 6) SIGABRT\t 7) SIGBUS\t 8) SIGFPE\t 9) SIGKILL\t10) SIGUSR1" }
+  ],
+  "seeAlso": ["killall", "ps", "top", "pkill"],
+  "dangerLevel": "caution",
+  "dangerNote": "kill -9 ne laisse pas le programme sauvegarder ses données. Essayez d'abord un simple kill (SIGTERM)."
+}
