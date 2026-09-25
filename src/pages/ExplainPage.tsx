@@ -97,14 +97,13 @@ export function ExplainPage() {
         <>
           <div className="space-y-3">
             <TokenLine input={input} items={allItems} selectedKey={selectedKey} onSelect={setSelectedKey} />
-            <ul aria-label="Légende" className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-zinc-500 dark:text-zinc-400">
+            <ul aria-label="Légende" className="flex flex-wrap items-center gap-x-2 gap-y-2.5 text-xs text-zinc-500 dark:text-zinc-400">
               {LEGEND.map(({ kind, label }) => (
-                <li key={kind} className="flex items-center gap-1.5">
-                  <span className={`size-3 rounded ring-1 ring-inset ${TOKEN_STYLE[kind]}`} aria-hidden="true" />
-                  {label}
+                <li key={kind}>
+                  <span className={`rounded px-1.5 py-0.5 ring-1 ring-inset ${TOKEN_STYLE[kind]}`}>{label}</span>
                 </li>
               ))}
-              <li className="flex items-center gap-1.5">
+              <li className="ml-1">
                 <span className="underline decoration-dotted underline-offset-4">souligné</span> = non documenté
               </li>
             </ul>

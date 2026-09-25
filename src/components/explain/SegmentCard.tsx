@@ -65,7 +65,7 @@ export function SegmentCard({ index, segment, items, selectedKey, onSelect, fall
               type="button"
               onClick={() => onSelect(selectedKey === key ? null : key)}
               aria-pressed={selectedKey === key}
-              className={`grid w-full grid-cols-[minmax(0,9rem)_1fr] gap-4 rounded-lg px-3 py-3 text-left transition-colors sm:grid-cols-[minmax(0,12rem)_1fr] ${
+              className={`grid w-full gap-2 rounded-lg sm:grid-cols-[minmax(0,12rem)_1fr] sm:gap-4 px-3 py-3 text-left transition-colors ${
                 selectedKey === key ? 'bg-indigo-50/70 dark:bg-indigo-500/10' : 'hover:bg-zinc-50 dark:hover:bg-zinc-800/50'
               }`}
             >

@@ -1,0 +1,97 @@
+# LinuxLens
+
+**Comprendre visuellement les commandes shell Linux, en français.**
+
+LinuxLens découpe une ligne de commande en éléments colorés (commande, options, arguments, pipes, redirections) et explique chacun d’eux. L’application propose aussi un analyseur de sortie `ls -l` et un calculateur de permissions `chmod`. Tout tourne dans le navigateur, sans backend.
+
+![Explication d’une commande avec pipe et redirections](docs/screenshots/explain.png)
+
+## Fonctionnalités
+
+### Expliquer une commande
+- Grand champ de saisie avec **autocomplétion** des noms de commandes (clavier : ↑ ↓, Entrée, Tab, Échap).
+- Chaque élément est **coloré selon son rôle** et expliqué au survol, au focus clavier ou au clic.
+- **Options groupées** éclatées (`-la` → `-l` et `-a`), options longues (`--color=auto`), valeurs d’options (`head -n 5`, `tar -xzvf archive.tar.gz`).
+- **Pipes** (`|`), **redirections** (`>`, `>>`, `<`, `2>`, `2>&1`, `&>`) et **enchaînements** (`&&`, `||`, `;`, `&`) : chaque segment est expliqué séparément.
+- Modes **chmod** octaux (`755`) et symboliques (`u+x`, `go-w`) traduits en phrases.
+- Commandes « enveloppes » reconnues (`sudo apt install`, `xargs rm`).
+- Avertissements pour les commandes risquées (`rm`, `chmod`, `sed -i`…).
+- L’URL contient la commande (`/?c=ls%20-la`) : chaque explication peut être partagée.
+
+![Infobulle sur une option groupée](docs/screenshots/explain-hover.png)
+
+### Trois niveaux de couverture
+1. **Fiches détaillées**, écrites à la main (`src/data/commands/*.json`) : description, chaque option, arguments, exemples avec sortie.
+2. **tldr-pages** : plus de 6 600 commandes Linux et communes, en français quand la traduction existe, sinon en anglais, avec la mention « Source : tldr-pages » et la licence.
+3. **Commande inconnue** : le découpage en tokens reste affiché, avec un message clair.
+
+### Analyseur de sortie `ls -l`
+Collez `-rw-rw-r-- 1 esprit esprit 47 juil. 12 21:14 fichier1` : chaque bloc est surligné et expliqué (type, droits par catégorie, liens, propriétaire, groupe, taille, date, nom), avec l’équivalent octal (`664`). Cas gérés : liens symboliques, répertoires, périphériques, setuid/setgid/sticky, ACL (`+`), SELinux (`.`), dates en français, anglais, allemand, espagnol et ISO, année à la place de l’heure, `ls -li`, `ls -lh`, plusieurs lignes et `total`.
+
+![Analyseur ls -l](docs/screenshots/ls.png)
+
+### Calculateur de permissions
+Grille lecture/écriture/exécution × propriétaire/groupe/autres, synchronisée dans les deux sens avec la notation symbolique (`rwxr-x---`), l’octal (`750`) et la commande `chmod`. Il gère aussi les bits spéciaux, propose des modes courants et un testeur de modes symboliques (`u+x`, `g=u`…).
+
+![Calculateur de permissions](docs/screenshots/chmod.png)
+
+### Et aussi
+- Page **Explorer** : toutes les commandes par catégorie, avec une recherche insensible aux accents.
+- **Mode sombre** en option (clair par défaut, choix mémorisé).
+- **Responsive** et **accessible** : navigation clavier, rôles ARIA (combobox, tooltip), lien d’évitement, contrastes AA, `prefers-reduced-motion`.
+
+| Mode sombre | Mobile |
+|---|---|
+| ![Mode sombre](docs/screenshots/explain-dark.png) | ![Mobile](docs/screenshots/mobile.png) |
+
+## Installation
+
+Prérequis : Node.js 20 ou plus récent.
+
+```bash
+npm install
+npm run tldr     # télécharge et convertit tldr-pages dans public/tldr/ (facultatif en dev)
+npm run dev      # http://localhost:5173
+```
+
+| Script | Rôle |
+|---|---|
+| `npm run dev` | Serveur de développement |
+| `npm test` | Tests unitaires et de composants (Vitest) |
+| `npm run typecheck` | Vérification TypeScript |
+| `npm run tldr` | Génère les données tldr (`--refresh` pour ignorer le cache) |
+| `npm run build` | Génère tldr (`prebuild`), vérifie les types puis construit `dist/` |
+
+### Déploiement sur Vercel
+Importer le dépôt : Vercel détecte Vite (build `npm run build`, sortie `dist`). Le script `prebuild` télécharge tldr-pages à chaque déploiement. `vercel.json` redirige les routes de l’application vers `index.html`, sauf les fichiers de `tldr/` et `assets/`.
+
+## Structure
+
+```
+scripts/             build-tldr.ts (téléchargement) + tldr-convert.ts (conversion testée)
+src/
+  types/             command.ts (schéma des fiches), parser.ts, lsl.ts
+  lib/               parser.ts, explain.ts, permissions.ts, chmod.ts, lsl.ts, registry.ts, schema.ts, search.ts
+  data/              commands/*.json (fiches détaillées), categories.ts, index.ts
+  components/        explain/, permissions/, layout/, ui/
+  hooks/             useTheme, useTldr (chargement à la demande)
+  pages/             Expliquer, Explorer, fiche, ls -l, chmod
+```
+
+## Choix techniques
+
+- **Parseur maison, pur et testé** (`src/lib/parser.ts`). Un lexer gère les guillemets, les échappements, `$(…)`, les backticks et les opérateurs. Une seconde passe classe chaque mot selon sa position : commande, option, valeur, argument, mode chmod, cible de redirection. Le parseur ne dépend pas des fiches : un `ParserSpec` optionnel lui indique quelles options attendent une valeur. Chaque token garde sa position exacte, ce qui permet le surlignage.
+- **Une fiche = un fichier JSON**, validée par un schéma TypeScript (`CommandDoc`) et par un validateur exécuté en test. Les tests vérifient aussi que chaque exemple se parse sans erreur et contient bien la commande.
+- **tldr-pages chargé à la demande** : un index léger (nom + résumé) sert à la recherche et à l’autocomplétion ; la fiche complète n’est téléchargée qu’à l’ouverture. Les fichiers générés ne sont pas versionnés.
+- **Logique séparée de l’interface** : l’explication (`explain.ts`), les permissions et l’analyse `ls -l` sont des fonctions pures, testées sans DOM.
+- **État dans l’URL** (`?c=`, `?l=`, `?mode=`) : pages partageables, sans gestionnaire d’état.
+- **Stack** : React 19, TypeScript strict (`noUncheckedIndexedAccess`), Vite, Tailwind CSS 4, React Router, Vitest + Testing Library. Polices Inter et JetBrains Mono auto-hébergées (`@fontsource`).
+
+## Ajouter une commande détaillée
+
+Créer `src/data/commands/<nom>.json` en suivant le type `CommandDoc` (`src/types/command.ts`), puis lancer `npm test`. Le test de schéma signale les champs manquants ou mal formés et les exemples qui ne se parsent pas.
+
+## Crédits
+
+- Fiches étendues : [tldr-pages](https://github.com/tldr-pages/tldr), © les contributeurs tldr-pages, sous licence [CC BY 4.0](https://github.com/tldr-pages/tldr/blob/main/LICENSE.md). Les pages sont converties en JSON (placeholders `{{…}}` simplifiés) sans autre modification de contenu.
+- Polices : [Inter](https://rsms.me/inter/) et [JetBrains Mono](https://www.jetbrains.com/lp/mono/), licence SIL OFL.

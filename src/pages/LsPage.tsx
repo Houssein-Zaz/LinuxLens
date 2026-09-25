@@ -131,7 +131,7 @@ function EntryView({ entry }: { entry: LslEntry }) {
               key={i}
               onMouseEnter={() => setActive(i)}
               onMouseLeave={() => setActive(null)}
-              className={`grid grid-cols-[minmax(0,8rem)_1fr] gap-4 px-4 py-3 transition-colors sm:grid-cols-[minmax(0,10rem)_1fr] ${
+              className={`grid gap-2 px-4 py-3 transition-colors sm:grid-cols-[minmax(0,10rem)_1fr] sm:gap-4 ${
                 active === i ? 'bg-indigo-50/70 dark:bg-indigo-500/10' : ''
               }`}
             >
