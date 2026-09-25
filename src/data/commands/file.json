@@ -1,0 +1,22 @@
+{
+  "name": "file",
+  "category": "files",
+  "summary": "Détermine le type réel d'un fichier.",
+  "description": "Sous Linux, l'extension d'un fichier n'est qu'une convention. file examine le contenu (les premiers octets, appelés « nombre magique ») pour dire ce qu'est vraiment un fichier : texte et encodage, image, archive, exécutable, script…",
+  "synopsis": "file [OPTION]... FICHIER...",
+  "options": [
+    { "short": "-b", "long": "--brief", "description": "N'affiche pas le nom du fichier devant le résultat." },
+    { "short": "-i", "long": "--mime", "description": "Affiche le type MIME (image/png, text/plain; charset=utf-8…)." },
+    { "short": "-L", "long": "--dereference", "description": "Suit les liens symboliques et décrit la cible." },
+    { "short": "-z", "long": "--uncompress", "description": "Regarde aussi à l'intérieur des fichiers compressés." }
+  ],
+  "arguments": [{ "name": "FICHIER", "description": "Fichier(s) à analyser.", "variadic": true }],
+  "examples": [
+    { "command": "file photo.jpg script.sh", "explanation": "Type de chaque fichier.", "output": "photo.jpg: JPEG image data, JFIF standard 1.01, 1920x1080\nscript.sh: Bourne-Again shell script, ASCII text executable" },
+    { "command": "file document.pdf", "explanation": "Vérifie qu'un fichier est bien ce que son extension prétend.", "output": "document.pdf: Zip archive data, at least v2.0 to extract" },
+    { "command": "file -i notes.txt", "explanation": "Type MIME et encodage d'un texte.", "output": "notes.txt: text/plain; charset=utf-8" },
+    { "command": "file /bin/ls", "explanation": "Décrit un programme compilé.", "output": "/bin/ls: ELF 64-bit LSB pie executable, x86-64, dynamically linked" }
+  ],
+  "seeAlso": ["stat", "ls"],
+  "dangerLevel": "safe"
+}

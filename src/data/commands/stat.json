@@ -1,0 +1,26 @@
+{
+  "name": "stat",
+  "category": "files",
+  "summary": "Affiche toutes les informations d'un fichier.",
+  "description": "Donne le détail de ce que ls -l résume : taille, nombre de blocs, inode, liens, permissions en octal et en lettres, propriétaire et groupe (nom et numéro), et trois dates (dernier accès, dernière modification du contenu, dernier changement des métadonnées).",
+  "synopsis": "stat [OPTION]... FICHIER...",
+  "options": [
+    { "short": "-c", "long": "--format", "description": "Format de sortie personnalisé : %a (permissions en octal), %A (en lettres), %s (taille), %U (propriétaire), %y (date de modification), %n (nom)…", "takesValue": true, "valueName": "FORMAT" },
+    { "long": "--printf", "description": "Comme -c, mais interprète \\n et n'ajoute pas de retour à la ligne final.", "takesValue": true, "valueName": "FORMAT" },
+    { "short": "-L", "long": "--dereference", "description": "Pour un lien symbolique, décrit la cible plutôt que le lien." },
+    { "short": "-f", "long": "--file-system", "description": "Décrit le système de fichiers qui contient le fichier." },
+    { "short": "-t", "long": "--terse", "description": "Sortie condensée sur une ligne." }
+  ],
+  "arguments": [{ "name": "FICHIER", "description": "Fichier(s) à décrire.", "variadic": true }],
+  "examples": [
+    {
+      "command": "stat fichier1",
+      "explanation": "Toutes les informations du fichier.",
+      "output": "  Fichier : fichier1\n   Taille : 47        \tBlocs : 8          Blocs d'E/S : 4096   fichier\nPériphérique : 8,2\tInœud : 1837465     Liens : 1\n    Accès : (0664/-rw-rw-r--)  UID : ( 1000/  esprit)   GID : ( 1000/  esprit)\nModifié : 2024-07-12 21:14:05.000000000 +0200"
+    },
+    { "command": "stat -c '%a %U %n' *", "explanation": "Permissions en octal, propriétaire et nom de chaque fichier.", "output": "664 esprit fichier1\n755 esprit projets" },
+    { "command": "stat -c %s video.mp4", "explanation": "La taille exacte en octets, pratique dans un script." }
+  ],
+  "seeAlso": ["ls", "file", "du"],
+  "dangerLevel": "safe"
+}

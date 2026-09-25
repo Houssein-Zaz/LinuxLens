@@ -23,6 +23,9 @@ describe('registry', () => {
   });
 
   it('intègre des noms supplémentaires, fiches détaillées en premier', () => {
-    expect(suggestCommands('ta', ['tac'])).toEqual(['tar', 'tail', 'tac']);
+    const s = suggestCommands('ta', ['tac']);
+    // préfixes (fiches détaillées d'abord), puis les noms qui contiennent « ta » (stat…)
+    expect(s.slice(0, 3)).toEqual(['tar', 'tail', 'tac']);
+    expect(s.slice(3)).toContain('stat');
   });
 });

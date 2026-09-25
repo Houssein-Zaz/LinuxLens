@@ -1,0 +1,20 @@
+{
+  "name": "rmdir",
+  "category": "files",
+  "summary": "Supprime des répertoires vides.",
+  "description": "Supprime un répertoire seulement s'il est vide. C'est une sécurité : si le répertoire contient encore quelque chose, rmdir refuse et affiche une erreur. Pour supprimer un répertoire et son contenu, il faut rm -r.",
+  "synopsis": "rmdir [OPTION]... RÉPERTOIRE...",
+  "options": [
+    { "short": "-p", "long": "--parents", "description": "Supprime aussi les parents devenus vides : rmdir -p a/b/c supprime c, puis b, puis a." },
+    { "short": "-v", "long": "--verbose", "description": "Affiche un message pour chaque répertoire supprimé." },
+    { "long": "--ignore-fail-on-non-empty", "description": "N'affiche pas d'erreur pour les répertoires non vides (ils sont simplement laissés en place)." }
+  ],
+  "arguments": [{ "name": "RÉPERTOIRE", "description": "Répertoire(s) vide(s) à supprimer.", "variadic": true }],
+  "examples": [
+    { "command": "rmdir vieux_dossier", "explanation": "Supprime le répertoire s'il est vide." },
+    { "command": "rmdir projet", "explanation": "Si le répertoire n'est pas vide, rmdir refuse.", "output": "rmdir: impossible de supprimer 'projet': Le dossier n'est pas vide" },
+    { "command": "rmdir -pv a/b/c", "explanation": "Supprime c, puis b, puis a, tant qu'ils sont vides." }
+  ],
+  "seeAlso": ["rm", "mkdir"],
+  "dangerLevel": "safe"
+}

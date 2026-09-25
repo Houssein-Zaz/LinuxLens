@@ -1,0 +1,28 @@
+{
+  "name": "ln",
+  "category": "files",
+  "summary": "Crée des liens entre fichiers.",
+  "description": "Sans option, ln crée un lien physique (hard link) : un second nom pour le même contenu sur le disque ; le contenu n'est effacé qu'une fois tous ses noms supprimés. Avec -s, il crée un lien symbolique : un petit fichier qui contient un chemin vers la cible, comme un raccourci. Les liens symboliques peuvent viser un répertoire ou un autre disque ; ils cassent si la cible est déplacée. Attention à l'ordre : d'abord la cible, ensuite le nom du lien.",
+  "synopsis": "ln [OPTION]... CIBLE [NOM_DU_LIEN]",
+  "options": [
+    { "short": "-s", "long": "--symbolic", "description": "Crée un lien symbolique au lieu d'un lien physique." },
+    { "short": "-f", "long": "--force", "description": "Remplace le fichier de destination s'il existe déjà." },
+    { "short": "-n", "long": "--no-dereference", "description": "Si le nom du lien est déjà un lien vers un répertoire, le remplace au lieu de créer le lien à l'intérieur (utile avec -sf)." },
+    { "short": "-r", "long": "--relative", "description": "Enregistre un chemin relatif à l'emplacement du lien." },
+    { "short": "-i", "long": "--interactive", "description": "Demande confirmation avant de remplacer une destination." },
+    { "short": "-v", "long": "--verbose", "description": "Affiche chaque lien créé." }
+  ],
+  "arguments": [
+    { "name": "CIBLE", "description": "Fichier ou répertoire vers lequel le lien pointe." },
+    { "name": "NOM_DU_LIEN", "description": "Nom du lien à créer. Par défaut : le nom de la cible, dans le répertoire courant.", "optional": true }
+  ],
+  "examples": [
+    { "command": "ln -s /var/www/monsite ~/site", "explanation": "Crée ~/site, un raccourci vers /var/www/monsite." },
+    { "command": "ln -sf python3.12 /usr/local/bin/python", "explanation": "Crée ou remplace un lien qui pointe vers python3.12." },
+    { "command": "ln rapport.txt rapport-copie.txt", "explanation": "Crée un lien physique : deux noms pour le même contenu (même inode)." },
+    { "command": "ln -srv config/app.conf app.conf", "explanation": "Crée un lien symbolique relatif et affiche ce qui a été fait.", "output": "'app.conf' -> 'config/app.conf'" }
+  ],
+  "seeAlso": ["ls", "readlink", "cp", "stat"],
+  "dangerLevel": "caution",
+  "dangerNote": "Avec -f, un fichier existant portant le nom du lien est remplacé sans confirmation. Et n'inversez pas les arguments : la cible vient en premier."
+}

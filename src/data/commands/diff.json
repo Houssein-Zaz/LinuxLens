@@ -1,0 +1,34 @@
+{
+  "name": "diff",
+  "category": "reading",
+  "summary": "Compare deux fichiers ligne par ligne.",
+  "description": "Affiche les différences entre deux fichiers, ou entre deux répertoires avec -r. Le format unifié (-u) est le plus lisible : les lignes préfixées par - viennent du premier fichier, celles préfixées par + du second, et @@ indique la position. C'est le format des correctifs (patch) et de git diff. Le code de retour vaut 0 si les fichiers sont identiques et 1 s'ils diffèrent.",
+  "synopsis": "diff [OPTION]... FICHIER1 FICHIER2",
+  "options": [
+    { "short": "-u", "long": "--unified", "description": "Format unifié, avec 3 lignes de contexte autour de chaque différence." },
+    { "short": "-y", "long": "--side-by-side", "description": "Affiche les deux fichiers côte à côte." },
+    { "short": "-r", "long": "--recursive", "description": "Compare récursivement deux répertoires." },
+    { "short": "-q", "long": "--brief", "description": "Indique seulement si les fichiers diffèrent, sans détailler." },
+    { "short": "-i", "long": "--ignore-case", "description": "Ignore les différences de casse." },
+    { "short": "-w", "long": "--ignore-all-space", "description": "Ignore toutes les différences d'espaces." },
+    { "short": "-B", "long": "--ignore-blank-lines", "description": "Ignore les lignes vides ajoutées ou supprimées." },
+    { "short": "-N", "long": "--new-file", "description": "Avec -r, traite un fichier absent d'un côté comme un fichier vide." },
+    { "long": "--color", "description": "Colore les différences.", "takesValue": true, "valueName": "QUAND", "values": ["auto", "always", "never"] }
+  ],
+  "arguments": [
+    { "name": "FICHIER1", "description": "Fichier (ou répertoire) de référence, l'« ancien »." },
+    { "name": "FICHIER2", "description": "Fichier (ou répertoire) à comparer, le « nouveau »." }
+  ],
+  "examples": [
+    {
+      "command": "diff -u ancien.conf nouveau.conf",
+      "explanation": "Différences au format unifié.",
+      "output": "--- ancien.conf\n+++ nouveau.conf\n@@ -1,3 +1,3 @@\n port=8080\n-debug=true\n+debug=false\n host=localhost"
+    },
+    { "command": "diff -y --color=auto a.txt b.txt", "explanation": "Comparaison côte à côte, en couleur." },
+    { "command": "diff -rq projet-v1/ projet-v2/", "explanation": "Liste les fichiers qui diffèrent entre deux versions d'un projet." },
+    { "command": "diff -u ancien.py nouveau.py > correctif.patch", "explanation": "Enregistre les différences dans un fichier correctif, applicable avec patch." }
+  ],
+  "seeAlso": ["cmp", "patch", "git"],
+  "dangerLevel": "safe"
+}

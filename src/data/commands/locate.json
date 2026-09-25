@@ -1,0 +1,24 @@
+{
+  "name": "locate",
+  "category": "files",
+  "summary": "Trouve instantanément des fichiers par leur nom.",
+  "description": "Cherche dans une base de données de tous les chemins du système au lieu de parcourir le disque : c'est beaucoup plus rapide que find, mais la base n'est mise à jour qu'une fois par jour environ. Un fichier créé récemment peut donc manquer : lancez sudo updatedb pour rafraîchir la base. Selon la distribution, la commande est fournie par plocate ou mlocate.",
+  "synopsis": "locate [OPTION]... MOTIF...",
+  "options": [
+    { "short": "-i", "long": "--ignore-case", "description": "Ignore la casse." },
+    { "short": "-c", "long": "--count", "description": "Affiche seulement le nombre de résultats." },
+    { "short": "-l", "long": "--limit", "description": "Limite le nombre de résultats.", "takesValue": true, "valueName": "N" },
+    { "short": "-b", "long": "--basename", "description": "Ne cherche que dans le nom du fichier, pas dans tout le chemin." },
+    { "short": "-e", "long": "--existing", "description": "N'affiche que les fichiers qui existent encore." },
+    { "short": "-r", "long": "--regex", "description": "Interprète le motif comme une expression régulière." }
+  ],
+  "arguments": [{ "name": "MOTIF", "description": "Texte recherché dans les chemins. Sans joker, il suffit qu'il apparaisse n'importe où dans le chemin.", "variadic": true }],
+  "examples": [
+    { "command": "locate nginx.conf", "explanation": "Trouve tous les chemins contenant nginx.conf.", "output": "/etc/nginx/nginx.conf\n/usr/share/doc/nginx/examples/nginx.conf" },
+    { "command": "locate -i readme -l 5", "explanation": "Les 5 premiers fichiers dont le chemin contient « readme », quelle que soit la casse." },
+    { "command": "locate -c \"*.jpg\"", "explanation": "Compte les images JPEG du système." },
+    { "command": "locate -r '\\.conf$'", "explanation": "Les chemins qui se terminent par .conf (expression régulière)." }
+  ],
+  "seeAlso": ["find", "which"],
+  "dangerLevel": "safe"
+}

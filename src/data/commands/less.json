@@ -1,0 +1,24 @@
+{
+  "name": "less",
+  "category": "reading",
+  "summary": "Affiche un fichier page par page, avec défilement et recherche.",
+  "description": "Ouvre un fichier (ou la sortie d'un pipe) dans un lecteur plein écran, sans le charger entièrement : idéal pour les gros fichiers. Touches : Espace / b pour avancer / reculer d'une page, flèches pour une ligne, g et G pour le début et la fin, /motif pour chercher (n et N pour le résultat suivant et précédent), F pour suivre le fichier comme tail -f, q pour quitter. C'est le lecteur utilisé par man.",
+  "synopsis": "less [OPTION]... [FICHIER]...",
+  "options": [
+    { "short": "-N", "long": "--LINE-NUMBERS", "description": "Affiche les numéros de ligne." },
+    { "short": "-S", "long": "--chop-long-lines", "description": "Ne replie pas les lignes longues : défilement horizontal avec les flèches (pratique pour les CSV)." },
+    { "short": "-i", "long": "--ignore-case", "description": "Recherche insensible à la casse, sauf si le motif contient une majuscule." },
+    { "short": "-R", "long": "--RAW-CONTROL-CHARS", "description": "Affiche correctement les couleurs (codes ANSI), par exemple celles de grep --color=always." },
+    { "short": "-F", "long": "--quit-if-one-screen", "description": "Quitte immédiatement si le contenu tient sur un seul écran." },
+    { "short": "-X", "long": "--no-init", "description": "Laisse le contenu affiché dans le terminal après avoir quitté." }
+  ],
+  "arguments": [{ "name": "FICHIER", "description": "Fichier(s) à lire. Sans fichier : l'entrée standard (fin d'un pipe).", "optional": true, "variadic": true }],
+  "examples": [
+    { "command": "less /var/log/syslog", "explanation": "Parcourt le journal système ; /error puis n pour trouver chaque erreur." },
+    { "command": "less -N script.sh", "explanation": "Lit un script avec les numéros de ligne." },
+    { "command": "less -S donnees.csv", "explanation": "Lit un CSV large sans replier les lignes." },
+    { "command": "grep --color=always -n erreur app.log | less -R", "explanation": "Parcourt les résultats de grep en gardant leurs couleurs." }
+  ],
+  "seeAlso": ["more", "cat", "head", "tail"],
+  "dangerLevel": "safe"
+}

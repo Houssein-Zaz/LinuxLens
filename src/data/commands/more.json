@@ -1,0 +1,20 @@
+{
+  "name": "more",
+  "category": "reading",
+  "summary": "Affiche un fichier page par page (lecteur simple).",
+  "description": "L'ancêtre de less : affiche le texte un écran à la fois. Espace avance d'une page, Entrée d'une ligne, /motif cherche, q quitte. Il ne permet que peu de retour en arrière ; less, plus complet, est généralement préféré. more reste utile sur les systèmes minimaux où less n'est pas installé.",
+  "synopsis": "more [OPTION]... FICHIER...",
+  "options": [
+    { "short": "-d", "long": "--silent", "description": "Affiche une aide (« Appuyez sur espace pour continuer, q pour quitter ») au lieu de sonner en cas de mauvaise touche." },
+    { "short": "-s", "long": "--squeeze", "description": "Réduit les suites de lignes vides à une seule." },
+    { "short": "-n", "long": "--lines", "description": "Nombre de lignes par écran.", "takesValue": true, "valueName": "N" }
+  ],
+  "arguments": [{ "name": "FICHIER", "description": "Fichier(s) à lire. Sans fichier : l'entrée standard.", "optional": true, "variadic": true }],
+  "examples": [
+    { "command": "more /etc/services", "explanation": "Lit un long fichier écran par écran." },
+    { "command": "ls -la /etc | more", "explanation": "Parcourt une longue liste de fichiers." },
+    { "command": "more -d README", "explanation": "Affiche le texte avec un rappel des touches en bas de l'écran." }
+  ],
+  "seeAlso": ["less", "cat", "head"],
+  "dangerLevel": "safe"
+}

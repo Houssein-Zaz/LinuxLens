@@ -1,0 +1,30 @@
+{
+  "name": "tree",
+  "category": "files",
+  "summary": "Affiche une arborescence de répertoires.",
+  "description": "Dessine le contenu d'un répertoire et de ses sous-répertoires sous forme d'arbre, puis le total de dossiers et de fichiers. Très pratique pour visualiser la structure d'un projet. tree n'est pas toujours installé par défaut (sudo apt install tree).",
+  "synopsis": "tree [OPTION]... [RÉPERTOIRE]...",
+  "options": [
+    { "short": "-L", "description": "Profondeur maximale affichée.", "takesValue": true, "valueName": "NIVEAU" },
+    { "short": "-d", "description": "N'affiche que les répertoires." },
+    { "short": "-a", "description": "Affiche aussi les fichiers cachés." },
+    { "short": "-h", "description": "Affiche la taille de chaque fichier en unités lisibles." },
+    { "short": "-f", "description": "Affiche le chemin complet de chaque fichier." },
+    { "short": "-I", "description": "Exclut les fichiers correspondant au motif ; plusieurs motifs se séparent par | (ex. 'node_modules|dist').", "takesValue": true, "valueName": "MOTIF" },
+    { "short": "-P", "description": "N'affiche que les fichiers correspondant au motif.", "takesValue": true, "valueName": "MOTIF" },
+    { "long": "--dirsfirst", "description": "Liste les répertoires avant les fichiers." },
+    { "long": "--gitignore", "description": "Ignore les fichiers listés dans .gitignore." }
+  ],
+  "arguments": [{ "name": "RÉPERTOIRE", "description": "Racine de l'arbre. Par défaut : le répertoire courant.", "optional": true, "variadic": true }],
+  "examples": [
+    {
+      "command": "tree -L 2 projet",
+      "explanation": "Les deux premiers niveaux du répertoire projet.",
+      "output": "projet\n├── README.md\n├── package.json\n└── src\n    ├── App.tsx\n    └── main.tsx\n\n2 directories, 4 files"
+    },
+    { "command": "tree -d", "explanation": "Seulement l'arborescence des répertoires." },
+    { "command": "tree -I 'node_modules|dist' --dirsfirst", "explanation": "L'arbre d'un projet web sans les dossiers générés, répertoires en premier." }
+  ],
+  "seeAlso": ["ls", "find", "du"],
+  "dangerLevel": "safe"
+}

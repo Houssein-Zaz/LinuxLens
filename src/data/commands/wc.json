@@ -1,0 +1,23 @@
+{
+  "name": "wc",
+  "category": "reading",
+  "summary": "Compte les lignes, les mots et les octets.",
+  "description": "Word Count : affiche, pour chaque fichier, le nombre de lignes, de mots et d'octets, puis un total s'il y a plusieurs fichiers. En fin de pipe, wc -l sert à compter des résultats. Attention : wc -l compte les caractères de fin de ligne, donc une dernière ligne sans retour à la ligne n'est pas comptée.",
+  "synopsis": "wc [OPTION]... [FICHIER]...",
+  "options": [
+    { "short": "-l", "long": "--lines", "description": "Compte seulement les lignes." },
+    { "short": "-w", "long": "--words", "description": "Compte seulement les mots (séparés par des blancs)." },
+    { "short": "-c", "long": "--bytes", "description": "Compte seulement les octets." },
+    { "short": "-m", "long": "--chars", "description": "Compte les caractères (un caractère accentué compte pour un, contre deux octets en UTF-8)." },
+    { "short": "-L", "long": "--max-line-length", "description": "Affiche la longueur de la ligne la plus longue." }
+  ],
+  "arguments": [{ "name": "FICHIER", "description": "Fichier(s) à analyser. Sans fichier : l'entrée standard.", "optional": true, "variadic": true }],
+  "examples": [
+    { "command": "wc rapport.txt", "explanation": "Lignes, mots et octets du fichier.", "output": "  42  318 2051 rapport.txt" },
+    { "command": "wc -l *.py", "explanation": "Nombre de lignes de chaque script Python, avec le total.", "output": "  120 app.py\n   45 utils.py\n  165 total" },
+    { "command": "ls | wc -l", "explanation": "Compte les éléments du répertoire courant." },
+    { "command": "grep -r \"TODO\" src/ | wc -l", "explanation": "Compte les TODO d'un projet." }
+  ],
+  "seeAlso": ["grep", "cat", "du"],
+  "dangerLevel": "safe"
+}

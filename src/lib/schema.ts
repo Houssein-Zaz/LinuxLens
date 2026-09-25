@@ -2,7 +2,7 @@ import { CATEGORY_IDS } from '../types/command';
 
 const DANGER_LEVELS = ['safe', 'caution', 'danger'];
 const SHORT_RE = /^-[A-Za-z0-9?#]$/;
-const LONG_RE = /^--[a-z0-9][a-z0-9-]*$/;
+const LONG_RE = /^--[A-Za-z0-9][A-Za-z0-9-]*$/; // less --LINE-NUMBERS
 const SINGLE_DASH_LONG_RE = /^-(?:[a-z][a-z0-9-]+|\d+)$/; // find -name, kill -15…
 
 type Obj = Record<string, unknown>;
