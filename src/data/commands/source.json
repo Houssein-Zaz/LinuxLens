@@ -1,0 +1,20 @@
+{
+  "name": "source",
+  "category": "misc",
+  "summary": "Exécute un fichier de commandes dans le shell courant.",
+  "description": "Commande interne du shell, qui s'écrit aussi avec un simple point (. fichier). Contrairement à ./script.sh, qui s'exécute dans un nouveau processus, source lit le fichier dans le shell en cours : les variables, alias et fonctions qu'il définit restent disponibles ensuite. C'est ce qu'on fait après avoir modifié ~/.bashrc, ou pour activer un environnement virtuel Python.",
+  "synopsis": "source FICHIER [ARGUMENT]...",
+  "options": [],
+  "arguments": [
+    { "name": "FICHIER", "description": "Fichier contenant des commandes shell." },
+    { "name": "ARGUMENT", "description": "Arguments transmis au fichier ($1, $2…).", "optional": true, "variadic": true }
+  ],
+  "examples": [
+    { "command": "source ~/.bashrc", "explanation": "Applique immédiatement les modifications de ~/.bashrc, sans ouvrir un nouveau terminal." },
+    { "command": "source .venv/bin/activate", "explanation": "Active un environnement virtuel Python dans le terminal courant." },
+    { "command": "source .env && echo $DATABASE_URL", "explanation": "Charge des variables depuis un fichier de configuration." }
+  ],
+  "seeAlso": ["export", "alias", "bash"],
+  "dangerLevel": "caution",
+  "dangerNote": "source exécute tout le contenu du fichier avec vos droits, dans votre shell. Ne l'utilisez que sur des fichiers dont vous connaissez le contenu."
+}

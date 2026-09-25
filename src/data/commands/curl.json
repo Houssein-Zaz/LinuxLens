@@ -1,0 +1,37 @@
+{
+  "name": "curl",
+  "category": "network",
+  "summary": "Envoie des requêtes HTTP (et bien d'autres) depuis le terminal.",
+  "description": "Transfère des données depuis ou vers une URL. Par défaut, curl fait une requête GET et affiche la réponse sur la sortie standard ; il faut -o ou -O pour l'enregistrer. C'est l'outil de référence pour tester une API : méthode (-X), en-têtes (-H), corps de requête (-d). Il gère aussi HTTPS, FTP, SFTP et d'autres protocoles.",
+  "synopsis": "curl [OPTION]... URL...",
+  "options": [
+    { "short": "-o", "long": "--output", "description": "Enregistre la réponse dans ce fichier.", "takesValue": true, "valueName": "FICHIER" },
+    { "short": "-O", "long": "--remote-name", "description": "Enregistre la réponse sous le nom de fichier présent dans l'URL." },
+    { "short": "-L", "long": "--location", "description": "Suit les redirections (301, 302…)." },
+    { "short": "-I", "long": "--head", "description": "N'affiche que les en-têtes de la réponse (requête HEAD)." },
+    { "short": "-i", "long": "--include", "description": "Affiche les en-têtes de la réponse avant le corps." },
+    { "short": "-X", "long": "--request", "description": "Méthode HTTP : GET, POST, PUT, PATCH, DELETE…", "takesValue": true, "valueName": "MÉTHODE" },
+    { "short": "-H", "long": "--header", "description": "Ajoute un en-tête, par exemple \"Authorization: Bearer …\".", "takesValue": true, "valueName": "EN-TÊTE" },
+    { "short": "-d", "long": "--data", "description": "Corps de la requête ; implique POST. @fichier lit le corps depuis un fichier.", "takesValue": true, "valueName": "DONNÉES" },
+    { "long": "--json", "description": "Envoie du JSON : ajoute les en-têtes Content-Type et Accept adaptés.", "takesValue": true, "valueName": "DONNÉES" },
+    { "short": "-u", "long": "--user", "description": "Identifiants pour l'authentification basique.", "takesValue": true, "valueName": "UTILISATEUR:MDP" },
+    { "short": "-s", "long": "--silent", "description": "Masque la barre de progression et les erreurs." },
+    { "short": "-S", "long": "--show-error", "description": "Avec -s, affiche quand même les erreurs." },
+    { "short": "-f", "long": "--fail", "description": "Échoue (code de retour non nul) si le serveur répond par une erreur HTTP." },
+    { "short": "-v", "long": "--verbose", "description": "Détaille toute l'échange : connexion, TLS, en-têtes envoyés et reçus." },
+    { "short": "-k", "long": "--insecure", "description": "Accepte un certificat TLS invalide (à réserver aux tests)." }
+  ],
+  "arguments": [{ "name": "URL", "description": "Adresse de la ressource.", "variadic": true }],
+  "examples": [
+    { "command": "curl https://api.github.com/users/torvalds", "explanation": "Affiche la réponse JSON d'une API." },
+    { "command": "curl -LO https://exemple.fr/fichier.zip", "explanation": "Télécharge un fichier en suivant les redirections et garde son nom." },
+    { "command": "curl -I https://exemple.fr", "explanation": "Seulement les en-têtes : code de statut, type de contenu, cache…", "output": "HTTP/2 200\ncontent-type: text/html; charset=UTF-8\ncache-control: max-age=600" },
+    {
+      "command": "curl -X POST -H \"Content-Type: application/json\" -d '{\"nom\": \"Ali\"}' https://api.exemple.fr/utilisateurs",
+      "explanation": "Envoie un objet JSON en POST à une API."
+    },
+    { "command": "curl -fsSL https://exemple.fr/install.sh -o install.sh", "explanation": "Téléchargement discret qui échoue proprement en cas d'erreur HTTP." }
+  ],
+  "seeAlso": ["wget", "ssh", "ping"],
+  "dangerLevel": "safe"
+}

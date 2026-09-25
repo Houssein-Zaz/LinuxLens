@@ -1,0 +1,21 @@
+{
+  "name": "export",
+  "category": "misc",
+  "summary": "Rend une variable visible par les programmes lancés depuis le shell.",
+  "description": "Commande interne du shell. Une variable simple (NOM=valeur) n'existe que dans le shell courant ; export en fait une variable d'environnement, transmise à tous les programmes lancés ensuite. C'est ainsi qu'on modifie le PATH ou qu'on fournit une configuration (clé d'API, port) à une application. Comme pour alias, l'effet disparaît à la fermeture du terminal, sauf si la ligne est ajoutée à ~/.bashrc.",
+  "synopsis": "export [-n] [-p] [NOM[=VALEUR]]...",
+  "options": [
+    { "short": "-p", "description": "Liste toutes les variables exportées." },
+    { "short": "-n", "description": "Retire l'attribut d'export : la variable redevient locale au shell." },
+    { "short": "-f", "description": "Exporte une fonction du shell au lieu d'une variable." }
+  ],
+  "arguments": [{ "name": "NOM=VALEUR", "description": "Variable à exporter, avec ou sans nouvelle valeur. Pas d'espace autour du =.", "optional": true, "variadic": true }],
+  "examples": [
+    { "command": "export EDITOR=nano", "explanation": "Les programmes qui ouvrent un éditeur (git, crontab…) utiliseront nano." },
+    { "command": "export PATH=\"$HOME/.local/bin:$PATH\"", "explanation": "Ajoute un répertoire au début du PATH, pour y trouver des commandes." },
+    { "command": "export NODE_ENV=production && node serveur.js", "explanation": "Fournit une variable de configuration à une application." },
+    { "command": "export -p | grep PATH", "explanation": "Vérifie la valeur exportée de PATH." }
+  ],
+  "seeAlso": ["env", "source", "echo"],
+  "dangerLevel": "safe"
+}

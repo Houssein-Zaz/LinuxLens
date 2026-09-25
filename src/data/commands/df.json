@@ -1,0 +1,27 @@
+{
+  "name": "df",
+  "category": "system",
+  "summary": "Affiche l'espace libre des disques.",
+  "description": "Disk free : pour chaque système de fichiers monté, affiche sa taille, l'espace utilisé, l'espace disponible, le pourcentage d'occupation et son point de montage. Pour savoir ce qui occupe la place dans un répertoire, utilisez du.",
+  "synopsis": "df [OPTION]... [FICHIER]...",
+  "options": [
+    { "short": "-h", "long": "--human-readable", "description": "Tailles en unités lisibles (K, M, G)." },
+    { "short": "-T", "long": "--print-type", "description": "Ajoute le type de système de fichiers (ext4, tmpfs, vfat…)." },
+    { "short": "-i", "long": "--inodes", "description": "Affiche l'utilisation des inodes au lieu des blocs : un disque peut être « plein » faute d'inodes." },
+    { "short": "-t", "long": "--type", "description": "N'affiche que les systèmes de fichiers de ce type.", "takesValue": true, "valueName": "TYPE" },
+    { "short": "-x", "long": "--exclude-type", "description": "Exclut ce type de système de fichiers.", "takesValue": true, "valueName": "TYPE" },
+    { "long": "--total", "description": "Ajoute une ligne de total." }
+  ],
+  "arguments": [{ "name": "FICHIER", "description": "Affiche seulement le système de fichiers qui contient ce chemin.", "optional": true, "variadic": true }],
+  "examples": [
+    {
+      "command": "df -h",
+      "explanation": "Occupation de tous les disques, en unités lisibles.",
+      "output": "Sys. de fichiers Taille Utilisé Dispo Uti% Monté sur\n/dev/sda2          234G     98G  124G  45% /\n/dev/sda1          511M    6,1M  505M   2% /boot/efi"
+    },
+    { "command": "df -h /home", "explanation": "Seulement le disque qui contient /home." },
+    { "command": "df -hT -x tmpfs", "explanation": "Avec le type de chaque système de fichiers, sans les systèmes temporaires en mémoire." }
+  ],
+  "seeAlso": ["du", "lsblk", "mount"],
+  "dangerLevel": "safe"
+}

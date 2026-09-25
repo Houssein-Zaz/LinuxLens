@@ -1,0 +1,18 @@
+{
+  "name": "uptime",
+  "category": "system",
+  "summary": "Indique depuis combien de temps le système tourne, et sa charge.",
+  "description": "Affiche l'heure, la durée depuis le dernier démarrage, le nombre d'utilisateurs connectés et la charge moyenne (load average) sur 1, 5 et 15 minutes. La charge correspond au nombre moyen de processus qui utilisent ou attendent le processeur : on la compare au nombre de cœurs (nproc). Une charge de 4 sur une machine à 4 cœurs signifie qu'elle est pleinement occupée.",
+  "synopsis": "uptime [OPTION]...",
+  "options": [
+    { "short": "-p", "long": "--pretty", "description": "Affiche seulement la durée de fonctionnement, en toutes lettres." },
+    { "short": "-s", "long": "--since", "description": "Affiche la date et l'heure du démarrage." }
+  ],
+  "examples": [
+    { "command": "uptime", "explanation": "Durée de fonctionnement et charge moyenne.", "output": " 10:42:01 up 3 days,  2:11,  1 user,  load average: 0,52, 0,48, 0,40" },
+    { "command": "uptime -p", "explanation": "Version lisible.", "output": "up 3 days, 2 hours, 11 minutes" },
+    { "command": "uptime -s", "explanation": "Date du dernier démarrage.", "output": "2024-07-09 08:31:12" }
+  ],
+  "seeAlso": ["top", "uname", "w"],
+  "dangerLevel": "safe"
+}

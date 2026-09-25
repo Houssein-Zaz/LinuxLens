@@ -1,0 +1,30 @@
+{
+  "name": "snap",
+  "category": "packages",
+  "summary": "Installe des applications empaquetées au format Snap.",
+  "description": "Système de paquets de Canonical, préinstallé sur Ubuntu. Un snap embarque toutes ses dépendances et s'exécute dans un environnement isolé (confinement) ; les snaps se mettent à jour automatiquement. En contrepartie, ils prennent plus de place et démarrent parfois plus lentement que les paquets apt. Le catalogue se consulte sur snapcraft.io.",
+  "synopsis": "snap SOUS-COMMANDE [OPTION]... [SNAP]...",
+  "options": [
+    { "long": "--classic", "description": "Installe sans confinement : nécessaire pour les outils qui doivent accéder à tout le système (éditeurs de code, compilateurs)." },
+    { "long": "--channel", "description": "Canal de version : stable, candidate, beta, edge.", "takesValue": true, "valueName": "CANAL" },
+    { "long": "--beta", "description": "Raccourci pour le canal beta." }
+  ],
+  "subcommands": [
+    { "name": "install", "description": "Installe un snap." },
+    { "name": "remove", "description": "Désinstalle un snap." },
+    { "name": "list", "description": "Liste les snaps installés avec leur version et leur canal." },
+    { "name": "find", "description": "Cherche un snap dans le catalogue." },
+    { "name": "info", "description": "Détaille un snap : description, canaux et versions disponibles." },
+    { "name": "refresh", "description": "Met à jour un snap, ou tous sans argument." },
+    { "name": "revert", "description": "Revient à la version précédente d'un snap." }
+  ],
+  "arguments": [{ "name": "SNAP", "description": "Nom du ou des snaps visés.", "optional": true, "variadic": true }],
+  "examples": [
+    { "command": "sudo snap install code --classic", "explanation": "Installe Visual Studio Code (qui exige --classic)." },
+    { "command": "snap find postman", "explanation": "Cherche un snap dans le catalogue." },
+    { "command": "snap list", "explanation": "Les snaps installés.", "output": "Nom    Version   Rév.  Suivi          Éditeur\ncode   1.91.1    163   latest/stable  vscode✓\ncore22 20240408  1380  latest/stable  canonical✓" },
+    { "command": "sudo snap refresh", "explanation": "Force la mise à jour immédiate de tous les snaps." }
+  ],
+  "seeAlso": ["apt", "dpkg"],
+  "dangerLevel": "safe"
+}

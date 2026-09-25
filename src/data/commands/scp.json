@@ -1,0 +1,28 @@
+{
+  "name": "scp",
+  "category": "network",
+  "summary": "Copie des fichiers entre machines via SSH.",
+  "description": "Secure copy : fonctionne comme cp, mais l'une des extrémités (ou les deux) peut être distante, sous la forme utilisateur@hôte:chemin. Le transfert est chiffré et utilise la même authentification que ssh (mot de passe ou clé, alias de ~/.ssh/config). Pour de gros transferts ou des synchronisations répétées, rsync est plus efficace.",
+  "synopsis": "scp [OPTION]... SOURCE... DESTINATION",
+  "options": [
+    { "short": "-r", "description": "Copie les répertoires récursivement." },
+    { "short": "-P", "description": "Port SSH du serveur (majuscule, contrairement à ssh -p).", "takesValue": true, "valueName": "PORT" },
+    { "short": "-i", "description": "Clé privée à utiliser.", "takesValue": true, "valueName": "FICHIER" },
+    { "short": "-p", "description": "Préserve les dates et les permissions." },
+    { "short": "-C", "description": "Compresse les données pendant le transfert." },
+    { "short": "-q", "description": "Masque la barre de progression." },
+    { "short": "-J", "description": "Passe par un serveur rebond (bastion).", "takesValue": true, "valueName": "HÔTE" }
+  ],
+  "arguments": [
+    { "name": "SOURCE", "description": "Fichier(s) à copier : chemin local ou utilisateur@hôte:chemin.", "variadic": true },
+    { "name": "DESTINATION", "description": "Emplacement cible : chemin local ou utilisateur@hôte:chemin." }
+  ],
+  "examples": [
+    { "command": "scp rapport.pdf esprit@192.168.1.20:/home/esprit/", "explanation": "Envoie un fichier sur une machine distante." },
+    { "command": "scp serveur:/var/log/nginx/error.log .", "explanation": "Récupère un fichier distant dans le répertoire courant (« . »)." },
+    { "command": "scp -r -P 2222 site/ admin@serveur.fr:/var/www/", "explanation": "Envoie un répertoire entier sur un serveur SSH écoutant sur le port 2222." }
+  ],
+  "seeAlso": ["ssh", "rsync", "cp"],
+  "dangerLevel": "caution",
+  "dangerNote": "scp écrase sans confirmation les fichiers existants à la destination."
+}

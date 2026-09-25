@@ -1,0 +1,21 @@
+{
+  "name": "tee",
+  "category": "misc",
+  "summary": "Écrit l'entrée à la fois dans un fichier et sur l'écran.",
+  "description": "Comme un raccord en T sur un tuyau : tee lit l'entrée standard, l'écrit dans un ou plusieurs fichiers et la transmet aussi sur la sortie standard. Il permet de garder une trace d'une commande tout en voyant le résultat, ou d'écrire dans un fichier protégé avec sudo tee (sudo ne s'applique pas à une redirection >).",
+  "synopsis": "tee [OPTION]... [FICHIER]...",
+  "options": [
+    { "short": "-a", "long": "--append", "description": "Ajoute à la fin des fichiers au lieu de les écraser." },
+    { "short": "-i", "long": "--ignore-interrupts", "description": "Ignore Ctrl+C (SIGINT)." }
+  ],
+  "arguments": [{ "name": "FICHIER", "description": "Fichier(s) où copier l'entrée.", "optional": true, "variadic": true }],
+  "examples": [
+    { "command": "npm run build | tee build.log", "explanation": "Affiche la compilation et l'enregistre dans build.log." },
+    { "command": "echo \"vm.swappiness=10\" | sudo tee -a /etc/sysctl.conf", "explanation": "Ajoute une ligne à un fichier système protégé." },
+    { "command": "ls -l | tee liste.txt | wc -l", "explanation": "Enregistre la liste dans un fichier et compte les lignes en même temps." },
+    { "command": "echo \"Bonjour\" | tee > /dev/null a.txt b.txt", "explanation": "Écrit dans deux fichiers sans rien afficher." }
+  ],
+  "seeAlso": ["xargs", "cat", "sudo"],
+  "dangerLevel": "caution",
+  "dangerNote": "Sans -a, tee écrase le contenu des fichiers cibles. Avec sudo tee, une erreur de chemin peut remplacer un fichier système."
+}

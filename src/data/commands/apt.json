@@ -1,0 +1,37 @@
+{
+  "name": "apt",
+  "category": "packages",
+  "summary": "Installe, met à jour et supprime des logiciels (Debian, Ubuntu).",
+  "description": "Le gestionnaire de paquets de Debian et Ubuntu. Il télécharge les logiciels depuis les dépôts et gère automatiquement leurs dépendances. Les opérations qui modifient le système demandent sudo. Deux étapes à ne pas confondre : apt update rafraîchit la liste des versions disponibles, apt upgrade installe réellement les mises à jour.",
+  "synopsis": "apt [OPTION]... SOUS-COMMANDE [PAQUET]...",
+  "options": [
+    { "short": "-y", "long": "--yes", "description": "Répond « oui » automatiquement aux confirmations." },
+    { "long": "--no-install-recommends", "description": "N'installe pas les paquets simplement recommandés, seulement les dépendances obligatoires." },
+    { "short": "-s", "long": "--simulate", "description": "Montre ce qui serait fait, sans rien modifier." },
+    { "long": "--installed", "description": "Avec list, seulement les paquets installés." },
+    { "long": "--upgradable", "description": "Avec list, seulement les paquets qui ont une mise à jour." }
+  ],
+  "subcommands": [
+    { "name": "update", "description": "Télécharge la liste à jour des paquets disponibles (n'installe rien)." },
+    { "name": "upgrade", "description": "Installe les nouvelles versions des paquets déjà installés." },
+    { "name": "full-upgrade", "description": "Comme upgrade, mais peut aussi supprimer ou ajouter des paquets pour résoudre les dépendances." },
+    { "name": "install", "description": "Installe un ou plusieurs paquets, avec leurs dépendances." },
+    { "name": "remove", "description": "Désinstalle un paquet en gardant ses fichiers de configuration." },
+    { "name": "purge", "description": "Désinstalle un paquet et supprime aussi sa configuration." },
+    { "name": "autoremove", "description": "Supprime les dépendances installées automatiquement et devenues inutiles." },
+    { "name": "search", "description": "Cherche un paquet par mot-clé dans les noms et descriptions." },
+    { "name": "show", "description": "Affiche les détails d'un paquet : version, taille, dépendances, description." },
+    { "name": "list", "description": "Liste des paquets, à filtrer avec --installed ou --upgradable." }
+  ],
+  "arguments": [{ "name": "PAQUET", "description": "Nom(s) de paquet visés par la sous-commande.", "optional": true, "variadic": true }],
+  "examples": [
+    { "command": "sudo apt update && sudo apt upgrade", "explanation": "La mise à jour classique : rafraîchir la liste, puis installer les nouvelles versions." },
+    { "command": "sudo apt install -y git curl", "explanation": "Installe git et curl sans demander de confirmation." },
+    { "command": "apt search \"image editor\"", "explanation": "Cherche un logiciel par description." },
+    { "command": "sudo apt purge apache2 && sudo apt autoremove", "explanation": "Désinstalle complètement Apache, puis nettoie les dépendances inutiles." },
+    { "command": "apt list --upgradable", "explanation": "Les paquets pour lesquels une mise à jour est disponible." }
+  ],
+  "seeAlso": ["dpkg", "snap", "sudo"],
+  "dangerLevel": "caution",
+  "dangerNote": "Lisez la liste des paquets à supprimer avant de confirmer : remove ou full-upgrade peuvent emporter des paquets dont d'autres logiciels dépendent. -y supprime cette vérification."
+}

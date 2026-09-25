@@ -1,0 +1,29 @@
+{
+  "name": "sudo",
+  "category": "permissions",
+  "summary": "Exécute une commande avec les droits d'un autre utilisateur, root par défaut.",
+  "description": "Superuser do : lance la commande qui suit avec les privilèges administrateur, après avoir demandé VOTRE mot de passe (pas celui de root). Le droit d'utiliser sudo est défini dans /etc/sudoers, souvent via le groupe sudo ou wheel. Le mot de passe est mémorisé quelques minutes. Chaque utilisation est journalisée.",
+  "synopsis": "sudo [OPTION]... COMMANDE [ARGUMENT]...",
+  "options": [
+    { "short": "-u", "long": "--user", "description": "Exécute la commande en tant que cet utilisateur au lieu de root.", "takesValue": true, "valueName": "UTILISATEUR" },
+    { "short": "-i", "long": "--login", "description": "Ouvre un shell de connexion root complet (environnement de root)." },
+    { "short": "-s", "long": "--shell", "description": "Ouvre un shell root en gardant l'environnement actuel." },
+    { "short": "-l", "long": "--list", "description": "Liste les commandes que vous avez le droit d'exécuter." },
+    { "short": "-k", "long": "--reset-timestamp", "description": "Oublie le mot de passe mémorisé : il sera redemandé la prochaine fois." },
+    { "short": "-E", "long": "--preserve-env", "description": "Conserve les variables d'environnement de l'utilisateur." },
+    { "short": "-g", "long": "--group", "description": "Exécute la commande avec ce groupe principal.", "takesValue": true, "valueName": "GROUPE" }
+  ],
+  "arguments": [
+    { "name": "COMMANDE", "description": "Commande à exécuter avec des privilèges élevés, suivie de ses propres options." }
+  ],
+  "examples": [
+    { "command": "sudo apt update", "explanation": "Met à jour la liste des paquets, ce qui nécessite les droits root." },
+    { "command": "sudo -u postgres psql", "explanation": "Ouvre psql en tant qu'utilisateur postgres." },
+    { "command": "sudo -i", "explanation": "Ouvre un shell root ; tapez exit pour revenir." },
+    { "command": "sudo -l", "explanation": "Vérifie ce que vous êtes autorisé à faire avec sudo." },
+    { "command": "echo \"127.0.0.1 dev.local\" | sudo tee -a /etc/hosts", "explanation": "Écrit dans un fichier protégé : « sudo echo … >> /etc/hosts » échouerait, car la redirection est faite par votre shell, sans privilèges." }
+  ],
+  "seeAlso": ["su", "whoami", "id"],
+  "dangerLevel": "caution",
+  "dangerNote": "Avec sudo, une commande peut modifier ou supprimer n'importe quoi sur le système. Relisez la commande avant de valider, et n'exécutez jamais avec sudo un script que vous ne comprenez pas."
+}

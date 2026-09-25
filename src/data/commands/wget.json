@@ -1,0 +1,27 @@
+{
+  "name": "wget",
+  "category": "network",
+  "summary": "Télécharge des fichiers depuis le web.",
+  "description": "Télécharge une URL et l'enregistre directement dans un fichier du répertoire courant. wget est pensé pour le téléchargement : reprise d'un transfert interrompu, nouvelles tentatives automatiques, téléchargement récursif d'un site. Pour tester une API, curl est plus adapté.",
+  "synopsis": "wget [OPTION]... URL...",
+  "options": [
+    { "short": "-O", "long": "--output-document", "description": "Nom du fichier de sortie ; -O - écrit sur la sortie standard.", "takesValue": true, "valueName": "FICHIER" },
+    { "short": "-P", "long": "--directory-prefix", "description": "Répertoire où enregistrer les fichiers.", "takesValue": true, "valueName": "RÉPERTOIRE" },
+    { "short": "-c", "long": "--continue", "description": "Reprend un téléchargement interrompu." },
+    { "short": "-q", "long": "--quiet", "description": "N'affiche rien." },
+    { "short": "-b", "long": "--background", "description": "Continue le téléchargement en arrière-plan (journal dans wget-log)." },
+    { "short": "-i", "long": "--input-file", "description": "Télécharge toutes les URL listées dans un fichier.", "takesValue": true, "valueName": "FICHIER" },
+    { "short": "-r", "long": "--recursive", "description": "Téléchargement récursif : suit les liens des pages." },
+    { "long": "--no-parent", "description": "Avec -r, ne remonte jamais dans les répertoires parents (forme courte : -np)." },
+    { "long": "--limit-rate", "description": "Limite le débit, par exemple 500k ou 2m.", "takesValue": true, "valueName": "DÉBIT" }
+  ],
+  "arguments": [{ "name": "URL", "description": "Adresse(s) à télécharger.", "variadic": true }],
+  "examples": [
+    { "command": "wget https://exemple.fr/ubuntu.iso", "explanation": "Télécharge le fichier dans le répertoire courant, avec une barre de progression." },
+    { "command": "wget -c https://exemple.fr/ubuntu.iso", "explanation": "Reprend le téléchargement là où il s'était arrêté." },
+    { "command": "wget -O logo.png https://exemple.fr/images/logo-2024.png", "explanation": "Enregistre sous un autre nom." },
+    { "command": "wget -i liens.txt -P telechargements/", "explanation": "Télécharge toutes les URL de liens.txt dans le répertoire telechargements." }
+  ],
+  "seeAlso": ["curl", "scp"],
+  "dangerLevel": "safe"
+}

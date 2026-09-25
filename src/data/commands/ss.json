@@ -1,0 +1,32 @@
+{
+  "name": "ss",
+  "category": "network",
+  "summary": "Affiche les sockets : connexions et ports en écoute.",
+  "description": "Socket statistics : le remplaçant moderne et plus rapide de netstat. Il liste les connexions réseau (TCP, UDP) et les sockets locaux. Le réflexe classique pour savoir quel programme écoute sur quel port : sudo ss -tulpn. On peut aussi filtrer par état ou par port directement dans la commande.",
+  "synopsis": "ss [OPTION]... [FILTRE]",
+  "options": [
+    { "short": "-t", "long": "--tcp", "description": "Sockets TCP." },
+    { "short": "-u", "long": "--udp", "description": "Sockets UDP." },
+    { "short": "-l", "long": "--listening", "description": "Seulement les sockets en écoute." },
+    { "short": "-a", "long": "--all", "description": "Toutes les sockets, en écoute et établies." },
+    { "short": "-n", "long": "--numeric", "description": "Ports et adresses en chiffres (22 au lieu de ssh)." },
+    { "short": "-p", "long": "--processes", "description": "Affiche le programme qui utilise chaque socket (sudo pour tout voir)." },
+    { "short": "-s", "long": "--summary", "description": "Résumé statistique." },
+    { "short": "-4", "long": "--ipv4", "description": "Seulement IPv4." },
+    { "short": "-6", "long": "--ipv6", "description": "Seulement IPv6." }
+  ],
+  "arguments": [
+    { "name": "FILTRE", "description": "Filtre facultatif : state established, sport = :443, dst 192.168.1.10…", "optional": true, "variadic": true }
+  ],
+  "examples": [
+    {
+      "command": "sudo ss -tulpn",
+      "explanation": "Ports TCP et UDP en écoute, en chiffres, avec le programme associé.",
+      "output": "Netid State  Recv-Q Send-Q Local Address:Port Peer Address:Port Process\ntcp   LISTEN 0      128          0.0.0.0:22        0.0.0.0:*     users:((\"sshd\",pid=812,fd=3))"
+    },
+    { "command": "ss -tn state established", "explanation": "Les connexions TCP établies." },
+    { "command": "ss -ltn 'sport = :5432'", "explanation": "Vérifie que quelque chose écoute sur le port de PostgreSQL." }
+  ],
+  "seeAlso": ["netstat", "ip", "lsof"],
+  "dangerLevel": "safe"
+}

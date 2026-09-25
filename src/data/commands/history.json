@@ -1,0 +1,21 @@
+{
+  "name": "history",
+  "category": "system",
+  "summary": "Affiche l'historique des commandes tapées.",
+  "description": "Commande interne du shell qui liste les commandes précédentes, numérotées. L'historique est enregistré dans ~/.bash_history à la fermeture du shell. Raccourcis utiles : !42 relance la commande n°42, !! relance la dernière (sudo !! pour la relancer avec sudo), et Ctrl+R lance une recherche dans l'historique au fil de la frappe.",
+  "synopsis": "history [N] | history -c | history -d POSITION",
+  "options": [
+    { "short": "-c", "description": "Efface l'historique de la session en cours." },
+    { "short": "-d", "description": "Supprime l'entrée à cette position.", "takesValue": true, "valueName": "POSITION" },
+    { "short": "-w", "description": "Écrit immédiatement l'historique de la session dans ~/.bash_history." },
+    { "short": "-a", "description": "Ajoute au fichier d'historique les nouvelles commandes de la session." }
+  ],
+  "arguments": [{ "name": "N", "description": "N'affiche que les N dernières commandes.", "optional": true }],
+  "examples": [
+    { "command": "history 5", "explanation": "Les 5 dernières commandes.", "output": "  498  cd projet\n  499  git status\n  500  npm test\n  501  git commit -m \"fix\"\n  502  history 5" },
+    { "command": "history | grep ssh", "explanation": "Retrouve les connexions SSH déjà tapées." },
+    { "command": "history -d 501", "explanation": "Supprime l'entrée 501, par exemple si elle contenait un mot de passe." }
+  ],
+  "seeAlso": ["alias", "fc"],
+  "dangerLevel": "safe"
+}

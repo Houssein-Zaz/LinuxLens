@@ -1,0 +1,28 @@
+{
+  "name": "ping",
+  "category": "network",
+  "summary": "Teste si une machine répond sur le réseau.",
+  "description": "Envoie des paquets ICMP « echo request » à un hôte et mesure le temps de réponse (time=… ms). Sous Linux, ping continue indéfiniment : Ctrl+C l'arrête et affiche un résumé (paquets perdus, temps min/moyen/max). Une absence de réponse ne prouve pas que la machine est éteinte : de nombreux pare-feux bloquent l'ICMP.",
+  "synopsis": "ping [OPTION]... HÔTE",
+  "options": [
+    { "short": "-c", "description": "Nombre de paquets à envoyer avant de s'arrêter.", "takesValue": true, "valueName": "N" },
+    { "short": "-i", "description": "Intervalle entre deux paquets, en secondes (1 par défaut).", "takesValue": true, "valueName": "SECONDES" },
+    { "short": "-W", "description": "Délai d'attente de chaque réponse, en secondes.", "takesValue": true, "valueName": "SECONDES" },
+    { "short": "-s", "description": "Taille des données de chaque paquet, en octets.", "takesValue": true, "valueName": "OCTETS" },
+    { "short": "-4", "description": "Force l'IPv4." },
+    { "short": "-6", "description": "Force l'IPv6." },
+    { "short": "-q", "description": "Mode silencieux : seulement le résumé final." }
+  ],
+  "arguments": [{ "name": "HÔTE", "description": "Nom de domaine ou adresse IP à tester." }],
+  "examples": [
+    {
+      "command": "ping -c 4 google.com",
+      "explanation": "Envoie 4 paquets puis affiche le résumé.",
+      "output": "64 octets de par21s23-in-f14.1e100.net (142.250.179.110) : icmp_seq=1 ttl=117 temps=12.4 ms\n...\n4 paquets transmis, 4 reçus, 0 % paquets perdus, temps 3005 ms\nrtt min/avg/max/mdev = 11.9/12.3/12.8/0.3 ms"
+    },
+    { "command": "ping 192.168.1.1", "explanation": "Vérifie que la box ou le routeur répond (Ctrl+C pour arrêter)." },
+    { "command": "ping -c 1 -W 2 serveur.local && echo \"en ligne\"", "explanation": "Test rapide dans un script : un paquet, 2 secondes d'attente au maximum." }
+  ],
+  "seeAlso": ["traceroute", "ip", "curl"],
+  "dangerLevel": "safe"
+}

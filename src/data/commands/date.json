@@ -1,0 +1,25 @@
+{
+  "name": "date",
+  "category": "system",
+  "summary": "Affiche ou formate la date et l'heure.",
+  "description": "Sans argument, affiche la date et l'heure courantes. Un argument commençant par + définit le format : %Y (année), %m (mois), %d (jour), %H:%M:%S (heure), %s (secondes depuis 1970, le « timestamp Unix »). Très utilisé dans les scripts pour nommer des fichiers de sauvegarde. Changer l'heure du système demande sudo ; on utilise plutôt timedatectl.",
+  "synopsis": "date [OPTION]... [+FORMAT]",
+  "options": [
+    { "short": "-d", "long": "--date", "description": "Affiche une autre date que maintenant : \"tomorrow\", \"2 days ago\", \"2024-12-25\", \"@1700000000\" (timestamp).", "takesValue": true, "valueName": "TEXTE" },
+    { "short": "-u", "long": "--utc", "description": "Affiche l'heure UTC au lieu de l'heure locale." },
+    { "short": "-I", "long": "--iso-8601", "description": "Format ISO 8601 (2024-07-12)." },
+    { "short": "-R", "long": "--rfc-email", "description": "Format des en-têtes d'e-mail (RFC 5322)." },
+    { "short": "-r", "long": "--reference", "description": "Affiche la date de dernière modification d'un fichier.", "takesValue": true, "valueName": "FICHIER" },
+    { "short": "-s", "long": "--set", "description": "Règle l'horloge du système (root).", "takesValue": true, "valueName": "TEXTE" }
+  ],
+  "arguments": [{ "name": "+FORMAT", "description": "Format d'affichage, par exemple +%d/%m/%Y ou +%H:%M.", "optional": true }],
+  "examples": [
+    { "command": "date", "explanation": "La date et l'heure actuelles.", "output": "ven. 12 juil. 2024 21:14:05 CEST" },
+    { "command": "date +%Y-%m-%d", "explanation": "Date au format année-mois-jour.", "output": "2024-07-12" },
+    { "command": "date +\"%d/%m/%Y %H:%M\"", "explanation": "Format français ; les guillemets protègent l'espace. Dans un script, $(date +%F) insère la date du jour dans un nom de fichier.", "output": "12/07/2024 21:14" },
+    { "command": "date -d \"next monday\" +%A\\ %d\\ %B", "explanation": "Calcule une date relative.", "output": "lundi 15 juillet" },
+    { "command": "date +%s", "explanation": "Le timestamp Unix : secondes écoulées depuis le 1ᵉʳ janvier 1970.", "output": "1720811645" }
+  ],
+  "seeAlso": ["cal", "timedatectl", "touch"],
+  "dangerLevel": "safe"
+}

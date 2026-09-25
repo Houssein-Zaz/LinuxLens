@@ -115,6 +115,10 @@ describe('options', () => {
     ]);
   });
 
+  it('options en mots entiers pour ip (-br, -4)', () => {
+    expect(kinds(first('ip -br -4 a').seg.tokens)).toEqual(['command:ip', 'option:-br', 'option:-4', 'argument:a']);
+  });
+
   it('-- termine les options', () => {
     const { seg } = first('rm -- -fichier');
     expect(kinds(seg.tokens)).toEqual(['command:rm', 'option:--', 'argument:-fichier']);

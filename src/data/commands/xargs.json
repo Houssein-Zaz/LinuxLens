@@ -1,0 +1,29 @@
+{
+  "name": "xargs",
+  "category": "misc",
+  "summary": "Transforme l'entrée standard en arguments d'une commande.",
+  "description": "Certaines commandes, comme rm, ne lisent pas l'entrée standard : elles attendent des arguments. xargs fait le lien : il lit des mots (un par ligne ou séparés par des espaces) et les ajoute comme arguments à la commande qui le suit, en regroupant autant que possible. Avec -I, chaque élément est inséré à l'endroit indiqué. Pour les noms de fichiers contenant des espaces, combinez find -print0 et xargs -0.",
+  "synopsis": "xargs [OPTION]... [COMMANDE [ARGUMENT]...]",
+  "options": [
+    { "short": "-I", "description": "Remplace cette chaîne par chaque élément et lance une commande par élément (souvent -I {}).", "takesValue": true, "valueName": "CHAÎNE" },
+    { "short": "-n", "long": "--max-args", "description": "Au plus N arguments par exécution de la commande.", "takesValue": true, "valueName": "N" },
+    { "short": "-0", "long": "--null", "description": "Les éléments sont séparés par un octet nul (avec find -print0) : gère les espaces dans les noms." },
+    { "short": "-P", "long": "--max-procs", "description": "Lance jusqu'à N exécutions en parallèle.", "takesValue": true, "valueName": "N" },
+    { "short": "-d", "long": "--delimiter", "description": "Caractère séparant les éléments (par exemple '\\n').", "takesValue": true, "valueName": "CAR" },
+    { "short": "-p", "long": "--interactive", "description": "Demande confirmation avant chaque exécution." },
+    { "short": "-t", "long": "--verbose", "description": "Affiche chaque commande avant de l'exécuter." },
+    { "short": "-r", "long": "--no-run-if-empty", "description": "Ne lance pas la commande si l'entrée est vide." }
+  ],
+  "arguments": [
+    { "name": "COMMANDE", "description": "Commande à lancer avec les éléments lus (echo par défaut), suivie de ses propres options.", "optional": true }
+  ],
+  "examples": [
+    { "command": "find . -name \"*.tmp\" | xargs rm", "explanation": "Supprime tous les fichiers .tmp trouvés par find." },
+    { "command": "find . -name \"*.jpg\" -print0 | xargs -0 -P 4 -I {} convert {} -resize 50% {}", "explanation": "Redimensionne les images, noms avec espaces compris, 4 à la fois." },
+    { "command": "cat urls.txt | xargs -n 1 curl -O", "explanation": "Télécharge chaque URL du fichier, une commande par URL." },
+    { "command": "echo \"a b c\" | xargs -t -n 1 echo", "explanation": "Montre les commandes générées.", "output": "echo a\na\necho b\nb\necho c\nc" }
+  ],
+  "seeAlso": ["find", "tee", "parallel"],
+  "dangerLevel": "caution",
+  "dangerNote": "Combiné à rm, xargs agit sur tout ce qu'il reçoit. Vérifiez la liste d'abord (remplacez rm par echo), et utilisez -0 pour les noms contenant des espaces."
+}

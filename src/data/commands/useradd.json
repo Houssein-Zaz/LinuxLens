@@ -1,0 +1,26 @@
+{
+  "name": "useradd",
+  "category": "permissions",
+  "summary": "Crée un compte utilisateur.",
+  "description": "Commande bas niveau pour créer un compte (nécessite sudo). Par défaut, elle ne crée ni répertoire personnel ni mot de passe : pensez à -m, puis à passwd. Sur Debian et Ubuntu, adduser est un assistant interactif plus simple qui fait tout cela automatiquement.",
+  "synopsis": "useradd [OPTION]... NOM",
+  "options": [
+    { "short": "-m", "long": "--create-home", "description": "Crée le répertoire personnel (/home/NOM) à partir de /etc/skel." },
+    { "short": "-s", "long": "--shell", "description": "Shell de connexion, par exemple /bin/bash.", "takesValue": true, "valueName": "SHELL" },
+    { "short": "-G", "long": "--groups", "description": "Groupes supplémentaires, séparés par des virgules.", "takesValue": true, "valueName": "GROUPES" },
+    { "short": "-g", "long": "--gid", "description": "Groupe principal.", "takesValue": true, "valueName": "GROUPE" },
+    { "short": "-d", "long": "--home-dir", "description": "Chemin du répertoire personnel, s'il ne doit pas être /home/NOM.", "takesValue": true, "valueName": "RÉPERTOIRE" },
+    { "short": "-c", "long": "--comment", "description": "Commentaire, en général le nom complet.", "takesValue": true, "valueName": "TEXTE" },
+    { "short": "-e", "long": "--expiredate", "description": "Date d'expiration du compte (AAAA-MM-JJ).", "takesValue": true, "valueName": "DATE" },
+    { "short": "-r", "long": "--system", "description": "Crée un compte système (pour un service, sans connexion)." }
+  ],
+  "arguments": [{ "name": "NOM", "description": "Nom de connexion du nouveau compte (minuscules, sans espace)." }],
+  "examples": [
+    { "command": "sudo useradd -m -s /bin/bash alice", "explanation": "Crée alice avec un répertoire personnel et bash comme shell." },
+    { "command": "sudo useradd -m -G sudo,docker -c \"Alice Martin\" alice", "explanation": "Crée alice et l'ajoute aux groupes sudo et docker." },
+    { "command": "sudo useradd -r -s /usr/sbin/nologin monservice", "explanation": "Crée un compte système sans connexion possible, pour faire tourner un service." }
+  ],
+  "seeAlso": ["passwd", "id", "usermod", "userdel"],
+  "dangerLevel": "caution",
+  "dangerNote": "L'ajout au groupe sudo donne tous les droits d'administration. Pour modifier un compte existant, utilisez usermod -aG (sans -a, les autres groupes sont retirés)."
+}

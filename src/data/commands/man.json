@@ -1,0 +1,25 @@
+{
+  "name": "man",
+  "category": "system",
+  "summary": "Affiche le manuel d'une commande.",
+  "description": "Ouvre la page de manuel officielle, dans le lecteur less (q pour quitter, /motif pour chercher). Les pages sont rangées par sections : 1 pour les commandes, 5 pour les formats de fichiers, 8 pour l'administration. Une référence comme passwd(5) désigne la section 5. Sur Ubuntu, les pages en français s'installent avec le paquet manpages-fr.",
+  "synopsis": "man [OPTION]... [SECTION] PAGE...",
+  "options": [
+    { "short": "-k", "long": "--apropos", "description": "Cherche un mot-clé dans les descriptions de toutes les pages (comme apropos)." },
+    { "short": "-f", "long": "--whatis", "description": "Affiche la description courte de la page (comme whatis)." },
+    { "short": "-a", "long": "--all", "description": "Affiche successivement toutes les pages de ce nom, dans toutes les sections." },
+    { "short": "-L", "long": "--locale", "description": "Langue des pages, par exemple fr.", "takesValue": true, "valueName": "LANGUE" }
+  ],
+  "arguments": [
+    { "name": "SECTION", "description": "Numéro de section, si le même nom existe dans plusieurs sections.", "optional": true },
+    { "name": "PAGE", "description": "Commande, fichier ou fonction à documenter." }
+  ],
+  "examples": [
+    { "command": "man ls", "explanation": "Le manuel de ls." },
+    { "command": "man 5 passwd", "explanation": "Le format du fichier /etc/passwd (section 5), et non la commande passwd." },
+    { "command": "man -k compress", "explanation": "Toutes les pages dont la description parle de compression.", "output": "gzip (1)             - compress or expand files\nzip (1)              - package and compress (archive) files" },
+    { "command": "man -f tar", "explanation": "Description courte de tar.", "output": "tar (1)              - an archiving utility" }
+  ],
+  "seeAlso": ["less", "which", "info"],
+  "dangerLevel": "safe"
+}

@@ -1,0 +1,25 @@
+{
+  "name": "free",
+  "category": "system",
+  "summary": "Affiche l'utilisation de la mémoire vive et du swap.",
+  "description": "Montre la mémoire totale, utilisée, libre, partagée, en cache et disponible. La colonne à regarder est « disponible » : Linux utilise la mémoire libre comme cache disque et la rend dès qu'un programme en a besoin, donc une valeur « libre » faible n'est pas inquiétante.",
+  "synopsis": "free [OPTION]...",
+  "options": [
+    { "short": "-h", "long": "--human", "description": "Unités lisibles (Mi, Gi)." },
+    { "short": "-m", "long": "--mebi", "description": "Valeurs en mébioctets." },
+    { "short": "-g", "long": "--gibi", "description": "Valeurs en gibioctets." },
+    { "short": "-t", "long": "--total", "description": "Ajoute une ligne de total (mémoire + swap)." },
+    { "short": "-w", "long": "--wide", "description": "Sépare les colonnes buffers et cache." },
+    { "short": "-s", "long": "--seconds", "description": "Rafraîchit l'affichage toutes les N secondes.", "takesValue": true, "valueName": "N" }
+  ],
+  "examples": [
+    {
+      "command": "free -h",
+      "explanation": "État de la mémoire en unités lisibles.",
+      "output": "               total    utilisé      libre   partagé tamp/cache disponible\nMem:           7,7Gi      3,0Gi      2,1Gi     312Mi      2,5Gi      4,4Gi\nÉchange:       2,0Gi         0B      2,0Gi"
+    },
+    { "command": "free -h -s 2", "explanation": "Réaffiche l'état toutes les 2 secondes (Ctrl+C pour arrêter)." }
+  ],
+  "seeAlso": ["top", "htop", "vmstat"],
+  "dangerLevel": "safe"
+}

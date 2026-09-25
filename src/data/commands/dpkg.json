@@ -1,0 +1,29 @@
+{
+  "name": "dpkg",
+  "category": "packages",
+  "summary": "Gère les paquets .deb à bas niveau.",
+  "description": "L'outil sur lequel repose apt. dpkg installe un fichier .deb local, mais ne télécharge rien et ne résout pas les dépendances ; si des dépendances manquent, sudo apt install -f les complète. Aujourd'hui, sudo apt install ./fichier.deb fait tout d'un coup. dpkg reste très utile pour interroger la liste des paquets installés.",
+  "synopsis": "dpkg ACTION [OPTION]... PAQUET|FICHIER",
+  "options": [
+    { "short": "-i", "long": "--install", "description": "Installe un fichier .deb." },
+    { "short": "-r", "long": "--remove", "description": "Désinstalle un paquet en gardant sa configuration." },
+    { "short": "-P", "long": "--purge", "description": "Désinstalle un paquet et sa configuration." },
+    { "short": "-l", "long": "--list", "description": "Liste les paquets installés (ii en début de ligne = installé)." },
+    { "short": "-L", "long": "--listfiles", "description": "Liste les fichiers installés par un paquet." },
+    { "short": "-S", "long": "--search", "description": "Trouve le paquet qui a installé un fichier donné." },
+    { "short": "-s", "long": "--status", "description": "Affiche l'état et la description d'un paquet." },
+    { "long": "--configure", "description": "Termine la configuration de paquets ; --configure -a reprend une installation interrompue." },
+    { "short": "-a", "long": "--pending", "description": "Avec --configure, traite tous les paquets en attente." }
+  ],
+  "arguments": [{ "name": "PAQUET|FICHIER", "description": "Nom de paquet, fichier .deb ou chemin, selon l'action.", "optional": true, "variadic": true }],
+  "examples": [
+    { "command": "sudo dpkg -i google-chrome-stable_current_amd64.deb", "explanation": "Installe un paquet téléchargé à la main." },
+    { "command": "dpkg -l | grep nginx", "explanation": "Vérifie si nginx est installé et en quelle version.", "output": "ii  nginx  1.24.0-2ubuntu7  amd64  small, powerful, scalable web/proxy server" },
+    { "command": "dpkg -L curl", "explanation": "Liste les fichiers installés par le paquet curl." },
+    { "command": "dpkg -S /usr/bin/convert", "explanation": "Quel paquet a installé ce programme ?", "output": "imagemagick-6.q16: /usr/bin/convert" },
+    { "command": "sudo dpkg --configure -a", "explanation": "Répare une installation interrompue (erreur « dpkg was interrupted »)." }
+  ],
+  "seeAlso": ["apt", "snap"],
+  "dangerLevel": "caution",
+  "dangerNote": "dpkg n'installe pas les dépendances et peut laisser le système dans un état incohérent. Préférez apt install ./fichier.deb."
+}

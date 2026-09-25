@@ -19,6 +19,7 @@ export const TOKEN_STYLE: Record<TokenKind, string> = {
 /** Types affichés dans la légende, dans l'ordre. */
 export const LEGEND: Array<{ kind: TokenKind; label: string }> = [
   { kind: 'command', label: 'Commande' },
+  { kind: 'subcommand', label: 'Sous-commande' },
   { kind: 'option', label: 'Option' },
   { kind: 'option-value', label: "Valeur d'option" },
   { kind: 'argument', label: 'Argument' },

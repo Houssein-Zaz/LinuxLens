@@ -201,8 +201,8 @@ const DEFAULT_VALUE_OPTIONS: Record<string, string[]> = {
   watch: ['-n', '--interval'],
 };
 
-/** Commandes dont les options à un tiret sont des mots entiers (`find -name`). */
-const SINGLE_DASH_LONG = new Set(['find', 'java', 'gcc', 'g++', 'clang', 'ffmpeg', 'xrandr']);
+/** Commandes dont les options à un tiret sont des mots entiers (`find -name`, `ip -br`). */
+const SINGLE_DASH_LONG = new Set(['find', 'ip', 'java', 'gcc', 'g++', 'clang', 'ffmpeg', 'xrandr']);
 
 const ASSIGNMENT_RE = /^[A-Za-z_][A-Za-z0-9_]*=/;
 const NUMERIC_OPTION_RE = /^-\d+$/;

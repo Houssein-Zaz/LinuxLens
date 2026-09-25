@@ -1,0 +1,19 @@
+{
+  "name": "alias",
+  "category": "misc",
+  "summary": "Crée un raccourci pour une commande.",
+  "description": "Commande interne du shell qui associe un nom court à une commande plus longue : alias ll='ls -alF' fait que ll lance ls -alF. Il ne doit pas y avoir d'espace autour du =. Un alias ne dure que le temps de la session ; pour le garder, ajoutez la ligne à ~/.bashrc (ou ~/.bash_aliases). unalias supprime un alias, et \\commande lance la commande d'origine en ignorant l'alias.",
+  "synopsis": "alias [-p] [NOM[='COMMANDE']]...",
+  "options": [{ "short": "-p", "description": "Affiche tous les alias sous une forme réutilisable." }],
+  "arguments": [
+    { "name": "NOM='COMMANDE'", "description": "Définition de l'alias. Avec seulement un NOM, affiche sa définition ; sans argument, liste tous les alias.", "optional": true, "variadic": true }
+  ],
+  "examples": [
+    { "command": "alias", "explanation": "Liste les alias définis.", "output": "alias grep='grep --color=auto'\nalias ll='ls -alF'" },
+    { "command": "alias ll='ls -alF'", "explanation": "ll affichera désormais une liste détaillée, fichiers cachés compris." },
+    { "command": "alias maj='sudo apt update && sudo apt upgrade'", "explanation": "Un raccourci pour la mise à jour complète." },
+    { "command": "alias ll", "explanation": "Affiche la définition d'un alias. Pour le rendre permanent, ajoutez la ligne alias à ~/.bashrc puis lancez source ~/.bashrc.", "output": "alias ll='ls -alF'" }
+  ],
+  "seeAlso": ["source", "export", "history"],
+  "dangerLevel": "safe"
+}

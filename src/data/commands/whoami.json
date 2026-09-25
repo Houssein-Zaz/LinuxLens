@@ -1,0 +1,14 @@
+{
+  "name": "whoami",
+  "category": "permissions",
+  "summary": "Affiche le nom de l'utilisateur courant.",
+  "description": "Écrit le nom de l'utilisateur effectif : celui dont les droits s'appliquent aux commandes que vous lancez. Pratique pour vérifier où l'on en est après su ou sudo, ou dans un script.",
+  "synopsis": "whoami",
+  "options": [],
+  "examples": [
+    { "command": "whoami", "explanation": "Affiche votre nom d'utilisateur.", "output": "esprit" },
+    { "command": "sudo whoami", "explanation": "Avec sudo, la commande s'exécute en tant que root.", "output": "root" }
+  ],
+  "seeAlso": ["id", "who", "sudo"],
+  "dangerLevel": "safe"
+}

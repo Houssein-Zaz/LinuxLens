@@ -1,0 +1,25 @@
+{
+  "name": "chgrp",
+  "category": "permissions",
+  "summary": "Change le groupe propriétaire de fichiers.",
+  "description": "Attribue un nouveau groupe à des fichiers, sans toucher au propriétaire. Un utilisateur peut donner l'un de ses fichiers à un groupe dont il fait partie ; au-delà, il faut sudo. chown :groupe fichier fait la même chose.",
+  "synopsis": "chgrp [OPTION]... GROUPE FICHIER...",
+  "options": [
+    { "short": "-R", "long": "--recursive", "description": "Applique le changement aux répertoires et à tout leur contenu." },
+    { "short": "-v", "long": "--verbose", "description": "Affiche un message pour chaque fichier traité." },
+    { "short": "-c", "long": "--changes", "description": "N'affiche que les fichiers réellement modifiés." },
+    { "short": "-h", "long": "--no-dereference", "description": "Modifie le lien symbolique lui-même plutôt que sa cible." },
+    { "long": "--reference", "description": "Copie le groupe d'un autre fichier.", "takesValue": true, "valueName": "FICHIER" }
+  ],
+  "arguments": [
+    { "name": "GROUPE", "description": "Nom (ou numéro) du nouveau groupe." },
+    { "name": "FICHIER", "description": "Fichier(s) ou répertoire(s) à modifier.", "variadic": true }
+  ],
+  "examples": [
+    { "command": "chgrp developpeurs projet.py", "explanation": "Le fichier appartient désormais au groupe developpeurs." },
+    { "command": "sudo chgrp -R www-data /var/www/site", "explanation": "Donne tout le site au groupe du serveur web." },
+    { "command": "chgrp -v equipe rapport.pdf", "explanation": "Change le groupe et le confirme.", "output": "le groupe de 'rapport.pdf' a été modifié de esprit en equipe" }
+  ],
+  "seeAlso": ["chown", "chmod", "id", "groups"],
+  "dangerLevel": "safe"
+}

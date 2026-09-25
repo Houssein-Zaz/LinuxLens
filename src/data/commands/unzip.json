@@ -1,0 +1,30 @@
+{
+  "name": "unzip",
+  "category": "archives",
+  "summary": "Extrait les fichiers d'une archive .zip.",
+  "description": "Extrait le contenu d'une archive .zip dans le répertoire courant, ou ailleurs avec -d. Si un fichier existe déjà, unzip demande quoi faire. Conseil : listez d'abord le contenu avec -l, car certaines archives ne contiennent pas de répertoire racine et éparpillent leurs fichiers.",
+  "synopsis": "unzip [OPTION]... ARCHIVE.zip [FICHIER]...",
+  "options": [
+    { "short": "-d", "description": "Répertoire où extraire (créé s'il n'existe pas).", "takesValue": true, "valueName": "RÉPERTOIRE" },
+    { "short": "-l", "description": "Liste le contenu de l'archive sans l'extraire." },
+    { "short": "-o", "description": "Écrase les fichiers existants sans demander." },
+    { "short": "-n", "description": "N'écrase jamais un fichier existant." },
+    { "short": "-q", "description": "N'affiche rien." },
+    { "short": "-t", "description": "Vérifie l'intégrité de l'archive." },
+    { "short": "-j", "description": "Extrait tous les fichiers au même niveau, sans recréer les répertoires." },
+    { "short": "-x", "description": "Exclut les fichiers qui correspondent aux motifs qui suivent." }
+  ],
+  "arguments": [
+    { "name": "ARCHIVE.zip", "description": "Archive à extraire." },
+    { "name": "FICHIER", "description": "Fichiers précis à extraire. Par défaut : tout.", "optional": true, "variadic": true }
+  ],
+  "examples": [
+    { "command": "unzip projet.zip", "explanation": "Extrait l'archive dans le répertoire courant." },
+    { "command": "unzip -l projet.zip", "explanation": "Liste le contenu sans extraire.", "output": "  Length      Date    Time    Name\n---------  ---------- -----   ----\n        0  2024-07-12 21:10   projet/\n     1024  2024-07-12 21:14   projet/README.md" },
+    { "command": "unzip photos.zip -d ~/Images/vacances", "explanation": "Extrait dans un répertoire précis." },
+    { "command": "unzip archive.zip \"*.pdf\"", "explanation": "N'extrait que les fichiers PDF." }
+  ],
+  "seeAlso": ["zip", "tar", "gunzip"],
+  "dangerLevel": "caution",
+  "dangerNote": "Avec -o, les fichiers existants sont écrasés sans confirmation. En cas de doute, listez le contenu avec -l avant d'extraire."
+}

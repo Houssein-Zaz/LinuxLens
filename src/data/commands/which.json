@@ -1,0 +1,18 @@
+{
+  "name": "which",
+  "category": "system",
+  "summary": "Indique quel programme sera exécuté pour une commande.",
+  "description": "Cherche la commande dans les répertoires du PATH, dans l'ordre, et affiche le chemin du premier exécutable trouvé : c'est celui que le shell lancera. Utile quand plusieurs versions sont installées. which ne voit pas les alias ni les commandes internes du shell ; type les voit.",
+  "synopsis": "which [-a] COMMANDE...",
+  "options": [
+    { "short": "-a", "description": "Affiche tous les exécutables correspondants dans le PATH, pas seulement le premier." }
+  ],
+  "arguments": [{ "name": "COMMANDE", "description": "Nom(s) de commande à localiser.", "variadic": true }],
+  "examples": [
+    { "command": "which python3", "explanation": "Chemin du python3 utilisé.", "output": "/usr/bin/python3" },
+    { "command": "which -a node", "explanation": "Toutes les versions de node présentes dans le PATH.", "output": "/home/esprit/.nvm/versions/node/v22.4.0/bin/node\n/usr/bin/node" },
+    { "command": "which docker || echo \"docker n'est pas installé\"", "explanation": "which échoue si la commande est introuvable : pratique dans un script." }
+  ],
+  "seeAlso": ["type", "whereis", "man"],
+  "dangerLevel": "safe"
+}

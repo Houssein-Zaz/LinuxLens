@@ -1,0 +1,29 @@
+{
+  "name": "zip",
+  "category": "archives",
+  "summary": "Crée des archives .zip.",
+  "description": "Regroupe et compresse des fichiers dans une archive .zip, le format le plus compatible avec Windows et macOS. Attention à l'ordre : d'abord le nom de l'archive, ensuite les fichiers à y mettre. Pour inclure le contenu d'un répertoire, il faut -r. Si l'archive existe déjà, les fichiers y sont ajoutés ou mis à jour.",
+  "synopsis": "zip [OPTION]... ARCHIVE.zip FICHIER...",
+  "options": [
+    { "short": "-r", "long": "--recurse-paths", "description": "Inclut les répertoires et tout leur contenu." },
+    { "short": "-e", "long": "--encrypt", "description": "Protège l'archive par un mot de passe (demandé au clavier)." },
+    { "short": "-q", "long": "--quiet", "description": "N'affiche rien." },
+    { "short": "-u", "long": "--update", "description": "Ne remplace que les fichiers modifiés depuis la dernière fois." },
+    { "short": "-d", "long": "--delete", "description": "Supprime de l'archive les fichiers indiqués." },
+    { "short": "-j", "long": "--junk-paths", "description": "Stocke les fichiers sans leurs répertoires." },
+    { "short": "-x", "long": "--exclude", "description": "Exclut les fichiers qui correspondent aux motifs qui suivent." },
+    { "short": "-9", "description": "Compression maximale (-0 : aucune compression)." }
+  ],
+  "arguments": [
+    { "name": "ARCHIVE.zip", "description": "Nom de l'archive à créer ou à modifier." },
+    { "name": "FICHIER", "description": "Fichiers et répertoires à ajouter.", "variadic": true }
+  ],
+  "examples": [
+    { "command": "zip documents.zip cv.pdf lettre.docx", "explanation": "Crée une archive contenant deux fichiers." },
+    { "command": "zip -r projet.zip projet/", "explanation": "Archive un répertoire complet." },
+    { "command": "zip -r site.zip site/ -x \"*.log\" \"site/node_modules/*\"", "explanation": "Archive un site sans les journaux ni les dépendances." },
+    { "command": "zip -e secret.zip releve.pdf", "explanation": "Crée une archive protégée par mot de passe." }
+  ],
+  "seeAlso": ["unzip", "tar", "gzip"],
+  "dangerLevel": "safe"
+}

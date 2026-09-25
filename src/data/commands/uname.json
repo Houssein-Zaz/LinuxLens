@@ -1,0 +1,22 @@
+{
+  "name": "uname",
+  "category": "system",
+  "summary": "Affiche des informations sur le noyau et la machine.",
+  "description": "Donne le nom du noyau (Linux), sa version, le nom de la machine et l'architecture du processeur. Pour connaître la distribution (Ubuntu, Debian…), regardez plutôt /etc/os-release ou lsb_release -a.",
+  "synopsis": "uname [OPTION]...",
+  "options": [
+    { "short": "-a", "long": "--all", "description": "Toutes les informations." },
+    { "short": "-s", "long": "--kernel-name", "description": "Nom du noyau (par défaut)." },
+    { "short": "-r", "long": "--kernel-release", "description": "Version du noyau." },
+    { "short": "-n", "long": "--nodename", "description": "Nom de la machine sur le réseau (hostname)." },
+    { "short": "-m", "long": "--machine", "description": "Architecture matérielle : x86_64, aarch64 (ARM 64 bits)…" },
+    { "short": "-o", "long": "--operating-system", "description": "Système d'exploitation (GNU/Linux)." }
+  ],
+  "examples": [
+    { "command": "uname -a", "explanation": "Toutes les informations sur une ligne.", "output": "Linux portable 6.8.0-45-generic #45-Ubuntu SMP PREEMPT_DYNAMIC x86_64 x86_64 x86_64 GNU/Linux" },
+    { "command": "uname -r", "explanation": "La version du noyau.", "output": "6.8.0-45-generic" },
+    { "command": "uname -m", "explanation": "L'architecture, utile pour choisir quel binaire télécharger.", "output": "x86_64" }
+  ],
+  "seeAlso": ["hostname", "uptime"],
+  "dangerLevel": "safe"
+}
