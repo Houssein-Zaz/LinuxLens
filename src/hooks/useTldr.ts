@@ -10,12 +10,15 @@ import type { TldrDoc, TldrIndexEntry } from '../types/command';
 export type TldrIndex = ReadonlyMap<string, TldrIndexEntry>;
 
 const EMPTY: TldrIndex = new Map();
+
+/** En dev, un fichier absent renvoie la page HTML du SPA avec un statut 200. */
+const isJson = (r: Response) => r.ok && (r.headers.get('content-type') ?? '').includes('json');
 let indexPromise: Promise<TldrIndex> | null = null;
 let indexValue: TldrIndex | null = null;
 
 export function loadTldrIndex(): Promise<TldrIndex> {
   indexPromise ??= fetch('/tldr/index.json')
-    .then((r) => (r.ok ? (r.json() as Promise<TldrIndexEntry[]>) : []))
+    .then((r) => (isJson(r) ? (r.json() as Promise<TldrIndexEntry[]>) : []))
     .then((entries) => {
       indexValue = new Map(entries.map((e) => [e.name, e]));
       return indexValue;
@@ -47,7 +50,7 @@ export function loadTldrPage(name: string): Promise<TldrDoc | null> {
   let p = pageCache.get(name);
   if (!p) {
     p = fetch(`/tldr/pages/${encodeURIComponent(name)}.json`)
-      .then((r) => (r.ok ? (r.json() as Promise<TldrDoc>) : null))
+      .then((r) => (isJson(r) ? (r.json() as Promise<TldrDoc>) : null))
       .catch(() => null);
     pageCache.set(name, p);
   }

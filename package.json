@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "tldr": "tsx scripts/build-tldr.ts",
+    "prebuild": "npm run tldr",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "test": "vitest run",
@@ -27,6 +29,7 @@
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.1",
+    "fflate": "^0.8.3",
     "jsdom": "^29.1.1",
     "tailwindcss": "^4.3.3",
     "tsx": "^4.23.15",
