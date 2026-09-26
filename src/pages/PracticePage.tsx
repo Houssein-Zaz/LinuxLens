@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent } from 'react';
+import { Link, useNavigate } from 'react-router';
 import { PermCard } from '../components/practice/PermCard';
 import { QuizCard } from '../components/practice/QuizCard';
 import { WriteCard } from '../components/practice/WriteCard';
@@ -6,6 +7,7 @@ import { buttonClass } from '../components/practice/Feedback';
 import { PageHeader } from '../components/ui/PageHeader';
 import { CATEGORIES, CATEGORY_BY_ID } from '../data/categories';
 import { ALL_EXERCISES, EXERCISE_KIND_LABEL, LEVEL_LABEL, type Exercise } from '../data/exercises';
+import { useAuth } from '../hooks/useAuth';
 import { useProgress } from '../hooks/useProgress';
 import type { CategoryId } from '../types/command';
 
@@ -49,8 +51,85 @@ function loadPosition(): Position {
   }
 }
 
+const NEXT = `?next=${encodeURIComponent('/exercices')}`;
+
+/** Les exercices sont réservés aux comptes : la progression et les résultats y sont enregistrés. */
 export function PracticePage() {
-  const { solved, recordAttempt, reset } = useProgress();
+  const { user, loading } = useAuth();
+  if (loading) return <p className="text-zinc-500">Chargement…</p>;
+  if (user) return <Practice />;
+  return (
+    <>
+      {/* Aperçu flou et inerte des exercices, derrière la fenêtre */}
+      <div inert aria-hidden="true" className="pointer-events-none blur-sm select-none">
+        <Practice />
+      </div>
+      <SignUpPopup />
+    </>
+  );
+}
+
+function SignUpPopup() {
+  const id = useId();
+  const navigate = useNavigate();
+  const dialogRef = useRef<HTMLDivElement>(null);
+
+  // « Plus tard » : retour à la page précédente, ou à l'accueil si on est arrivé directement ici
+  const later = () => ((window.history.state as { idx?: number } | null)?.idx ? navigate(-1) : navigate('/'));
+
+  useEffect(() => {
+    dialogRef.current?.querySelector<HTMLElement>('a, button')?.focus();
+  }, []);
+
+  const onKeyDown = (e: KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      later();
+    } else if (e.key === 'Tab') {
+      // Le focus reste dans la fenêtre
+      const items = [...(dialogRef.current?.querySelectorAll<HTMLElement>('a, button') ?? [])];
+      const at = items.indexOf(document.activeElement as HTMLElement);
+      e.preventDefault();
+      items[(at + (e.shiftKey ? -1 : 1) + items.length) % items.length]?.focus();
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/40 p-4 backdrop-blur-sm">
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={`${id}-title`}
+        aria-describedby={`${id}-message`}
+        onKeyDown={onKeyDown}
+        className="w-full max-w-md rounded-2xl border border-zinc-200 bg-white p-6 shadow-xl dark:border-zinc-800 dark:bg-zinc-900"
+      >
+        <h2 id={`${id}-title`} className="text-lg font-semibold tracking-tight">
+          Créez un compte pour faire les exercices
+        </h2>
+        <p id={`${id}-message`} className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+          C’est gratuit. Vos exercices réussis sont enregistrés dans votre compte : vous retrouvez votre progression sur
+          n’importe quel appareil, et « Mon compte » vous montre ce qu’il reste à revoir.
+        </p>
+        <div className="mt-5 flex flex-wrap gap-2">
+          <Link to={`/inscription${NEXT}`} className={buttonClass.primary}>
+            Créer un compte
+          </Link>
+          <Link to={`/connexion${NEXT}`} className={buttonClass.secondary}>
+            J’ai déjà un compte
+          </Link>
+          <button type="button" onClick={later} className="ml-auto text-sm text-zinc-500 underline-offset-2 hover:underline dark:text-zinc-400">
+            Plus tard
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Practice() {
+  const { solved, recordAttempt, reset, ready } = useProgress();
   const [saved] = useState(loadPosition);
   const [kind, setKind] = useState<KindFilter>(saved.kind);
   const [category, setCategory] = useState<CategoryId | 'all'>(saved.category);
@@ -90,6 +169,8 @@ export function PracticePage() {
     setIndex(0);
     setCurrent(null);
   };
+
+  if (!ready) return <p className="text-zinc-500">Chargement…</p>;
 
   return (
     <>

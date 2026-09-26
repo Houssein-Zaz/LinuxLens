@@ -32,6 +32,8 @@ export function useProgress() {
   const { backend, user } = useAuth();
   const userId = user?.id;
   const [solved, setSolved] = useState<Set<string>>(loadLocal);
+  // Compte dont la progression est chargée : avant, l'affichage montrerait des exercices réussis comme à faire
+  const [loadedFor, setLoadedFor] = useState<string | null>(null);
 
   useEffect(() => {
     if (!userId) {
@@ -51,6 +53,7 @@ export function useProgress() {
       } catch {
         // base injoignable : on garde l'affichage courant
       }
+      if (alive) setLoadedFor(userId);
     })();
     return () => {
       alive = false;
@@ -85,5 +88,5 @@ export function useProgress() {
     else saveLocal(new Set());
   }, [userId, backend]);
 
-  return { solved, markSolved, recordAttempt, reset, synced: Boolean(userId) };
+  return { solved, markSolved, recordAttempt, reset, synced: Boolean(userId), ready: !userId || loadedFor === userId };
 }

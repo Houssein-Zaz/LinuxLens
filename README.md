@@ -2,7 +2,7 @@
 
 **Comprendre visuellement les commandes shell Linux, en français.**
 
-LinuxLens découpe une ligne de commande en éléments colorés (commande, options, arguments, pipes, redirections) et explique chacun d’eux. L’application propose aussi un analyseur de sortie `ls -l`, un calculateur de permissions `chmod` et des exercices corrigés automatiquement. Sans compte, tout tourne dans le navigateur ; les comptes, facultatifs, s’appuient sur Supabase.
+LinuxLens découpe une ligne de commande en éléments colorés (commande, options, arguments, pipes, redirections) et explique chacun d’eux. L’application propose aussi un analyseur de sortie `ls -l`, un calculateur de permissions `chmod` et des exercices corrigés automatiquement. L’explication, l’analyseur et le calculateur s’utilisent sans compte ; les exercices demandent un compte (Supabase).
 
 ![Explication d’une commande avec pipe et redirections](docs/screenshots/explain.png)
 
@@ -84,7 +84,7 @@ La clé « anon » est publique par conception : la sécurité repose sur les r�
 
 #### Tableau de bord administrateur
 
-La page `/admin` (code dans `src/admin/`) montre les inscrits avec, pour chacun, son score aux exercices, sa réussite par catégorie, son point faible et les exercices à revoir, ainsi que les **problèmes** : plantages de page, erreurs JavaScript et erreurs de connexion inexpliquées, enregistrés automatiquement. On y lit aussi les **messages des visiteurs**, envoyés depuis la page d’explication (« Un problème, ou une explication manquante ? ») avec la commande affichée, même sans compte. Vous pouvez **répondre** à ceux des utilisateurs connectés : la réponse s’affiche dans leur page « Mon compte ».
+La page `/admin` (code dans `src/admin/`) montre les inscrits avec, pour chacun, son score aux exercices, sa réussite par catégorie, son point faible et les exercices à revoir, ainsi que les **problèmes** : plantages de page, erreurs JavaScript et erreurs de connexion inexpliquées, enregistrés automatiquement. On y lit aussi les **avis des visiteurs**, envoyés depuis la page d’explication (« Dites-le-nous » : ce qui a plu, ce qui n’a pas plu, un commentaire) avec la commande affichée, même sans compte, et exportables en **PDF**. Vous pouvez **répondre** à ceux des utilisateurs connectés : la réponse s’affiche dans leur page « Mon compte ».
 
 1. Dans **SQL Editor**, exécuter [`supabase/admin.sql`](supabase/admin.sql) (après `schema.sql`).
 2. Se déclarer administrateur, une fois son compte créé sur le site :

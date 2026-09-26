@@ -9,8 +9,9 @@ export function PrivacyPage() {
 
       <Section title="Sans compte">
         <p>
-          Rien n’est envoyé à un serveur. Vos préférences (thème) et votre progression aux exercices sont enregistrées dans
-          le stockage local de votre navigateur ; vous pouvez les effacer à tout moment en vidant les données du site.
+          Rien n’est envoyé à un serveur. Vos préférences (thème) sont enregistrées dans le stockage local de votre
+          navigateur ; vous pouvez les effacer à tout moment en vidant les données du site. Les exercices demandent un
+          compte.
         </p>
       </Section>
 
