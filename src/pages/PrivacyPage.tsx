@@ -54,6 +54,14 @@ export function PrivacyPage() {
         </p>
       </Section>
 
+      <Section title="Messages envoyés">
+        <p>
+          Les messages envoyés avec « Dites-le-nous » sont lus par l’administrateur du site, avec la commande affichée à ce
+          moment-là et, si vous êtes connecté, votre adresse e-mail pour pouvoir vous répondre. La réponse s’affiche dans
+          « Mon compte ». Si vous supprimez votre compte, vos messages sont conservés sans lien avec vous.
+        </p>
+      </Section>
+
       <Section title="Vos droits">
         <p>
           Depuis la page « Mon compte », vous pouvez consulter vos données, effacer votre historique et supprimer votre

@@ -1,4 +1,5 @@
 import { useId, useState, type FormEvent } from 'react';
+import { Link } from 'react-router';
 import { useAuth } from '../../hooks/useAuth';
 import { FEEDBACK_MAX_LENGTH } from '../../lib/backend/validation';
 import { buttonClass } from '../practice/Feedback';
@@ -8,7 +9,7 @@ import { buttonClass } from '../practice/Feedback';
  * Les messages arrivent dans le tableau de bord admin, avec la commande affichée.
  */
 export function FeedbackBox({ command }: { command: string }) {
-  const { backend } = useAuth();
+  const { backend, user } = useAuth();
   const id = useId();
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState('');
@@ -35,6 +36,15 @@ export function FeedbackBox({ command }: { command: string }) {
     return (
       <div role="status" className={box}>
         <p className="font-medium text-emerald-700 dark:text-emerald-300">✓ Merci ! Votre message a bien été envoyé.</p>
+        {user && (
+          <p className="mt-1 text-zinc-600 dark:text-zinc-400">
+            La réponse apparaîtra dans{' '}
+            <Link to="/compte" className="font-medium text-indigo-700 underline-offset-2 hover:underline dark:text-indigo-300">
+              Mon compte
+            </Link>
+            .
+          </p>
+        )}
         <button
           type="button"
           onClick={() => {
@@ -91,6 +101,14 @@ export function FeedbackBox({ command }: { command: string }) {
             'Pensez à indiquer la commande concernée.'
           ))}
       </p>
+      {!user && (
+        <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+          <Link to="/connexion" className="underline underline-offset-2">
+            Connectez-vous
+          </Link>{' '}
+          avant d’envoyer si vous voulez recevoir une réponse.
+        </p>
+      )}
       <div className="mt-3 flex flex-wrap items-center gap-2">
         <button type="submit" className={buttonClass.primary} disabled={status === 'sending' || !message.trim()}>
           {status === 'sending' ? 'Envoi…' : 'Envoyer'}

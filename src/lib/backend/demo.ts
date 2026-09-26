@@ -1,5 +1,12 @@
-import type { Attempt, Backend, HistoryEntry, User } from '../../types/backend';
-import { ANSWER_MAX_LENGTH, ATTEMPTS_LIMIT, HISTORY_LIMIT, normalizeEmail, validateEmail, validatePassword } from './validation';
+import type { Attempt, Backend, HistoryEntry, MyFeedback, User } from '../../types/backend';
+import {
+  ANSWER_MAX_LENGTH,
+  ATTEMPTS_LIMIT,
+  FEEDBACK_COMMAND_MAX_LENGTH,
+  FEEDBACK_MAX_LENGTH,
+  HISTORY_LIMIT,
+  MY_FEEDBACK_LIMIT,
+  normalizeEmail, validateEmail, validatePassword } from './validation';
 
 /*
  * Backend de démonstration : comptes et données dans le stockage du navigateur.
@@ -18,6 +25,8 @@ interface UserData {
   history: HistoryEntry[];
   /** Plus récents d'abord. Absent des données enregistrées avant l'ajout des essais. */
   attempts?: Attempt[];
+  /** Messages envoyés avec « Dites-le-nous ». Pas de réponse en mode démo : il n'y a pas d'administrateur. */
+  feedback?: MyFeedback[];
 }
 
 export interface KeyValueStore {
@@ -229,12 +238,30 @@ export function createDemoBackend(store: KeyValueStore = safeLocalStorage): Back
           d.history = [];
         });
       },
+      async getMyFeedback() {
+        return readData(requireUser().id).feedback ?? [];
+      },
     },
     // Pas de journal ni de tableau de bord en mode démo : tout reste dans ce navigateur
     monitoring: {
       async report() {},
-      async sendFeedback({ message }) {
-        return message.trim() ? {} : { error: 'Écrivez votre message.' };
+      async sendFeedback({ message, command = '' }) {
+        const text = message.trim();
+        if (!text) return { error: 'Écrivez votre message.' };
+        if (current()) {
+          updateData((d) => {
+            const entry: MyFeedback = {
+              id: Date.now(),
+              message: text.slice(0, FEEDBACK_MAX_LENGTH),
+              command: command.trim().slice(0, FEEDBACK_COMMAND_MAX_LENGTH),
+              createdAt: new Date().toISOString(),
+              reply: null,
+              repliedAt: null,
+            };
+            d.feedback = [entry, ...(d.feedback ?? [])].slice(0, MY_FEEDBACK_LIMIT);
+          });
+        }
+        return {};
       },
     },
   };

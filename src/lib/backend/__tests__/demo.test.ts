@@ -115,4 +115,15 @@ describe('backend démo', () => {
   it('les données exigent une connexion', async () => {
     await expect(createDemoBackend(memoryStore()).data.getProgress()).rejects.toThrow('Non connecté');
   });
+
+  it('messages : gardés pour un compte connecté, pas pour un visiteur', async () => {
+    const b = createDemoBackend(memoryStore());
+    expect(await b.monitoring.sendFeedback({ message: 'anonyme' })).toEqual({});
+    await b.auth.signUp('sara@exemple.fr', 'motdepasse1');
+    expect(await b.data.getMyFeedback()).toEqual([]);
+    await b.monitoring.sendFeedback({ message: ' Explication manquante ', command: 'parted -l' });
+    expect(await b.data.getMyFeedback()).toEqual([
+      expect.objectContaining({ message: 'Explication manquante', command: 'parted -l', reply: null }),
+    ]);
+  });
 });

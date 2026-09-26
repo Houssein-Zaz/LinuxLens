@@ -188,3 +188,19 @@ describe('données du compte', () => {
     expect(screen.getByRole('link', { name: 'Connexion' })).toBeInTheDocument();
   });
 });
+
+describe('Mon compte : messages', () => {
+  it('affiche la réponse de l’administrateur sous le message', async () => {
+    const backend = await testBackend(true);
+    backend.data.getMyFeedback = async () => [
+      { id: 1, message: 'Il manque parted.', command: 'parted -l', createdAt: '2026-09-20T10:00:00Z', reply: 'Ajouté, merci !', repliedAt: '2026-09-21T10:00:00Z' },
+      { id: 2, message: 'Et mkfs ?', command: '', createdAt: '2026-09-22T10:00:00Z', reply: null, repliedAt: null },
+    ];
+    renderApp('/compte', backend);
+    const card = await screen.findByRole('region', { name: 'Mes messages' });
+    expect(await within(card).findByText('Ajouté, merci !')).toBeInTheDocument();
+    expect(within(card).getByText('Réponse de LinuxLens')).toBeInTheDocument();
+    expect(within(card).getByText('En attente de réponse')).toBeInTheDocument();
+    expect(within(card).getByRole('link', { name: 'parted -l' })).toHaveAttribute('href', '/?c=parted%20-l');
+  });
+});

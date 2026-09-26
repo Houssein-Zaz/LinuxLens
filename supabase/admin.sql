@@ -95,12 +95,25 @@ create table if not exists public.feedback (
 
 create index if not exists feedback_recent on public.feedback (created_at desc);
 
+-- Réponse de l'administrateur, lue par l'auteur du message dans « Mon compte »
+alter table public.feedback
+  add column if not exists reply      text check (char_length(reply) between 1 and 2000),
+  add column if not exists replied_at timestamptz;
+
+create index if not exists feedback_user on public.feedback (user_id, created_at desc);
+
 alter table public.feedback enable row level security;
 
+-- Personne ne peut écrire lui-même une « réponse » : seule admin_reply_feedback() le fait
 drop policy if exists "envoyer un message" on public.feedback;
 create policy "envoyer un message" on public.feedback
   for insert to anon, authenticated
-  with check (user_id is null or user_id = (select auth.uid()));
+  with check ((user_id is null or user_id = (select auth.uid())) and reply is null and replied_at is null);
+
+drop policy if exists "lire ses messages" on public.feedback;
+create policy "lire ses messages" on public.feedback
+  for select to authenticated
+  using (user_id = (select auth.uid()));
 
 -- Au plus 1000 messages conservés : un robot qui en envoie en boucle ne remplit pas la base
 create or replace function public.trim_feedback()
@@ -272,8 +285,21 @@ begin
 end;
 $$;
 
+-- Le type de retour a changé (réponses) : la fonction doit être recréée
+drop function if exists public.admin_feedback();
+
 create or replace function public.admin_feedback()
-returns table (id bigint, email text, message text, command text, path text, created_at timestamptz)
+returns table (
+  id bigint,
+  email text,
+  can_reply boolean,
+  message text,
+  command text,
+  path text,
+  created_at timestamptz,
+  reply text,
+  replied_at timestamptz
+)
 language plpgsql
 stable
 security definer
@@ -282,7 +308,7 @@ as $$
 begin
   perform public.require_admin();
   return query
-    select f.id, u.email::text, f.message, f.command, f.path, f.created_at
+    select f.id, u.email::text, u.id is not null, f.message, f.command, f.path, f.created_at, f.reply, f.replied_at
     from public.feedback f left join auth.users u on u.id = f.user_id
     order by f.created_at desc
     limit 200;
@@ -301,12 +327,29 @@ begin
 end;
 $$;
 
+-- Réponse vide : la réponse est retirée
+create or replace function public.admin_reply_feedback(feedback_id bigint, reply_text text)
+returns void
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare answer text := nullif(btrim(reply_text), '');
+begin
+  perform public.require_admin();
+  update public.feedback
+  set reply = answer,
+      replied_at = case when answer is null then null else now() end
+  where id = feedback_id;
+end;
+$$;
+
 do $$
 declare f text;
 begin
   foreach f in array array[
     'admin_overview()', 'admin_users()', 'admin_attempts(int)', 'admin_errors()', 'admin_clear_errors()',
-    'admin_feedback()', 'admin_clear_feedback()'
+    'admin_feedback()', 'admin_clear_feedback()', 'admin_reply_feedback(bigint, text)'
   ] loop
     execute format('revoke all on function public.%s from public, anon', f);
     execute format('grant execute on function public.%s to authenticated', f);

@@ -144,6 +144,18 @@ describe('backend Supabase', () => {
     expect(await b.monitoring.sendFeedback({ message: 'x' })).toEqual({ error: expect.stringMatching(/Une erreur est survenue/) });
   });
 
+  it('mes messages : seulement les siens, réponses converties', async () => {
+    const { client, calls, responses } = fakeClient({ session });
+    responses.feedback = {
+      data: [{ id: 3, message: 'm', command: 'ls', created_at: 't', reply: 'r', replied_at: 't2' }],
+      error: null,
+    };
+    expect(await createSupabaseBackend(client).data.getMyFeedback()).toEqual([
+      { id: 3, message: 'm', command: 'ls', createdAt: 't', reply: 'r', repliedAt: 't2' },
+    ]);
+    expect(calls).toContainEqual(['feedback.eq', 'user_id', 'u1']);
+  });
+
   it('admin : fonctions SQL appelées et lignes converties', async () => {
     const { client, rpc } = fakeClient({ session });
     const responses: Record<string, unknown> = {
@@ -153,7 +165,9 @@ describe('backend Supabase', () => {
         { id: 'u1', email: 'a@b.fr', display_name: null, created_at: 't', last_sign_in_at: null, confirmed: true, attempts: '12', solved: '5' },
       ],
       admin_errors: [{ id: 1, email: null, source: 'page', message: 'm', detail: 'd', path: '/', user_agent: 'ua', created_at: 't' }],
-      admin_feedback: [{ id: 2, email: 'a@b.fr', message: 'm', command: 'ls', path: '/', created_at: 't' }],
+      admin_feedback: [
+        { id: 2, email: 'a@b.fr', can_reply: true, message: 'm', command: 'ls', path: '/', created_at: 't', reply: 'r', replied_at: 't2' },
+      ],
     };
     rpc.mockImplementation(async (...args: unknown[]) => ({ data: responses[args[0] as string] ?? null, error: null }));
     const admin = createSupabaseBackend(client).admin!;
@@ -164,7 +178,11 @@ describe('backend Supabase', () => {
       { id: 'u1', email: 'a@b.fr', displayName: null, createdAt: 't', lastSignInAt: null, confirmed: true, attempts: 12, solved: 5 },
     ]);
     expect((await admin.errors())[0]).toMatchObject({ userAgent: 'ua', createdAt: 't' });
-    expect(await admin.feedback()).toEqual([{ id: 2, email: 'a@b.fr', message: 'm', command: 'ls', path: '/', createdAt: 't' }]);
+    expect(await admin.feedback()).toEqual([
+      { id: 2, email: 'a@b.fr', canReply: true, message: 'm', command: 'ls', path: '/', createdAt: 't', reply: 'r', repliedAt: 't2' },
+    ]);
+    await admin.replyFeedback(2, '  Merci !  ');
+    expect(rpc).toHaveBeenCalledWith('admin_reply_feedback', { feedback_id: 2, reply_text: 'Merci !' });
     responses.admin_attempts = [{ user_id: 'u1', exercise_id: 'w-pwd', kind: 'write', correct: true, used_help: false, created_at: 't' }];
     expect(await admin.attempts(20)).toEqual([{ userId: 'u1', exerciseId: 'w-pwd', kind: 'write', correct: true, usedHelp: false, createdAt: 't' }]);
     expect(rpc).toHaveBeenCalledWith('admin_attempts', { max_rows: 20 });

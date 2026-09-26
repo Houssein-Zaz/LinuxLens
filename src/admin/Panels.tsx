@@ -1,6 +1,7 @@
-import { Fragment, useState, type ReactNode } from 'react';
+import { Fragment, useId, useState, type FormEvent, type ReactNode } from 'react';
 import { buttonClass } from '../components/practice/Feedback';
 import { CATEGORY_BY_ID } from '../data/categories';
+import { FEEDBACK_REPLY_MAX_LENGTH } from '../lib/backend/validation';
 import { ALL_EXERCISES, EXERCISE_BY_ID, exerciseTitle } from '../data/exercises';
 import type { AdminOverview, AdminUser, ErrorLog, FeedbackEntry } from '../types/backend';
 import { fullDate, percent, shortAgent, timeAgo } from './format';
@@ -136,40 +137,176 @@ export function ErrorsPanel({ errors, onClear }: { errors: ErrorLog[]; onClear()
 /* Messages des visiteurs                                              */
 /* ------------------------------------------------------------------ */
 
-export function FeedbackPanel({ feedback, onClear }: { feedback: FeedbackEntry[]; onClear(): Promise<void> }) {
+interface FeedbackPanelProps {
+  feedback: FeedbackEntry[];
+  onClear(): Promise<void>;
+  onReply(id: number, reply: string): Promise<void>;
+}
+
+export function FeedbackPanel({ feedback, onClear, onReply }: FeedbackPanelProps) {
   const action = feedback.length === 0 ? null : <ClearAll question={`Effacer les ${feedback.length} messages ?`} onClear={onClear} />;
+  const waiting = feedback.filter((f) => f.canReply && !f.reply).length;
 
   return (
     <Panel title={`Messages des visiteurs${feedback.length ? ` (${feedback.length})` : ''}`} id="admin-messages" action={action}>
       {feedback.length === 0 ? (
         <p className={`text-sm ${muted}`}>Aucun message. Ceux envoyés depuis la page d’explication (« Dites-le-nous ») apparaîtront ici.</p>
       ) : (
-        <ul className="divide-y divide-zinc-100 dark:divide-zinc-800">
-          {feedback.map((f) => (
-            <li key={f.id} className="py-3">
-              <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-                <span className="text-sm font-medium">{f.email ?? 'Visiteur sans compte'}</span>
-                <time dateTime={f.createdAt} title={fullDate(f.createdAt)} className={`text-xs ${muted}`}>
-                  {timeAgo(f.createdAt)}
-                </time>
-              </div>
-              <p className="mt-1.5 text-sm whitespace-pre-line [overflow-wrap:anywhere]">{f.message}</p>
-              {f.command && (
-                <p className="mt-1.5 text-xs">
-                  <span className={muted}>Commande : </span>
-                  <a
-                    href={`/?c=${encodeURIComponent(f.command)}`}
-                    className="font-mono text-indigo-700 underline-offset-2 [overflow-wrap:anywhere] hover:underline dark:text-indigo-300"
-                  >
-                    {f.command}
-                  </a>
-                </p>
-              )}
-            </li>
-          ))}
-        </ul>
+        <>
+          {waiting > 0 && (
+            <p className="mb-2 text-sm font-medium text-amber-700 dark:text-amber-300">
+              ⚠ {waiting} message{waiting > 1 ? 's' : ''} en attente de réponse
+            </p>
+          )}
+          <ul className="divide-y divide-zinc-100 dark:divide-zinc-800">
+            {feedback.map((f) => (
+              <FeedbackItem key={f.id} f={f} onReply={onReply} />
+            ))}
+          </ul>
+        </>
       )}
     </Panel>
+  );
+}
+
+function FeedbackItem({ f, onReply }: { f: FeedbackEntry; onReply: FeedbackPanelProps['onReply'] }) {
+  const id = useId();
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string>();
+  const author = f.email ?? 'Visiteur sans compte';
+
+  const save = async (reply: string) => {
+    setSaving(true);
+    try {
+      await onReply(f.id, reply);
+      setEditing(false);
+      setError(undefined);
+    } catch (e) {
+      setError(`Envoi impossible : ${e instanceof Error ? e.message : String(e)}`);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const submit = (e: FormEvent) => {
+    e.preventDefault();
+    void save(draft);
+  };
+
+  const status = !f.canReply ? null : f.reply ? (
+    <span className="rounded-md bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-800 dark:bg-emerald-400/15 dark:text-emerald-300">
+      ✓ Répondu
+    </span>
+  ) : (
+    <span className="rounded-md bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-800 dark:bg-amber-400/15 dark:text-amber-300">
+      Sans réponse
+    </span>
+  );
+
+  return (
+    <li className="py-3">
+      <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+        <span className="flex flex-wrap items-baseline gap-2">
+          <span className="text-sm font-medium">{author}</span>
+          {status}
+        </span>
+        <time dateTime={f.createdAt} title={fullDate(f.createdAt)} className={`text-xs ${muted}`}>
+          {timeAgo(f.createdAt)}
+        </time>
+      </div>
+      <p className="mt-1.5 text-sm whitespace-pre-line [overflow-wrap:anywhere]">{f.message}</p>
+      {f.command && (
+        <p className="mt-1.5 text-xs">
+          <span className={muted}>Commande : </span>
+          <a
+            href={`/?c=${encodeURIComponent(f.command)}`}
+            className="font-mono text-indigo-700 underline-offset-2 [overflow-wrap:anywhere] hover:underline dark:text-indigo-300"
+          >
+            {f.command}
+          </a>
+        </p>
+      )}
+
+      {f.reply && !editing && (
+        <div className="mt-3 rounded-xl border-l-4 border-indigo-400 bg-indigo-50 px-3 py-2 dark:border-indigo-500 dark:bg-indigo-400/10">
+          <p className={`text-xs ${muted}`}>
+            Votre réponse
+            {f.repliedAt && (
+              <>
+                {' · '}
+                <time dateTime={f.repliedAt} title={fullDate(f.repliedAt)}>
+                  {timeAgo(f.repliedAt)}
+                </time>
+              </>
+            )}
+          </p>
+          <p className="mt-1 text-sm whitespace-pre-line [overflow-wrap:anywhere]">{f.reply}</p>
+        </div>
+      )}
+
+      {editing ? (
+        <form onSubmit={submit} className="mt-3">
+          <label htmlFor={id} className="mb-1 block text-xs font-medium">
+            Réponse à {author}
+          </label>
+          <textarea
+            id={id}
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            maxLength={FEEDBACK_REPLY_MAX_LENGTH}
+            rows={3}
+            autoFocus
+            className="w-full resize-y rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm shadow-sm outline-none focus:border-indigo-400 focus:ring-4 focus:ring-indigo-500/10 dark:border-zinc-700 dark:bg-zinc-950 dark:focus:border-indigo-500"
+          />
+          <p className={`mt-1 text-xs ${muted}`}>La réponse apparaîtra dans la page « Mon compte » de l’utilisateur.</p>
+          {error && (
+            <p role="alert" className="mt-1 text-xs text-red-600 dark:text-red-400">
+              {error}
+            </p>
+          )}
+          <div className="mt-2 flex flex-wrap gap-2">
+            <button type="submit" className={buttonClass.primary} disabled={saving || !draft.trim()}>
+              {saving ? 'Envoi…' : f.reply ? 'Enregistrer' : 'Envoyer la réponse'}
+            </button>
+            <button type="button" className={buttonClass.secondary} onClick={() => setEditing(false)}>
+              Annuler
+            </button>
+          </div>
+        </form>
+      ) : f.canReply ? (
+        <div className="mt-2 flex flex-wrap gap-3 text-sm">
+          <button
+            type="button"
+            onClick={() => {
+              setDraft(f.reply ?? '');
+              setEditing(true);
+            }}
+            className="font-medium text-indigo-700 underline-offset-2 hover:underline dark:text-indigo-300"
+          >
+            {f.reply ? 'Modifier la réponse' : 'Répondre'}
+          </button>
+          {f.reply && (
+            <button
+              type="button"
+              onClick={() => void save('')}
+              disabled={saving}
+              className={`underline-offset-2 hover:underline ${muted}`}
+            >
+              Retirer la réponse
+            </button>
+          )}
+        </div>
+      ) : (
+        <p className={`mt-2 text-xs ${muted}`}>Envoyé sans compte : l’auteur ne pourra pas lire de réponse.</p>
+      )}
+      {error && !editing && (
+        <p role="alert" className="mt-1 text-xs text-red-600 dark:text-red-400">
+          {error}
+        </p>
+      )}
+    </li>
   );
 }
 

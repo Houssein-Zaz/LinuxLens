@@ -2,13 +2,14 @@ import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { AdminPage } from '../AdminPage';
 import { renderWithProviders, testBackend } from '../../test-utils';
-import type { AdminApi, Backend } from '../../types/backend';
+import type { AdminApi, Backend, FeedbackEntry } from '../../types/backend';
 
 const now = new Date().toISOString();
 
 function fakeAdmin(isAdmin = true): AdminApi {
-  let feedback = [
-    { id: 1, email: null, message: 'L’option -s de parted n’est pas expliquée.', command: 'parted -s /dev/sda print', path: '/', createdAt: now },
+  let feedback: FeedbackEntry[] = [
+    { id: 1, email: null, canReply: false, message: 'L’option -s de parted n’est pas expliquée.', command: 'parted -s /dev/sda print', path: '/', createdAt: now, reply: null, repliedAt: null },
+    { id: 2, email: 'sara@exemple.fr', canReply: true, message: 'Il manque la commande mkfs.', command: '', path: '/', createdAt: now, reply: null, repliedAt: null },
   ];
   let errors = [
     { id: 1, email: null, source: 'page', message: 'TypeError: x is undefined', detail: 'at LsPage', path: '/ls', userAgent: 'Mozilla/5.0 (Windows NT 10.0) Chrome/130.0', createdAt: now },
@@ -57,6 +58,9 @@ function fakeAdmin(isAdmin = true): AdminApi {
     feedback: vi.fn(async () => feedback),
     clearFeedback: vi.fn(async () => {
       feedback = [];
+    }),
+    replyFeedback: vi.fn(async (id: number, reply: string) => {
+      feedback = feedback.map((f) => (f.id === id ? { ...f, reply: reply || null, repliedAt: reply ? now : null } : f));
     }),
   };
 }
@@ -143,9 +147,10 @@ describe('AdminPage', () => {
     const user = userEvent.setup();
     const admin = fakeAdmin();
     await renderAdmin(admin);
-    const messages = await screen.findByRole('region', { name: 'Messages des visiteurs (1)' });
+    const messages = await screen.findByRole('region', { name: 'Messages des visiteurs (2)' });
     expect(within(messages).getByText('L’option -s de parted n’est pas expliquée.')).toBeInTheDocument();
     expect(within(messages).getByText('Visiteur sans compte')).toBeInTheDocument();
+    expect(within(messages).getByText(/l’auteur ne pourra pas lire de réponse/)).toBeInTheDocument();
     expect(within(messages).getByRole('link', { name: 'parted -s /dev/sda print' })).toHaveAttribute(
       'href',
       '/?c=' + encodeURIComponent('parted -s /dev/sda print'),
@@ -154,6 +159,29 @@ describe('AdminPage', () => {
     await user.click(within(messages).getByRole('button', { name: 'Oui, effacer' }));
     expect(admin.clearFeedback).toHaveBeenCalled();
     expect(await screen.findByText(/Aucun message/)).toBeInTheDocument();
+  });
+
+  it('répondre à un message, puis modifier ou retirer la réponse', async () => {
+    const user = userEvent.setup();
+    const admin = fakeAdmin();
+    await renderAdmin(admin);
+    const messages = await screen.findByRole('region', { name: 'Messages des visiteurs (2)' });
+    expect(within(messages).getByText('⚠ 1 message en attente de réponse')).toBeInTheDocument();
+    expect(within(messages).getAllByRole('button', { name: 'Répondre' })).toHaveLength(1); // pas pour le visiteur sans compte
+
+    await user.click(within(messages).getByRole('button', { name: 'Répondre' }));
+    const send = within(messages).getByRole('button', { name: 'Envoyer la réponse' });
+    expect(send).toBeDisabled();
+    await user.type(within(messages).getByLabelText('Réponse à sara@exemple.fr'), 'Merci, la fiche arrive bientôt.');
+    await user.click(send);
+    expect(admin.replyFeedback).toHaveBeenCalledWith(2, 'Merci, la fiche arrive bientôt.');
+    expect(await within(messages).findByText('Merci, la fiche arrive bientôt.')).toBeInTheDocument();
+    expect(within(messages).getByText('✓ Répondu')).toBeInTheDocument();
+    expect(within(messages).queryByText(/en attente de réponse/)).not.toBeInTheDocument();
+
+    await user.click(within(messages).getByRole('button', { name: 'Retirer la réponse' }));
+    expect(admin.replyFeedback).toHaveBeenLastCalledWith(2, '');
+    expect(await within(messages).findByRole('button', { name: 'Répondre' })).toBeInTheDocument();
   });
 
   it('base mal configurée : message clair au lieu d’une page vide', async () => {

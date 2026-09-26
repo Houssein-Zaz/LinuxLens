@@ -116,6 +116,10 @@ function Dashboard({ admin }: { admin: AdminApi }) {
               await admin.clearFeedback();
               await refresh();
             }}
+            onReply={async (id, reply) => {
+              await admin.replyFeedback(id, reply);
+              await refresh();
+            }}
           />
           <ErrorsPanel
             errors={data.errors}

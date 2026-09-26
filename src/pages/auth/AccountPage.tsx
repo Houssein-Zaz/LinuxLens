@@ -10,7 +10,7 @@ import { useFavorites } from '../../hooks/useFavorites';
 import { useProgress } from '../../hooks/useProgress';
 import { PASSWORD_MIN_LENGTH } from '../../lib/backend/validation';
 import { computeStats } from '../../lib/stats';
-import type { Attempt, ExerciseKind, HistoryEntry } from '../../types/backend';
+import type { Attempt, ExerciseKind, HistoryEntry, MyFeedback } from '../../types/backend';
 
 const DELETE_WORD = 'SUPPRIMER';
 
@@ -161,6 +161,7 @@ export function AccountPage() {
           )}
         </Card>
 
+        <MessagesCard />
         <ProfileCard />
         <PasswordCard />
 
@@ -279,6 +280,73 @@ function ResultsCard() {
             })}
           </ul>
         </>
+      )}
+    </Card>
+  );
+}
+
+function MessagesCard() {
+  const { backend } = useAuth();
+  const [messages, setMessages] = useState<MyFeedback[] | null>(null);
+
+  useEffect(() => {
+    let alive = true;
+    backend.data
+      .getMyFeedback()
+      .then((m) => alive && setMessages(m))
+      .catch(() => alive && setMessages([]));
+    return () => {
+      alive = false;
+    };
+  }, [backend]);
+
+  return (
+    <Card title="Mes messages" id="messages">
+      {!messages ? (
+        <p className="text-sm text-zinc-500">Chargement…</p>
+      ) : messages.length === 0 ? (
+        <p className="text-sm text-zinc-600 dark:text-zinc-400">
+          Un problème ou une explication manquante ? Utilisez « Dites-le-nous » sous l’
+          <Link to="/" className="underline underline-offset-2">
+            explication d’une commande
+          </Link>
+          . Vos messages et nos réponses apparaîtront ici.
+        </p>
+      ) : (
+        <ul className="divide-y divide-zinc-100 dark:divide-zinc-800">
+          {messages.map((m) => (
+            <li key={m.id} className="py-3 first:pt-0 last:pb-0">
+              <div className="flex items-baseline justify-between gap-4">
+                {m.reply ? (
+                  <span className="text-xs font-medium text-emerald-700 dark:text-emerald-300">✓ Répondu</span>
+                ) : (
+                  <span className="text-xs text-zinc-500 dark:text-zinc-400">En attente de réponse</span>
+                )}
+                <time dateTime={m.createdAt} className="shrink-0 text-xs text-zinc-500 dark:text-zinc-400">
+                  {dateFormat.format(new Date(m.createdAt))}
+                </time>
+              </div>
+              <p className="mt-1 text-sm whitespace-pre-line [overflow-wrap:anywhere]">{m.message}</p>
+              {m.command && (
+                <Link
+                  to={`/?c=${encodeURIComponent(m.command)}`}
+                  className="mt-1 block truncate font-mono text-xs text-zinc-500 hover:text-indigo-700 dark:text-zinc-400 dark:hover:text-indigo-300"
+                >
+                  {m.command}
+                </Link>
+              )}
+              {m.reply && (
+                <div className="mt-2 rounded-xl border-l-4 border-indigo-400 bg-indigo-50 px-3 py-2 dark:border-indigo-500 dark:bg-indigo-400/10">
+                  <p className="text-xs font-medium text-indigo-800 dark:text-indigo-200">
+                    Réponse de LinuxLens
+                    {m.repliedAt && <span className="font-normal"> · {dateFormat.format(new Date(m.repliedAt))}</span>}
+                  </p>
+                  <p className="mt-1 text-sm whitespace-pre-line [overflow-wrap:anywhere]">{m.reply}</p>
+                </div>
+              )}
+            </li>
+          ))}
+        </ul>
       )}
     </Card>
   );

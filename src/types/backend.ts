@@ -66,6 +66,8 @@ export interface DataApi {
   getHistory(limit?: number): Promise<HistoryEntry[]>;
   addHistory(command: string): Promise<void>;
   clearHistory(): Promise<void>;
+  /** Messages envoyés avec ce compte et leurs réponses, les plus récents d'abord. */
+  getMyFeedback(): Promise<MyFeedback[]>;
 }
 
 /** Erreur envoyée au journal, consultable dans le tableau de bord admin. */
@@ -81,6 +83,16 @@ export interface FeedbackInput {
   message: string;
   /** Commande affichée au moment de l'envoi, s'il y en a une. */
   command?: string;
+}
+
+/** Message envoyé par l'utilisateur connecté, avec la réponse de l'administrateur. */
+export interface MyFeedback {
+  id: number;
+  message: string;
+  command: string;
+  createdAt: string;
+  reply: string | null;
+  repliedAt: string | null;
 }
 
 export interface MonitoringApi {
@@ -136,10 +148,14 @@ export interface ErrorLog {
 export interface FeedbackEntry {
   id: number;
   email: string | null;
+  /** Faux pour un visiteur sans compte : il n'a aucun moyen de lire une réponse. */
+  canReply: boolean;
   message: string;
   command: string;
   path: string;
   createdAt: string;
+  reply: string | null;
+  repliedAt: string | null;
 }
 
 /** Réservé aux administrateurs : chaque appel est vérifié par la base. */
@@ -154,6 +170,8 @@ export interface AdminApi {
   /** Messages des visiteurs, les plus récents d'abord. */
   feedback(): Promise<FeedbackEntry[]>;
   clearFeedback(): Promise<void>;
+  /** Répond à un message (visible dans « Mon compte » de son auteur) ; une réponse vide la retire. */
+  replyFeedback(id: number, reply: string): Promise<void>;
 }
 
 export interface Backend {

@@ -9,6 +9,7 @@ import type {
   FeedbackEntry,
   FeedbackInput,
   HistoryEntry,
+  MyFeedback,
   User,
 } from '../../types/backend';
 import {
@@ -16,7 +17,9 @@ import {
   ATTEMPTS_LIMIT,
   FEEDBACK_COMMAND_MAX_LENGTH,
   FEEDBACK_MAX_LENGTH,
+  FEEDBACK_REPLY_MAX_LENGTH,
   HISTORY_LIMIT,
+  MY_FEEDBACK_LIMIT,
   normalizeEmail,
   validateEmail,
   validatePassword,
@@ -98,13 +101,19 @@ interface ErrorLogRow {
   created_at: string;
 }
 
-interface FeedbackRow {
+interface MyFeedbackRow {
   id: number;
-  email: string | null;
   message: string;
   command: string;
-  path: string;
   created_at: string;
+  reply: string | null;
+  replied_at: string | null;
+}
+
+interface FeedbackRow extends MyFeedbackRow {
+  email: string | null;
+  can_reply: boolean;
+  path: string;
 }
 
 /** Adresse de retour des liens envoyés par e-mail. */
@@ -287,6 +296,26 @@ export function createSupabaseBackend(client: SupabaseClient): Backend {
           }),
         );
       },
+      async getMyFeedback() {
+        // La règle RLS ne laisse lire que ses propres messages
+        const { data, error } = await client
+          .from('feedback')
+          .select('id, message, command, created_at, reply, replied_at')
+          .eq('user_id', await userId())
+          .order('created_at', { ascending: false })
+          .limit(MY_FEEDBACK_LIMIT);
+        check({ error });
+        return (data ?? []).map(
+          (r: MyFeedbackRow): MyFeedback => ({
+            id: r.id,
+            message: r.message,
+            command: r.command,
+            createdAt: r.created_at,
+            reply: r.reply,
+            repliedAt: r.replied_at,
+          }),
+        );
+      },
       async getFavorites() {
         const { data, error } = await client.from('favorites').select('command').order('created_at', { ascending: false });
         check({ error });
@@ -390,11 +419,24 @@ export function createSupabaseBackend(client: SupabaseClient): Backend {
       async feedback() {
         const rows = await rpc<FeedbackRow[] | null>('admin_feedback');
         return (rows ?? []).map(
-          (r): FeedbackEntry => ({ id: r.id, email: r.email, message: r.message, command: r.command, path: r.path, createdAt: r.created_at }),
+          (r): FeedbackEntry => ({
+            id: r.id,
+            email: r.email,
+            canReply: r.can_reply,
+            message: r.message,
+            command: r.command,
+            path: r.path,
+            createdAt: r.created_at,
+            reply: r.reply,
+            repliedAt: r.replied_at,
+          }),
         );
       },
       async clearFeedback() {
         await rpc('admin_clear_feedback');
+      },
+      async replyFeedback(id, reply) {
+        await rpc('admin_reply_feedback', { feedback_id: id, reply_text: reply.trim().slice(0, FEEDBACK_REPLY_MAX_LENGTH) });
       },
     },
   };
