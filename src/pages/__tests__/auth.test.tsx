@@ -40,7 +40,7 @@ describe('inscription et connexion', () => {
 
     expect(await screen.findByRole('heading', { name: 'Mon compte' })).toBeInTheDocument();
     expect(location()).toBe('/compte');
-    expect(screen.getByRole('link', { name: 'Mon compte' })).toHaveTextContent('S');
+    expect(screen.getByRole('button', { name: 'Mon compte' })).toHaveTextContent('S');
     expect(screen.getByText('sara@exemple.fr')).toBeInTheDocument();
   });
 
@@ -126,7 +126,7 @@ describe('données du compte', () => {
     unmount();
 
     renderApp('/compte', backend);
-    const results = await screen.findByRole('region', { name: 'Mes résultats' });
+    const results = await screen.findByRole('region', { name: 'Ma progression' });
     expect(await within(results).findByText('50 %')).toBeInTheDocument();
     expect(within(results).getByText('1 bonne réponse sur 2')).toBeInTheDocument();
     expect(within(results).getByText(/1 erreur · réussi/)).toBeInTheDocument();
@@ -169,11 +169,35 @@ describe('données du compte', () => {
     });
   });
 
+  it('menu du compte : liens vers les pages du compte, fermeture avec Échap', async () => {
+    const user = userEvent.setup();
+    const backend = await testBackend(true);
+    renderApp('/', backend);
+    const button = await screen.findByRole('button', { name: 'Mon compte' });
+    expect(button).toHaveAttribute('aria-expanded', 'false');
+
+    await user.click(button);
+    const menu = screen.getByRole('menu', { name: 'Mon compte' });
+    const items = within(menu).getAllByRole('menuitem');
+    expect(items.map((i) => i.textContent)).toEqual(['Mon compte', 'Changer le mot de passe', 'Supprimer mon compte', 'Se déconnecter']);
+    expect(items[0]).toHaveFocus();
+    await user.keyboard('{ArrowDown}');
+    expect(items[1]).toHaveFocus();
+    await user.keyboard('{Escape}');
+    expect(screen.queryByRole('menu')).not.toBeInTheDocument();
+    expect(button).toHaveFocus();
+
+    await user.click(button);
+    await user.click(screen.getByRole('menuitem', { name: 'Changer le mot de passe' }));
+    expect(await screen.findByRole('heading', { name: 'Changer le mot de passe' })).toBeInTheDocument();
+    expect(location()).toBe('/compte/mot-de-passe');
+    expect(screen.queryByRole('menu')).not.toBeInTheDocument();
+  });
+
   it('suppression du compte après confirmation', async () => {
     const backend = await testBackend(true);
-    renderApp('/compte', backend);
-    await userEvent.click(await screen.findByRole('button', { name: 'Supprimer mon compte…' }));
-    const confirm = screen.getByRole('button', { name: 'Supprimer définitivement' });
+    renderApp('/compte/suppression', backend);
+    const confirm = await screen.findByRole('button', { name: 'Supprimer définitivement' });
     expect(confirm).toBeDisabled();
     await fill('Confirmation', 'SUPPRIMER');
     await userEvent.click(confirm);
@@ -185,7 +209,8 @@ describe('données du compte', () => {
   it('déconnexion', async () => {
     const backend = await testBackend(true);
     renderApp('/compte', backend);
-    await userEvent.click(await screen.findByRole('button', { name: 'Se déconnecter' }));
+    await userEvent.click(await screen.findByRole('button', { name: 'Mon compte' }));
+    await userEvent.click(screen.getByRole('menuitem', { name: 'Se déconnecter' }));
     await waitFor(() => expect(location()).toBe('/'));
     expect(screen.getByRole('link', { name: 'Connexion' })).toBeInTheDocument();
   });
@@ -234,18 +259,17 @@ describe('Mon compte : confirmation avant de modifier ou supprimer', () => {
     await waitFor(async () => expect(await backend.data.getHistory()).toEqual([]));
   });
 
-  it('profil et mot de passe : rien n’est modifié sans confirmation', async () => {
+  it('profil : rien n’est modifié sans confirmation', async () => {
     const user = userEvent.setup();
     const backend = await testBackend(true);
     const updateProfile = vi.spyOn(backend.auth, 'updateProfile');
-    const updatePassword = vi.spyOn(backend.auth, 'updatePassword');
     renderApp('/compte', backend);
 
     const name = await screen.findByLabelText('Nom affiché');
     await user.clear(name);
     await user.type(name, 'Sara B.');
     await user.click(screen.getByRole('button', { name: 'Enregistrer' }));
-    let dialog = screen.getByRole('alertdialog', { name: 'Modifier votre profil ?' });
+    const dialog = screen.getByRole('alertdialog', { name: 'Modifier votre profil ?' });
     expect(dialog).toHaveTextContent('« Sara B. »');
     await user.click(within(dialog).getByRole('button', { name: 'Annuler' }));
     expect(updateProfile).not.toHaveBeenCalled();
@@ -253,11 +277,29 @@ describe('Mon compte : confirmation avant de modifier ou supprimer', () => {
     await user.click(within(screen.getByRole('alertdialog')).getByRole('button', { name: 'Enregistrer' }));
     expect(updateProfile).toHaveBeenCalledWith('Sara B.');
     expect(await screen.findByText('Profil enregistré.')).toBeInTheDocument();
+  });
 
-    await user.type(screen.getByLabelText('Nouveau mot de passe'), 'nouveaumdp9');
+  it('mot de passe : vérifié, confirmé, puis modifié', async () => {
+    const user = userEvent.setup();
+    const backend = await testBackend(true);
+    const updatePassword = vi.spyOn(backend.auth, 'updatePassword');
+    renderApp('/compte/mot-de-passe', backend);
+
+    await user.type(await screen.findByLabelText('Nouveau mot de passe'), 'nouveaumdp9');
+    await user.type(screen.getByLabelText('Confirmer le mot de passe'), 'autre');
     await user.click(screen.getByRole('button', { name: 'Changer le mot de passe' }));
-    dialog = screen.getByRole('alertdialog', { name: 'Changer votre mot de passe ?' });
+    expect(screen.getByRole('alert')).toHaveTextContent('Les deux mots de passe ne correspondent pas.');
+
+    await user.clear(screen.getByLabelText('Confirmer le mot de passe'));
+    await user.type(screen.getByLabelText('Confirmer le mot de passe'), 'nouveaumdp9');
+    await user.click(screen.getByRole('button', { name: 'Changer le mot de passe' }));
+    const dialog = screen.getByRole('alertdialog', { name: 'Changer votre mot de passe ?' });
     await user.click(within(dialog).getByRole('button', { name: 'Annuler' }));
     expect(updatePassword).not.toHaveBeenCalled();
+
+    await user.click(screen.getByRole('button', { name: 'Changer le mot de passe' }));
+    await user.click(within(screen.getByRole('alertdialog')).getByRole('button', { name: 'Changer le mot de passe' }));
+    expect(updatePassword).toHaveBeenCalledWith('nouveaumdp9');
+    expect(await screen.findByText('Mot de passe modifié.')).toBeInTheDocument();
   });
 });

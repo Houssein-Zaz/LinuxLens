@@ -22,6 +22,8 @@ const PrivacyPage = page(() => import('./pages/PrivacyPage'), 'PrivacyPage');
 const LegalPage = page(() => import('./pages/LegalPage'), 'LegalPage');
 const AdminPage = page(() => import('./admin/AdminPage'), 'AdminPage');
 const AccountPage = page(() => import('./pages/auth/AccountPage'), 'AccountPage');
+const ChangePasswordPage = page(() => import('./pages/auth/ChangePasswordPage'), 'ChangePasswordPage');
+const DeleteAccountPage = page(() => import('./pages/auth/DeleteAccountPage'), 'DeleteAccountPage');
 const ForgotPasswordPage = page(() => import('./pages/auth/ForgotPasswordPage'), 'ForgotPasswordPage');
 const ResetPasswordPage = page(() => import('./pages/auth/ResetPasswordPage'), 'ResetPasswordPage');
 const SignInPage = page(() => import('./pages/auth/SignInPage'), 'SignInPage');
@@ -59,6 +61,22 @@ export default function App({ backend }: { backend?: Backend }) {
                   element={
                     <RequireAuth>
                       <AccountPage />
+                    </RequireAuth>
+                  }
+                />
+                <Route
+                  path="/compte/mot-de-passe"
+                  element={
+                    <RequireAuth>
+                      <ChangePasswordPage />
+                    </RequireAuth>
+                  }
+                />
+                <Route
+                  path="/compte/suppression"
+                  element={
+                    <RequireAuth>
+                      <DeleteAccountPage />
                     </RequireAuth>
                   }
                 />
