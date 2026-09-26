@@ -75,6 +75,20 @@ describe('backend démo', () => {
     expect(await b.data.getHistory()).toEqual([]);
   });
 
+  it('essais : plus récents d’abord, réponse tronquée, effacés avec la progression', async () => {
+    const b = createDemoBackend(memoryStore());
+    await b.auth.signUp('a@b.fr', 'motdepasse1');
+    expect(await b.data.getAttempts()).toEqual([]);
+    await b.data.addAttempt({ exerciseId: 'w-pwd', kind: 'write', correct: false, answer: 'x'.repeat(500), usedHelp: false });
+    await b.data.addAttempt({ exerciseId: 'w-pwd', kind: 'write', correct: true, answer: 'pwd', usedHelp: true });
+    const [last, first] = await b.data.getAttempts();
+    expect(last).toMatchObject({ exerciseId: 'w-pwd', correct: true, answer: 'pwd', usedHelp: true });
+    expect(first!.answer).toHaveLength(200);
+
+    await b.data.clearProgress();
+    expect(await b.data.getAttempts()).toEqual([]);
+  });
+
   it('profil, mot de passe et suppression du compte', async () => {
     const store = memoryStore();
     const b = createDemoBackend(store);

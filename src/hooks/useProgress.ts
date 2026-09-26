@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import type { AttemptInput } from '../types/backend';
 import { useAuth } from './useAuth';
 
 const KEY = 'linuxlens-progress';
@@ -23,7 +24,7 @@ function saveLocal(ids: Set<string>) {
 }
 
 /**
- * Exercices réussis. Sans compte : mémorisés dans ce navigateur.
+ * Exercices réussis et essais. Sans compte : seuls les exercices réussis sont mémorisés, dans ce navigateur.
  * Avec un compte : enregistrés dans le compte ; à la connexion, la progression
  * faite hors connexion y est fusionnée, pour ne rien perdre.
  */
@@ -67,11 +68,22 @@ export function useProgress() {
     [solved, userId, backend],
   );
 
+  /** Enregistre une réponse ; si elle est juste, l'exercice est aussi marqué réussi. */
+  const recordAttempt = useCallback(
+    (attempt: AttemptInput) => {
+      if (!attempt.answer.trim()) return;
+      if (attempt.correct) markSolved(attempt.exerciseId);
+      // Les statistiques détaillées sont réservées aux comptes
+      if (userId) void backend.data.addAttempt(attempt).catch(() => undefined);
+    },
+    [markSolved, userId, backend],
+  );
+
   const reset = useCallback(() => {
     setSolved(new Set());
     if (userId) void backend.data.clearProgress().catch(() => undefined);
     else saveLocal(new Set());
   }, [userId, backend]);
 
-  return { solved, markSolved, reset, synced: Boolean(userId) };
+  return { solved, markSolved, recordAttempt, reset, synced: Boolean(userId) };
 }

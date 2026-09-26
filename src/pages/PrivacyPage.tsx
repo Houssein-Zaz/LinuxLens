@@ -27,7 +27,8 @@ export function PrivacyPage() {
         <ul className="list-inside list-disc space-y-1">
           <li>votre adresse e-mail et, si vous le souhaitez, un nom affiché ;</li>
           <li>votre mot de passe, sous forme chiffrée (haché), jamais en clair ;</li>
-          <li>les exercices réussis, vos commandes favorites et l’historique des commandes expliquées.</li>
+          <li>les exercices réussis et vos réponses aux exercices (juste ou fausse, avec ou sans aide), pour vos statistiques ;</li>
+          <li>vos commandes favorites et l’historique des commandes expliquées.</li>
         </ul>
         <p>
           Ces données servent seulement à vous les restituer d’un appareil à l’autre. Elles ne sont ni vendues, ni

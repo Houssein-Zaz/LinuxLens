@@ -1,6 +1,6 @@
 import type { AuthError, SupabaseClient, User as SupabaseUser } from '@supabase/supabase-js';
-import type { Backend, HistoryEntry, User } from '../../types/backend';
-import { HISTORY_LIMIT, normalizeEmail, validateEmail, validatePassword } from './validation';
+import type { Attempt, Backend, HistoryEntry, User } from '../../types/backend';
+import { ANSWER_MAX_LENGTH, ATTEMPTS_LIMIT, HISTORY_LIMIT, normalizeEmail, validateEmail, validatePassword } from './validation';
 
 /*
  * Backend Supabase : authentification Supabase Auth, données dans PostgreSQL.
@@ -33,6 +33,15 @@ export function translateAuthError(error: Pick<AuthError, 'message'> & { code?: 
 
 const toUser = (u: SupabaseUser | null | undefined): User | null =>
   u ? { id: u.id, email: u.email ?? '', displayName: (u.user_metadata?.display_name as string | undefined) ?? null } : null;
+
+interface AttemptRow {
+  exercise_id: string;
+  kind: Attempt['kind'];
+  correct: boolean;
+  answer: string;
+  used_help: boolean;
+  created_at: string;
+}
 
 /** Adresse de retour des liens envoyés par e-mail. */
 const siteUrl = (path: string) => (typeof window === 'undefined' ? path : `${window.location.origin}${path}`);
@@ -124,7 +133,40 @@ export function createSupabaseBackend(client: SupabaseClient): Backend {
         );
       },
       async clearProgress() {
-        check(await client.from('exercise_progress').delete().eq('user_id', await userId()));
+        const user_id = await userId();
+        check(await client.from('exercise_progress').delete().eq('user_id', user_id));
+        check(await client.from('exercise_attempts').delete().eq('user_id', user_id));
+      },
+      async addAttempt(a) {
+        const user_id = await userId();
+        check(
+          await client.from('exercise_attempts').insert({
+            user_id,
+            exercise_id: a.exerciseId,
+            kind: a.kind,
+            correct: a.correct,
+            answer: a.answer.slice(0, ANSWER_MAX_LENGTH),
+            used_help: a.usedHelp,
+          }),
+        );
+      },
+      async getAttempts() {
+        const { data, error } = await client
+          .from('exercise_attempts')
+          .select('exercise_id, kind, correct, answer, used_help, created_at')
+          .order('created_at', { ascending: false })
+          .limit(ATTEMPTS_LIMIT);
+        check({ error });
+        return (data ?? []).map(
+          (r: AttemptRow): Attempt => ({
+            exerciseId: r.exercise_id,
+            kind: r.kind,
+            correct: r.correct,
+            answer: r.answer,
+            usedHelp: r.used_help,
+            createdAt: r.created_at,
+          }),
+        );
       },
       async getFavorites() {
         const { data, error } = await client.from('favorites').select('command').order('created_at', { ascending: false });

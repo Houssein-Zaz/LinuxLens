@@ -4,7 +4,8 @@ import type { WriteExercise } from '../../data/exercises';
 import { checkCommand, type CheckResult } from '../../lib/exercise';
 import { buttonClass, Feedback } from './Feedback';
 
-export function WriteCard({ exercise, onSolved }: { exercise: WriteExercise; onSolved(): void }) {
+/** `onAnswer` : appelé à chaque vérification, avec la réponse et l'aide déjà affichée. */
+export function WriteCard({ exercise, onAnswer }: { exercise: WriteExercise; onAnswer(correct: boolean, answer: string, usedHelp: boolean): void }) {
   const inputId = useId();
   const [answer, setAnswer] = useState('');
   const [result, setResult] = useState<CheckResult | null>(null);
@@ -12,9 +13,10 @@ export function WriteCard({ exercise, onSolved }: { exercise: WriteExercise; onS
   const [showSolution, setShowSolution] = useState(false);
 
   const check = () => {
+    if (result?.ok) return; // déjà réussi : ne pas compter un second essai
     const r = checkCommand(answer, exercise.solutions, exercise.ignoreOptions);
     setResult(r);
-    if (r.ok) onSolved();
+    onAnswer(r.ok, answer, showHint || showSolution);
   };
 
   const others = exercise.solutions.slice(1);

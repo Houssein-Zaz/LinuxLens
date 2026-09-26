@@ -5,7 +5,7 @@ import { checkOctalAnswer, checkSymbolicAnswer } from '../../lib/exercise';
 import { fromOctal, toOctal, toSymbolic } from '../../lib/permissions';
 import { buttonClass, Feedback } from './Feedback';
 
-export function PermCard({ exercise, onSolved }: { exercise: PermExercise; onSolved(): void }) {
+export function PermCard({ exercise, onAnswer }: { exercise: PermExercise; onAnswer(correct: boolean, answer: string, usedHelp: boolean): void }) {
   const inputId = useId();
   const [answer, setAnswer] = useState('');
   const [status, setStatus] = useState<'idle' | 'right' | 'wrong'>('idle');
@@ -20,9 +20,10 @@ export function PermCard({ exercise, onSolved }: { exercise: PermExercise; onSol
   const special = perms.setuid || perms.setgid || perms.sticky;
 
   const check = () => {
+    if (status === 'right') return; // déjà réussi : ne pas compter un second essai
     const ok = toOctalDir ? checkOctalAnswer(answer, symbolic) : checkSymbolicAnswer(answer, octal);
     setStatus(ok ? 'right' : 'wrong');
-    if (ok) onSolved();
+    onAnswer(ok, answer, showSolution);
   };
 
   return (

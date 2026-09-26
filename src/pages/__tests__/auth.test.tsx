@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, useLocation } from 'react-router';
 import App from '../../App';
@@ -110,6 +110,28 @@ describe('inscription et connexion', () => {
 });
 
 describe('données du compte', () => {
+  it('chaque réponse est enregistrée et résumée dans « Mes résultats »', async () => {
+    const user = userEvent.setup();
+    const backend = await testBackend(true);
+    const { unmount } = renderApp('/exercices', backend);
+    await user.selectOptions(await screen.findByLabelText('Catégorie'), 'files');
+    await user.click(screen.getByRole('button', { name: 'Suivant →' }));
+    const input = screen.getByLabelText('Votre commande');
+    await user.type(input, 'ls -l{Enter}'); // incomplet
+    await user.clear(input);
+    await user.type(input, 'ls -la{Enter}');
+    await user.type(input, '{Enter}'); // déjà réussi : pas de second essai
+    await waitFor(async () => expect(await backend.data.getAttempts()).toHaveLength(2));
+    expect((await backend.data.getAttempts()).map((a) => a.correct)).toEqual([true, false]);
+    unmount();
+
+    renderApp('/compte', backend);
+    const results = await screen.findByRole('region', { name: 'Mes résultats' });
+    expect(await within(results).findByText('50 %')).toBeInTheDocument();
+    expect(within(results).getByText('1 bonne réponse sur 2')).toBeInTheDocument();
+    expect(within(results).getByText(/1 erreur · réussi/)).toBeInTheDocument();
+  });
+
   it('la progression faite hors connexion est fusionnée dans le compte', async () => {
     localStorage.setItem('linuxlens-progress', JSON.stringify(['w-pwd']));
     const backend = await testBackend(true);

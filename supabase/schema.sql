@@ -15,6 +15,20 @@ create table if not exists public.exercise_progress (
   primary key (user_id, exercise_id)
 );
 
+-- Chaque essai (juste ou faux) : sert aux statistiques de la page « Mon compte »
+create table if not exists public.exercise_attempts (
+  id          bigint      generated always as identity primary key,
+  user_id     uuid        not null default auth.uid() references auth.users (id) on delete cascade,
+  exercise_id text        not null check (char_length(exercise_id) <= 100),
+  kind        text        not null check (kind in ('write', 'quiz', 'perm')),
+  correct     boolean     not null,
+  answer      text        not null default '' check (char_length(answer) <= 200),
+  used_help   boolean     not null default false,
+  created_at  timestamptz not null default now()
+);
+
+create index if not exists exercise_attempts_user_recent on public.exercise_attempts (user_id, created_at desc);
+
 create table if not exists public.favorites (
   user_id    uuid        not null default auth.uid() references auth.users (id) on delete cascade,
   command    text        not null check (char_length(command) <= 100),
@@ -39,13 +53,14 @@ create index if not exists history_user_recent on public.history (user_id, creat
 -- ---------------------------------------------------------------------
 
 alter table public.exercise_progress enable row level security;
+alter table public.exercise_attempts enable row level security;
 alter table public.favorites         enable row level security;
 alter table public.history           enable row level security;
 
 do $$
 declare t text;
 begin
-  foreach t in array array['exercise_progress', 'favorites', 'history'] loop
+  foreach t in array array['exercise_progress', 'exercise_attempts', 'favorites', 'history'] loop
     execute format('drop policy if exists "lecture de ses données" on public.%I', t);
     execute format('drop policy if exists "ajout de ses données" on public.%I', t);
     execute format('drop policy if exists "modification de ses données" on public.%I', t);
@@ -85,6 +100,32 @@ revoke all on function public.trim_history() from public, anon, authenticated;
 drop trigger if exists history_trim on public.history;
 create trigger history_trim after insert or update on public.history
   for each row execute function public.trim_history();
+
+-- ---------------------------------------------------------------------
+-- Essais limités à 1000 par utilisateur (ATTEMPTS_LIMIT), pour la même raison
+-- ---------------------------------------------------------------------
+
+create or replace function public.trim_attempts()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  delete from public.exercise_attempts
+  where user_id = new.user_id
+    and id not in (
+      select id from public.exercise_attempts where user_id = new.user_id order by created_at desc limit 1000
+    );
+  return null;
+end;
+$$;
+
+revoke all on function public.trim_attempts() from public, anon, authenticated;
+
+drop trigger if exists attempts_trim on public.exercise_attempts;
+create trigger attempts_trim after insert on public.exercise_attempts
+  for each row execute function public.trim_attempts();
 
 -- ---------------------------------------------------------------------
 -- Suppression de compte par l'utilisateur lui-même

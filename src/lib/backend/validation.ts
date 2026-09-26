@@ -2,6 +2,9 @@
 
 export const PASSWORD_MIN_LENGTH = 8;
 export const HISTORY_LIMIT = 50;
+/** Essais conservés par utilisateur (les plus anciens sont effacés, aussi côté base). */
+export const ATTEMPTS_LIMIT = 1000;
+export const ANSWER_MAX_LENGTH = 200;
 
 export function validateEmail(email: string): string | undefined {
   if (!email.trim()) return 'Indiquez votre adresse e-mail.';

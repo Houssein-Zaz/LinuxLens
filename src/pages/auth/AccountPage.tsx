@@ -4,12 +4,13 @@ import { DemoBanner } from '../../components/auth/DemoBanner';
 import { FormError, FormSuccess, PasswordField, TextField } from '../../components/auth/FormFields';
 import { buttonClass } from '../../components/practice/Feedback';
 import { PageHeader } from '../../components/ui/PageHeader';
-import { ALL_EXERCISES } from '../../data/exercises';
+import { ALL_EXERCISES, EXERCISE_BY_ID, EXERCISE_KIND_LABEL, exerciseTitle } from '../../data/exercises';
 import { useAuth } from '../../hooks/useAuth';
 import { useFavorites } from '../../hooks/useFavorites';
 import { useProgress } from '../../hooks/useProgress';
 import { PASSWORD_MIN_LENGTH } from '../../lib/backend/validation';
-import type { HistoryEntry } from '../../types/backend';
+import { computeStats } from '../../lib/stats';
+import type { Attempt, ExerciseKind, HistoryEntry } from '../../types/backend';
 
 const DELETE_WORD = 'SUPPRIMER';
 
@@ -75,6 +76,8 @@ export function AccountPage() {
             Continuer les exercices →
           </Link>
         </Card>
+
+        <ResultsCard />
 
         <Card title="Favoris" id="favoris">
           {favorites.length === 0 ? (
@@ -148,6 +151,115 @@ export function AccountPage() {
         </Card>
       </div>
     </>
+  );
+}
+
+const percent = (x: number) => `${Math.round(x * 100)} %`;
+const KINDS: ExerciseKind[] = ['write', 'quiz', 'perm'];
+
+function ResultsCard() {
+  const { backend } = useAuth();
+  const [attempts, setAttempts] = useState<Attempt[] | null>(null);
+
+  useEffect(() => {
+    let alive = true;
+    backend.data
+      .getAttempts()
+      .then((a) => alive && setAttempts(a))
+      .catch(() => alive && setAttempts([]));
+    return () => {
+      alive = false;
+    };
+  }, [backend]);
+
+  if (!attempts) {
+    return (
+      <Card title="Mes résultats" id="resultats">
+        <p className="text-sm text-zinc-500">Chargement…</p>
+      </Card>
+    );
+  }
+  if (attempts.length === 0) {
+    return (
+      <Card title="Mes résultats" id="resultats">
+        <p className="text-sm text-zinc-600 dark:text-zinc-400">
+          Vos réponses aux{' '}
+          <Link to="/exercices" className="underline underline-offset-2">
+            exercices
+          </Link>{' '}
+          apparaîtront ici : taux de réussite, exercices réussis du premier coup, points à revoir.
+        </p>
+      </Card>
+    );
+  }
+
+  const s = computeStats(attempts);
+  const tiles = [
+    { label: 'Taux de réussite', value: percent(s.successRate), detail: `${s.correct} bonne${s.correct > 1 ? 's' : ''} réponse${s.correct > 1 ? 's' : ''} sur ${s.attempts}` },
+    { label: 'Du premier coup', value: String(s.firstTry), detail: 'sans erreur ni aide' },
+    { label: 'Essais', value: String(s.attempts), detail: `sur ${s.exercises} exercice${s.exercises > 1 ? 's' : ''}` },
+  ];
+
+  return (
+    <Card title="Mes résultats" id="resultats">
+      <dl className="grid grid-cols-3 gap-3">
+        {tiles.map((t) => (
+          <div key={t.label} className="rounded-xl bg-zinc-50 p-3 dark:bg-zinc-800/60">
+            <dt className="text-xs text-zinc-500 dark:text-zinc-400">{t.label}</dt>
+            <dd className="mt-1 text-2xl font-semibold tracking-tight">{t.value}</dd>
+            <dd className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">{t.detail}</dd>
+          </div>
+        ))}
+      </dl>
+
+      <h3 className="mt-5 mb-2 text-sm font-medium">Par type d’exercice</h3>
+      <ul className="space-y-2">
+        {KINDS.filter((k) => s.byKind[k].attempts > 0).map((k) => {
+          const kind = s.byKind[k];
+          const rate = kind.correct / kind.attempts;
+          return (
+            <li key={k} className="text-sm">
+              <div className="flex justify-between">
+                <span>{EXERCISE_KIND_LABEL[k]}</span>
+                <span className="text-zinc-500 dark:text-zinc-400">
+                  {percent(rate)} · {kind.solved} réussi{kind.solved > 1 ? 's' : ''}
+                </span>
+              </div>
+              <div
+                role="meter"
+                aria-label={`Réussite : ${EXERCISE_KIND_LABEL[k]}`}
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={Math.round(rate * 100)}
+                className="mt-1 h-1.5 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800"
+              >
+                <div className="h-full rounded-full bg-indigo-500" style={{ width: `${rate * 100}%` }} />
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+
+      {s.toReview.length > 0 && (
+        <>
+          <h3 className="mt-5 mb-2 text-sm font-medium">À revoir</h3>
+          <ul className="divide-y divide-zinc-100 text-sm dark:divide-zinc-800">
+            {s.toReview.map((r) => {
+              const ex = EXERCISE_BY_ID.get(r.exerciseId);
+              return (
+                <li key={r.exerciseId} className="flex items-baseline justify-between gap-4 py-2">
+                  <span className="min-w-0 truncate">{ex ? exerciseTitle(ex) : r.exerciseId}</span>
+                  <span className={`shrink-0 text-xs ${r.solved ? 'text-zinc-500 dark:text-zinc-400' : 'text-amber-700 dark:text-amber-300'}`}>
+                    {r.errors} erreur{r.errors > 1 ? 's' : ''}
+                    {r.solved ? ' · réussi' : ''}
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
+        </>
+      )}
+    </Card>
   );
 }
 
@@ -232,7 +344,7 @@ function DeleteAccount() {
       }}
     >
       <p className="text-sm text-red-900 dark:text-red-200">
-        Votre compte, votre progression, vos favoris et votre historique seront <strong>définitivement supprimés</strong>.
+        Votre compte, votre progression, vos résultats, vos favoris et votre historique seront <strong>définitivement supprimés</strong>.
         Tapez <strong className="font-mono">{DELETE_WORD}</strong> pour confirmer.
       </p>
       <TextField label="Confirmation" value={typed} onChange={(e) => setTyped(e.target.value)} autoComplete="off" />

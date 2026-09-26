@@ -10,7 +10,7 @@ function fakeClient(opts: { session?: { user: { id: string; email: string; user_
   const responses: Record<string, unknown> = {};
   const query = (table: string) => {
     const chain: Record<string, unknown> = {};
-    for (const method of ['select', 'order', 'limit', 'upsert', 'delete', 'eq']) {
+    for (const method of ['select', 'order', 'limit', 'insert', 'upsert', 'delete', 'eq']) {
       chain[method] = (...args: unknown[]) => {
         calls.push([`${table}.${method}`, ...args]);
         return chain;
@@ -105,6 +105,29 @@ describe('backend Supabase', () => {
       [{ user_id: 'u1', exercise_id: 'w-ls-la' }],
       { onConflict: 'user_id,exercise_id', ignoreDuplicates: true },
     ]);
+  });
+
+  it('essais : insertion avec user_id, lecture convertie, effacés avec la progression', async () => {
+    const { client, calls, responses } = fakeClient({ session });
+    const b = createSupabaseBackend(client);
+    await b.data.addAttempt({ exerciseId: 'q-1', kind: 'quiz', correct: false, answer: 'x'.repeat(300), usedHelp: false });
+    expect(calls).toContainEqual([
+      'exercise_attempts.insert',
+      { user_id: 'u1', exercise_id: 'q-1', kind: 'quiz', correct: false, answer: 'x'.repeat(200), used_help: false },
+    ]);
+
+    responses.exercise_attempts = {
+      data: [{ exercise_id: 'q-1', kind: 'quiz', correct: true, answer: 'b', used_help: false, created_at: '2026-09-26T10:00:00Z' }],
+      error: null,
+    };
+    expect(await b.data.getAttempts()).toEqual([
+      { exerciseId: 'q-1', kind: 'quiz', correct: true, answer: 'b', usedHelp: false, createdAt: '2026-09-26T10:00:00Z' },
+    ]);
+    expect(calls).toContainEqual(['exercise_attempts.limit', 1000]);
+
+    await b.data.clearProgress();
+    expect(calls).toContainEqual(['exercise_attempts.delete']);
+    expect(calls).toContainEqual(['exercise_attempts.eq', 'user_id', 'u1']);
   });
 
   it('favoris et historique', async () => {

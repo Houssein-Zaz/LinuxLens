@@ -1,3 +1,4 @@
+import { fromOctal, toSymbolic } from '../lib/permissions';
 import type { CategoryId } from '../types/command';
 
 export type Level = 1 | 2 | 3;
@@ -160,3 +161,15 @@ export const PERM_EXERCISES: PermExercise[] = PERM_MODES.map(({ mode, level }, i
 });
 
 export const ALL_EXERCISES: Exercise[] = [...WRITE_EXERCISES, ...QUIZ_EXERCISES, ...PERM_EXERCISES];
+
+export const EXERCISE_BY_ID: ReadonlyMap<string, Exercise> = new Map(ALL_EXERCISES.map((e) => [e.id, e]));
+
+export const EXERCISE_KIND_LABEL: Record<Exercise['kind'], string> = { write: 'Écrire la commande', quiz: 'Comprendre', perm: 'Conversion' };
+
+/** Intitulé court d'un exercice, pour les listes. */
+export function exerciseTitle(e: Exercise): string {
+  if (e.kind === 'write') return e.prompt;
+  if (e.kind === 'quiz') return `${e.command} : ${e.question}`;
+  // Même présentation que l'exercice : on montre ce qui est donné à convertir
+  return e.direction === 'to-octal' ? `Convertir ${toSymbolic(fromOctal(e.mode)!)} en octal` : `Écrire ${e.mode} en symbolique`;
+}

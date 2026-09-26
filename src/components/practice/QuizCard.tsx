@@ -3,7 +3,7 @@ import { Link } from 'react-router';
 import type { QuizExercise } from '../../data/exercises';
 import { Feedback } from './Feedback';
 
-export function QuizCard({ exercise, onSolved }: { exercise: QuizExercise; onSolved(): void }) {
+export function QuizCard({ exercise, onAnswer }: { exercise: QuizExercise; onAnswer(correct: boolean, answer: string, usedHelp: boolean): void }) {
   const [picked, setPicked] = useState<number | null>(null);
   const answered = picked !== null;
   const correct = picked === exercise.answer;
@@ -31,7 +31,7 @@ export function QuizCard({ exercise, onSolved }: { exercise: QuizExercise; onSol
               disabled={answered}
               onClick={() => {
                 setPicked(i);
-                if (isAnswer) onSolved();
+                onAnswer(isAnswer, choice, false);
               }}
               className={`flex items-start gap-3 rounded-xl border px-4 py-3 text-left text-sm transition-colors ${
                 {

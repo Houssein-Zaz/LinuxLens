@@ -5,7 +5,7 @@ import { WriteCard } from '../components/practice/WriteCard';
 import { buttonClass } from '../components/practice/Feedback';
 import { PageHeader } from '../components/ui/PageHeader';
 import { CATEGORIES, CATEGORY_BY_ID } from '../data/categories';
-import { ALL_EXERCISES, LEVEL_LABEL, type Exercise } from '../data/exercises';
+import { ALL_EXERCISES, EXERCISE_KIND_LABEL, LEVEL_LABEL, type Exercise } from '../data/exercises';
 import { useProgress } from '../hooks/useProgress';
 import type { CategoryId } from '../types/command';
 
@@ -18,10 +18,8 @@ const KINDS: Array<{ id: KindFilter; label: string }> = [
   { id: 'perm', label: 'Permissions' },
 ];
 
-const KIND_LABEL: Record<Exercise['kind'], string> = { write: 'Écrire la commande', quiz: 'Comprendre', perm: 'Conversion' };
-
 export function PracticePage() {
-  const { solved, markSolved, reset } = useProgress();
+  const { solved, recordAttempt, reset } = useProgress();
   const [kind, setKind] = useState<KindFilter>('all');
   const [category, setCategory] = useState<CategoryId | 'all'>('all');
   const [hideSolved, setHideSolved] = useState(false);
@@ -46,9 +44,9 @@ export function PracticePage() {
     setIndex(next);
     setCurrent(visible[next]?.id ?? null);
   };
-  const solve = (id: string) => {
-    setCurrent(id);
-    markSolved(id);
+  const answer = (ex: Exercise) => (correct: boolean, given: string, usedHelp: boolean) => {
+    if (correct) setCurrent(ex.id);
+    recordAttempt({ exerciseId: ex.id, kind: ex.kind, correct, answer: given, usedHelp });
   };
   const changeFilter = (fn: () => void) => {
     fn();
@@ -131,7 +129,7 @@ export function PracticePage() {
       {exercise ? (
         <section aria-label="Exercice" className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm sm:p-8 dark:border-zinc-800 dark:bg-zinc-900">
           <div className="mb-5 flex flex-wrap items-center gap-2 text-xs">
-            <span className="rounded-md bg-indigo-50 px-2 py-0.5 font-medium text-indigo-700 dark:bg-indigo-400/15 dark:text-indigo-300">{KIND_LABEL[exercise.kind]}</span>
+            <span className="rounded-md bg-indigo-50 px-2 py-0.5 font-medium text-indigo-700 dark:bg-indigo-400/15 dark:text-indigo-300">{EXERCISE_KIND_LABEL[exercise.kind]}</span>
             <span className="rounded-md bg-zinc-100 px-2 py-0.5 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">{CATEGORY_BY_ID[exercise.category].label}</span>
             <span className="rounded-md bg-zinc-100 px-2 py-0.5 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">{LEVEL_LABEL[exercise.level]}</span>
             {solved.has(exercise.id) && (
@@ -142,9 +140,9 @@ export function PracticePage() {
             </span>
           </div>
 
-          {exercise.kind === 'write' && <WriteCard key={exercise.id} exercise={exercise} onSolved={() => solve(exercise.id)} />}
-          {exercise.kind === 'quiz' && <QuizCard key={exercise.id} exercise={exercise} onSolved={() => solve(exercise.id)} />}
-          {exercise.kind === 'perm' && <PermCard key={exercise.id} exercise={exercise} onSolved={() => solve(exercise.id)} />}
+          {exercise.kind === 'write' && <WriteCard key={exercise.id} exercise={exercise} onAnswer={answer(exercise)} />}
+          {exercise.kind === 'quiz' && <QuizCard key={exercise.id} exercise={exercise} onAnswer={answer(exercise)} />}
+          {exercise.kind === 'perm' && <PermCard key={exercise.id} exercise={exercise} onAnswer={answer(exercise)} />}
 
           <div className="mt-8 flex flex-wrap justify-between gap-2 border-t border-zinc-100 pt-5 dark:border-zinc-800">
             <button type="button" className={buttonClass.secondary} onClick={() => go(safeIndex - 1)} disabled={visible.length < 2}>

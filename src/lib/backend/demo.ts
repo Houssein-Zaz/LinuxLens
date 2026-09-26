@@ -1,5 +1,5 @@
-import type { Backend, HistoryEntry, User } from '../../types/backend';
-import { HISTORY_LIMIT, normalizeEmail, validateEmail, validatePassword } from './validation';
+import type { Attempt, Backend, HistoryEntry, User } from '../../types/backend';
+import { ANSWER_MAX_LENGTH, ATTEMPTS_LIMIT, HISTORY_LIMIT, normalizeEmail, validateEmail, validatePassword } from './validation';
 
 /*
  * Backend de démonstration : comptes et données dans le stockage du navigateur.
@@ -16,6 +16,8 @@ interface UserData {
   progress: string[];
   favorites: string[];
   history: HistoryEntry[];
+  /** Plus récents d'abord. Absent des données enregistrées avant l'ajout des essais. */
+  attempts?: Attempt[];
 }
 
 export interface KeyValueStore {
@@ -190,7 +192,17 @@ export function createDemoBackend(store: KeyValueStore = safeLocalStorage): Back
       async clearProgress() {
         updateData((d) => {
           d.progress = [];
+          d.attempts = [];
         });
+      },
+      async addAttempt(attempt) {
+        updateData((d) => {
+          const entry = { ...attempt, answer: attempt.answer.slice(0, ANSWER_MAX_LENGTH), createdAt: new Date().toISOString() };
+          d.attempts = [entry, ...(d.attempts ?? [])].slice(0, ATTEMPTS_LIMIT);
+        });
+      },
+      async getAttempts() {
+        return readData(requireUser().id).attempts ?? [];
       },
       async getFavorites() {
         return readData(requireUser().id).favorites;

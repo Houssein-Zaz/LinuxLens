@@ -76,7 +76,7 @@ Les comptes sont facultatifs : ils synchronisent la progression des exercices, l
 Sans configuration, l’application tourne en **mode démo** : inscription, connexion et données fonctionnent, mais tout reste dans le navigateur (un bandeau le signale). Pour brancher une vraie base :
 
 1. Créer un projet sur [supabase.com](https://supabase.com).
-2. Dans **SQL Editor**, exécuter [`supabase/schema.sql`](supabase/schema.sql) : il crée les tables `exercise_progress`, `favorites` et `history`, active la Row Level Security (chacun ne voit que ses lignes) et ajoute la fonction `delete_user()` pour la suppression de compte.
+2. Dans **SQL Editor**, exécuter [`supabase/schema.sql`](supabase/schema.sql) : il crée les tables `exercise_progress`, `exercise_attempts` (chaque réponse, pour les statistiques de « Mon compte »), `favorites` et `history`, active la Row Level Security (chacun ne voit que ses lignes) et ajoute la fonction `delete_user()` pour la suppression de compte.
 3. Dans **Authentication → URL Configuration**, déclarer l’URL du site (et `http://localhost:5173` en développement) : les liens de confirmation et de réinitialisation y renvoient (`/connexion`, `/nouveau-mot-de-passe`).
 4. Copier `.env.example` en `.env.local` et renseigner `VITE_SUPABASE_URL` et `VITE_SUPABASE_ANON_KEY` (**Project Settings → API**). Sur Vercel, ajouter les mêmes variables dans les réglages du projet.
 

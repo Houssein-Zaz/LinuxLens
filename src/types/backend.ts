@@ -34,11 +34,32 @@ export interface AuthApi {
   deleteAccount(): Promise<ActionResult>;
 }
 
+export type ExerciseKind = 'write' | 'quiz' | 'perm';
+
+/** Un essai sur un exercice, bonne ou mauvaise réponse. */
+export interface AttemptInput {
+  exerciseId: string;
+  kind: ExerciseKind;
+  correct: boolean;
+  /** Réponse donnée (tronquée à ANSWER_MAX_LENGTH). */
+  answer: string;
+  /** Indice ou solution affichés avant cette réponse. */
+  usedHelp: boolean;
+}
+
+export interface Attempt extends AttemptInput {
+  createdAt: string; // ISO 8601
+}
+
 /** Données de l'utilisateur connecté. */
 export interface DataApi {
   getProgress(): Promise<string[]>;
   addProgress(exerciseIds: string[]): Promise<void>;
+  /** Efface les exercices réussis et tous les essais. */
   clearProgress(): Promise<void>;
+  addAttempt(attempt: AttemptInput): Promise<void>;
+  /** Essais les plus récents d'abord, au plus ATTEMPTS_LIMIT. */
+  getAttempts(): Promise<Attempt[]>;
   getFavorites(): Promise<string[]>;
   setFavorite(command: string, favorite: boolean): Promise<void>;
   getHistory(limit?: number): Promise<HistoryEntry[]>;
