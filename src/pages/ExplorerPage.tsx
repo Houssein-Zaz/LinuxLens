@@ -37,10 +37,7 @@ export function ExplorerPage() {
 
   return (
     <>
-      <PageHeader title="Explorer les commandes">
-        {commands.length} fiches détaillées
-        {tldr.size > 0 && <> et {tldr.size.toLocaleString('fr-FR')} fiches courtes issues de tldr-pages</>}.
-      </PageHeader>
+      <PageHeader title="Explorer les commandes" />
 
       <div className="relative mb-10 max-w-xl">
         <svg aria-hidden="true" viewBox="0 0 20 20" className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-zinc-400" fill="none" stroke="currentColor" strokeWidth="2">
@@ -88,11 +85,11 @@ export function ExplorerPage() {
             <h2 id="cat-tldr" className="text-lg font-semibold tracking-tight">
               Autres commandes
             </h2>
-            <p className="mb-4 text-sm text-zinc-500 dark:text-zinc-400">Fiches courtes issues de tldr-pages.</p>
+            <p className="mb-4 text-sm text-zinc-500 dark:text-zinc-400">Fiches courtes : un résumé et des exemples.</p>
             <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {extended.map((e) => (
                 <li key={e.name}>
-                  <CardLink to={`/commande/${encodeURIComponent(e.name)}`} name={e.name} summary={e.summary} badge="tldr" />
+                  <CardLink to={`/commande/${encodeURIComponent(e.name)}`} name={e.name} summary={e.summary} />
                 </li>
               ))}
             </ul>
