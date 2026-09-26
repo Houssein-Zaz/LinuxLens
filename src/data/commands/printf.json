@@ -5,7 +5,7 @@
   "description": "Affiche ses arguments selon un FORMAT, comme la fonction printf du C. Dans le format, %s est remplacé par un texte, %d par un entier, %f par un nombre décimal, et \\n ajoute un retour à la ligne (que printf n'ajoute jamais seul). S'il y a plus d'arguments que de %, le format est réutilisé. Plus prévisible qu'echo dans les scripts.",
   "synopsis": "printf FORMAT [ARGUMENT]...",
   "options": [
-    { "short": "-v", "description": "(bash) Enregistre le résultat dans une variable au lieu de l'afficher.", "takesValue": true, "valueName": "VARIABLE" }
+    { "short": "-v", "description": "(bash) Enregistre le résultat dans une variable au lieu de l'afficher.", "takesValue": true, "valueName": "VARIABLE", "example": { "command": "printf -v message \"Bonjour %s\" \"$USER\" && echo \"$message\"", "output": "Bonjour esprit" } }
   ],
   "arguments": [
     { "name": "FORMAT", "description": "Modèle : %s (texte), %d (entier), %.2f (décimal à 2 chiffres), %-10s (texte aligné à gauche sur 10 caractères), \\n, \\t." },

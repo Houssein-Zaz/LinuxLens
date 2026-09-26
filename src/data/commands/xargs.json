@@ -9,10 +9,10 @@
     { "short": "-n", "long": "--max-args", "description": "Au plus N arguments par exécution de la commande.", "takesValue": true, "valueName": "N" },
     { "short": "-0", "long": "--null", "description": "Les éléments sont séparés par un octet nul (avec find -print0) : gère les espaces dans les noms." },
     { "short": "-P", "long": "--max-procs", "description": "Lance jusqu'à N exécutions en parallèle.", "takesValue": true, "valueName": "N" },
-    { "short": "-d", "long": "--delimiter", "description": "Caractère séparant les éléments (par exemple '\\n').", "takesValue": true, "valueName": "CAR" },
-    { "short": "-p", "long": "--interactive", "description": "Demande confirmation avant chaque exécution." },
+    { "short": "-d", "long": "--delimiter", "description": "Caractère séparant les éléments (par exemple '\\n').", "takesValue": true, "valueName": "CAR", "example": { "command": "printf 'mon fichier.txt\\nautre.txt\\n' | xargs -d '\\n' rm" } },
+    { "short": "-p", "long": "--interactive", "description": "Demande confirmation avant chaque exécution.", "example": { "command": "ls *.bak | xargs -p rm", "output": "rm ancien.bak config.bak ?..." } },
     { "short": "-t", "long": "--verbose", "description": "Affiche chaque commande avant de l'exécuter." },
-    { "short": "-r", "long": "--no-run-if-empty", "description": "Ne lance pas la commande si l'entrée est vide." }
+    { "short": "-r", "long": "--no-run-if-empty", "description": "Ne lance pas la commande si l'entrée est vide.", "example": { "command": "find . -name \"*.tmp\" | xargs -r rm" } }
   ],
   "arguments": [
     { "name": "COMMANDE", "description": "Commande à lancer avec les éléments lus (echo par défaut), suivie de ses propres options.", "optional": true }

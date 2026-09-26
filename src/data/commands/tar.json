@@ -11,13 +11,15 @@
     { "short": "-f", "long": "--file", "description": "Nom du fichier d'archive à créer ou à lire.", "takesValue": true, "valueName": "ARCHIVE" },
     { "short": "-v", "long": "--verbose", "description": "Affiche les fichiers au fur et à mesure du traitement." },
     { "short": "-z", "long": "--gzip", "description": "Compresse ou décompresse avec gzip (.tar.gz, .tgz)." },
-    { "short": "-j", "long": "--bzip2", "description": "Compresse ou décompresse avec bzip2 (.tar.bz2)." },
-    { "short": "-J", "long": "--xz", "description": "Compresse ou décompresse avec xz (.tar.xz)." },
+    { "short": "-j", "long": "--bzip2", "description": "Compresse ou décompresse avec bzip2 (.tar.bz2).", "example": { "command": "tar -cjf archive.tar.bz2 dossier/" } },
+    { "short": "-J", "long": "--xz", "description": "Compresse ou décompresse avec xz (.tar.xz).", "example": { "command": "tar -cJf archive.tar.xz dossier/" } },
     { "short": "-C", "long": "--directory", "description": "Se place dans ce répertoire avant d'agir (destination de l'extraction).", "takesValue": true, "valueName": "RÉPERTOIRE" },
-    { "short": "-r", "long": "--append", "description": "Ajoute des fichiers à la fin d'une archive existante (non compressée)." },
-    { "long": "--exclude", "description": "Exclut les fichiers correspondant au motif.", "takesValue": true, "valueName": "MOTIF" }
+    { "short": "-r", "long": "--append", "description": "Ajoute des fichiers à la fin d'une archive existante (non compressée).", "example": { "command": "tar -rf archive.tar oubli.txt" } },
+    { "long": "--exclude", "description": "Exclut les fichiers correspondant au motif.", "takesValue": true, "valueName": "MOTIF", "example": { "command": "tar -czf site.tar.gz --exclude=node_modules site/" } }
   ],
-  "arguments": [{ "name": "FICHIER", "description": "Fichiers ou répertoires à archiver, ou à extraire de l'archive.", "optional": true, "variadic": true }],
+  "arguments": [
+    { "name": "FICHIER", "description": "Fichiers ou répertoires à archiver, ou à extraire de l'archive.", "optional": true, "variadic": true }
+  ],
   "examples": [
     { "command": "tar -czvf projet.tar.gz projet/", "explanation": "Crée (c) une archive compressée gzip (z) de projet/, en affichant (v) les fichiers, dans projet.tar.gz (f)." },
     { "command": "tar -xzvf projet.tar.gz", "explanation": "Extrait l'archive dans le répertoire courant." },

@@ -7,9 +7,9 @@
   "options": [
     { "short": "-R", "long": "--recursive", "description": "Applique le changement aux répertoires et à tout leur contenu." },
     { "short": "-v", "long": "--verbose", "description": "Affiche un message pour chaque fichier traité." },
-    { "short": "-c", "long": "--changes", "description": "N'affiche que les fichiers réellement modifiés." },
-    { "short": "-h", "long": "--no-dereference", "description": "Modifie le lien symbolique lui-même plutôt que sa cible." },
-    { "long": "--reference", "description": "Copie le groupe d'un autre fichier.", "takesValue": true, "valueName": "FICHIER" }
+    { "short": "-c", "long": "--changes", "description": "N'affiche que les fichiers réellement modifiés.", "example": { "command": "chgrp -c equipe *.pdf", "output": "le groupe de 'rapport.pdf' a été modifié de esprit en equipe" } },
+    { "short": "-h", "long": "--no-dereference", "description": "Modifie le lien symbolique lui-même plutôt que sa cible.", "example": { "command": "chgrp -h equipe lien_doc" } },
+    { "long": "--reference", "description": "Copie le groupe d'un autre fichier.", "takesValue": true, "valueName": "FICHIER", "example": { "command": "chgrp --reference=modele.txt nouveau.txt" } }
   ],
   "arguments": [
     { "name": "GROUPE", "description": "Nom (ou numéro) du nouveau groupe." },

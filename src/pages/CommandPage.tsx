@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { Link, useParams } from 'react-router';
 import { DangerNote } from '../components/ui/DangerNote';
+import { ExampleBlock } from '../components/ui/ExampleBlock';
 import { PageHeader } from '../components/ui/PageHeader';
 import { CATEGORY_BY_ID } from '../data/categories';
 import { useTldrPage } from '../hooks/useTldr';
@@ -98,6 +99,7 @@ function DetailedDoc({ doc }: { doc: CommandDoc }) {
                 <dd className="text-sm text-zinc-700 dark:text-zinc-300">
                   {o.description}
                   {o.values && <span className="mt-1 block text-zinc-500 dark:text-zinc-400">Valeurs : {o.values.join(', ')}</span>}
+                  {o.example && <ExampleBlock example={o.example} className="mt-2" />}
                 </dd>
               </div>
             ))}

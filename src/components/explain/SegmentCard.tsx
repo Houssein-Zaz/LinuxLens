@@ -1,7 +1,9 @@
 import { Link } from 'react-router';
 import { getCommand } from '../../lib/registry';
+import { isPathCommand } from '../../lib/explain';
 import type { Segment } from '../../types/parser';
 import { DangerNote } from '../ui/DangerNote';
+import { ExampleBlock } from '../ui/ExampleBlock';
 import type { ExplainedToken } from './TokenLine';
 import { TOKEN_STYLE } from './tokenStyles';
 
@@ -19,7 +21,7 @@ interface Props {
 export function SegmentCard({ index, segment, items, selectedKey, onSelect, fallbackSource }: Props) {
   const rows = items.filter((i) => i.token.kind !== 'pipe' && i.token.kind !== 'chain');
   const docs = segment.commands.map((c) => getCommand(c)).filter((d) => d !== undefined);
-  const unknown = segment.commands.filter((c) => !getCommand(c) && !fallbackSource?.(c));
+  const unknown = segment.commands.filter((c) => !getCommand(c) && !fallbackSource?.(c) && !isPathCommand(c));
 
   return (
     <section
@@ -82,6 +84,9 @@ export function SegmentCard({ index, segment, items, selectedKey, onSelect, fall
                 {explanation.detail && <span className="mt-1 block text-zinc-500 dark:text-zinc-400">{explanation.detail}</span>}
               </span>
             </button>
+            {explanation.example && (
+              <ExampleBlock example={explanation.example} className="mx-3 mb-3 sm:ml-[calc(12rem+1.75rem)]" />
+            )}
           </li>
         ))}
       </ul>

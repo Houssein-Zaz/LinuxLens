@@ -8,12 +8,14 @@
     { "short": "-d", "long": "--delimiter", "description": "Caractère séparant les champs (tabulation par défaut).", "takesValue": true, "valueName": "SÉP" },
     { "short": "-f", "long": "--fields", "description": "Champs à garder : 1, 1,3, 2-4, 3-…", "takesValue": true, "valueName": "LISTE" },
     { "short": "-c", "long": "--characters", "description": "Positions de caractères à garder : -c1-8 garde les 8 premiers.", "takesValue": true, "valueName": "LISTE" },
-    { "short": "-b", "long": "--bytes", "description": "Positions d'octets à garder (différent de -c pour les caractères accentués).", "takesValue": true, "valueName": "LISTE" },
-    { "short": "-s", "long": "--only-delimited", "description": "Ignore les lignes qui ne contiennent pas le délimiteur." },
-    { "long": "--complement", "description": "Inverse la sélection : garde tout sauf les champs indiqués." },
-    { "long": "--output-delimiter", "description": "Séparateur à utiliser dans la sortie.", "takesValue": true, "valueName": "TEXTE" }
+    { "short": "-b", "long": "--bytes", "description": "Positions d'octets à garder (différent de -c pour les caractères accentués).", "takesValue": true, "valueName": "LISTE", "example": { "command": "cut -b1-4 dates.txt", "output": "2024\n2023" } },
+    { "short": "-s", "long": "--only-delimited", "description": "Ignore les lignes qui ne contiennent pas le délimiteur.", "example": { "command": "cut -d: -s -f1 melange.txt", "output": "root\nesprit" } },
+    { "long": "--complement", "description": "Inverse la sélection : garde tout sauf les champs indiqués.", "example": { "command": "cut -d, -f2 --complement clients.csv", "output": "id,ville\n1,Tunis" } },
+    { "long": "--output-delimiter", "description": "Séparateur à utiliser dans la sortie.", "takesValue": true, "valueName": "TEXTE", "example": { "command": "cut -d: -f1,7 --output-delimiter=' → ' /etc/passwd", "output": "root → /bin/bash\nesprit → /bin/bash" } }
   ],
-  "arguments": [{ "name": "FICHIER", "description": "Fichier(s) à traiter. Sans fichier : l'entrée standard.", "optional": true, "variadic": true }],
+  "arguments": [
+    { "name": "FICHIER", "description": "Fichier(s) à traiter. Sans fichier : l'entrée standard.", "optional": true, "variadic": true }
+  ],
   "examples": [
     { "command": "cut -d: -f1 /etc/passwd", "explanation": "Liste les noms d'utilisateurs (1ᵉʳ champ, séparateur « : »).", "output": "root\ndaemon\nbin" },
     { "command": "cut -d ',' -f 2,4 clients.csv", "explanation": "Garde les colonnes 2 et 4 d'un CSV simple." },

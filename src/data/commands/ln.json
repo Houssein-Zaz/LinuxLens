@@ -7,9 +7,9 @@
   "options": [
     { "short": "-s", "long": "--symbolic", "description": "Crée un lien symbolique au lieu d'un lien physique." },
     { "short": "-f", "long": "--force", "description": "Remplace le fichier de destination s'il existe déjà." },
-    { "short": "-n", "long": "--no-dereference", "description": "Si le nom du lien est déjà un lien vers un répertoire, le remplace au lieu de créer le lien à l'intérieur (utile avec -sf)." },
+    { "short": "-n", "long": "--no-dereference", "description": "Si le nom du lien est déjà un lien vers un répertoire, le remplace au lieu de créer le lien à l'intérieur (utile avec -sf).", "example": { "command": "ln -sfn versions/v2 courant" } },
     { "short": "-r", "long": "--relative", "description": "Enregistre un chemin relatif à l'emplacement du lien." },
-    { "short": "-i", "long": "--interactive", "description": "Demande confirmation avant de remplacer une destination." },
+    { "short": "-i", "long": "--interactive", "description": "Demande confirmation avant de remplacer une destination.", "example": { "command": "ln -si /opt/app/bin/app ~/bin/app", "output": "ln : remplacer '/home/esprit/bin/app' ?" } },
     { "short": "-v", "long": "--verbose", "description": "Affiche chaque lien créé." }
   ],
   "arguments": [

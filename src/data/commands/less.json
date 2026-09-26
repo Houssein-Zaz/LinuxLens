@@ -7,12 +7,14 @@
   "options": [
     { "short": "-N", "long": "--LINE-NUMBERS", "description": "Affiche les numéros de ligne." },
     { "short": "-S", "long": "--chop-long-lines", "description": "Ne replie pas les lignes longues : défilement horizontal avec les flèches (pratique pour les CSV)." },
-    { "short": "-i", "long": "--ignore-case", "description": "Recherche insensible à la casse, sauf si le motif contient une majuscule." },
+    { "short": "-i", "long": "--ignore-case", "description": "Recherche insensible à la casse, sauf si le motif contient une majuscule.", "example": { "command": "less -i journal.log" } },
     { "short": "-R", "long": "--RAW-CONTROL-CHARS", "description": "Affiche correctement les couleurs (codes ANSI), par exemple celles de grep --color=always." },
-    { "short": "-F", "long": "--quit-if-one-screen", "description": "Quitte immédiatement si le contenu tient sur un seul écran." },
-    { "short": "-X", "long": "--no-init", "description": "Laisse le contenu affiché dans le terminal après avoir quitté." }
+    { "short": "-F", "long": "--quit-if-one-screen", "description": "Quitte immédiatement si le contenu tient sur un seul écran.", "example": { "command": "git log --oneline | less -F" } },
+    { "short": "-X", "long": "--no-init", "description": "Laisse le contenu affiché dans le terminal après avoir quitté.", "example": { "command": "less -X config.ini" } }
   ],
-  "arguments": [{ "name": "FICHIER", "description": "Fichier(s) à lire. Sans fichier : l'entrée standard (fin d'un pipe).", "optional": true, "variadic": true }],
+  "arguments": [
+    { "name": "FICHIER", "description": "Fichier(s) à lire. Sans fichier : l'entrée standard (fin d'un pipe).", "optional": true, "variadic": true }
+  ],
   "examples": [
     { "command": "less /var/log/syslog", "explanation": "Parcourt le journal système ; /error puis n pour trouver chaque erreur." },
     { "command": "less -N script.sh", "explanation": "Lit un script avec les numéros de ligne." },

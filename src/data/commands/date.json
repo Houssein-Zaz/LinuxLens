@@ -6,13 +6,15 @@
   "synopsis": "date [OPTION]... [+FORMAT]",
   "options": [
     { "short": "-d", "long": "--date", "description": "Affiche une autre date que maintenant : \"tomorrow\", \"2 days ago\", \"2024-12-25\", \"@1700000000\" (timestamp).", "takesValue": true, "valueName": "TEXTE" },
-    { "short": "-u", "long": "--utc", "description": "Affiche l'heure UTC au lieu de l'heure locale." },
-    { "short": "-I", "long": "--iso-8601", "description": "Format ISO 8601 (2024-07-12)." },
-    { "short": "-R", "long": "--rfc-email", "description": "Format des en-têtes d'e-mail (RFC 5322)." },
-    { "short": "-r", "long": "--reference", "description": "Affiche la date de dernière modification d'un fichier.", "takesValue": true, "valueName": "FICHIER" },
-    { "short": "-s", "long": "--set", "description": "Règle l'horloge du système (root).", "takesValue": true, "valueName": "TEXTE" }
+    { "short": "-u", "long": "--utc", "description": "Affiche l'heure UTC au lieu de l'heure locale.", "example": { "command": "date -u", "output": "ven. 12 juil. 2024 19:14:05 UTC" } },
+    { "short": "-I", "long": "--iso-8601", "description": "Format ISO 8601 (2024-07-12).", "example": { "command": "date -I", "output": "2024-07-12" } },
+    { "short": "-R", "long": "--rfc-email", "description": "Format des en-têtes d'e-mail (RFC 5322).", "example": { "command": "date -R", "output": "Fri, 12 Jul 2024 21:14:05 +0200" } },
+    { "short": "-r", "long": "--reference", "description": "Affiche la date de dernière modification d'un fichier.", "takesValue": true, "valueName": "FICHIER", "example": { "command": "date -r rapport.pdf", "output": "jeu. 11 juil. 2024 18:02:47 CEST" } },
+    { "short": "-s", "long": "--set", "description": "Règle l'horloge du système (root).", "takesValue": true, "valueName": "TEXTE", "example": { "command": "sudo date -s \"2024-07-12 21:14\"", "output": "ven. 12 juil. 2024 21:14:00 CEST" } }
   ],
-  "arguments": [{ "name": "+FORMAT", "description": "Format d'affichage, par exemple +%d/%m/%Y ou +%H:%M.", "optional": true }],
+  "arguments": [
+    { "name": "+FORMAT", "description": "Format d'affichage, par exemple +%d/%m/%Y ou +%H:%M.", "optional": true }
+  ],
   "examples": [
     { "command": "date", "explanation": "La date et l'heure actuelles.", "output": "ven. 12 juil. 2024 21:14:05 CEST" },
     { "command": "date +%Y-%m-%d", "explanation": "Date au format année-mois-jour.", "output": "2024-07-12" },

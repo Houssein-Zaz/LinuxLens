@@ -6,16 +6,18 @@
   "synopsis": "dpkg ACTION [OPTION]... PAQUET|FICHIER",
   "options": [
     { "short": "-i", "long": "--install", "description": "Installe un fichier .deb." },
-    { "short": "-r", "long": "--remove", "description": "Désinstalle un paquet en gardant sa configuration." },
-    { "short": "-P", "long": "--purge", "description": "Désinstalle un paquet et sa configuration." },
+    { "short": "-r", "long": "--remove", "description": "Désinstalle un paquet en gardant sa configuration.", "example": { "command": "sudo dpkg -r google-chrome-stable" } },
+    { "short": "-P", "long": "--purge", "description": "Désinstalle un paquet et sa configuration.", "example": { "command": "sudo dpkg -P google-chrome-stable" } },
     { "short": "-l", "long": "--list", "description": "Liste les paquets installés (ii en début de ligne = installé)." },
     { "short": "-L", "long": "--listfiles", "description": "Liste les fichiers installés par un paquet." },
     { "short": "-S", "long": "--search", "description": "Trouve le paquet qui a installé un fichier donné." },
-    { "short": "-s", "long": "--status", "description": "Affiche l'état et la description d'un paquet." },
+    { "short": "-s", "long": "--status", "description": "Affiche l'état et la description d'un paquet.", "example": { "command": "dpkg -s curl", "output": "Package: curl\nStatus: install ok installed\nVersion: 8.5.0-2ubuntu10" } },
     { "long": "--configure", "description": "Termine la configuration de paquets ; --configure -a reprend une installation interrompue." },
     { "short": "-a", "long": "--pending", "description": "Avec --configure, traite tous les paquets en attente." }
   ],
-  "arguments": [{ "name": "PAQUET|FICHIER", "description": "Nom de paquet, fichier .deb ou chemin, selon l'action.", "optional": true, "variadic": true }],
+  "arguments": [
+    { "name": "PAQUET|FICHIER", "description": "Nom de paquet, fichier .deb ou chemin, selon l'action.", "optional": true, "variadic": true }
+  ],
   "examples": [
     { "command": "sudo dpkg -i google-chrome-stable_current_amd64.deb", "explanation": "Installe un paquet téléchargé à la main." },
     { "command": "dpkg -l | grep nginx", "explanation": "Vérifie si nginx est installé et en quelle version.", "output": "ii  nginx  1.24.0-2ubuntu7  amd64  small, powerful, scalable web/proxy server" },

@@ -7,15 +7,15 @@
   "options": [
     { "short": "-p", "description": "Port du serveur SSH (22 par défaut).", "takesValue": true, "valueName": "PORT" },
     { "short": "-i", "description": "Clé privée à utiliser pour l'authentification.", "takesValue": true, "valueName": "FICHIER" },
-    { "short": "-l", "description": "Nom d'utilisateur distant (équivalent de utilisateur@).", "takesValue": true, "valueName": "UTILISATEUR" },
+    { "short": "-l", "description": "Nom d'utilisateur distant (équivalent de utilisateur@).", "takesValue": true, "valueName": "UTILISATEUR", "example": { "command": "ssh -l admin serveur.fr" } },
     { "short": "-L", "description": "Redirection de port locale : -L 8080:localhost:80 rend le port 80 distant accessible sur le port local 8080.", "takesValue": true, "valueName": "LOCAL:HÔTE:DISTANT" },
-    { "short": "-R", "description": "Redirection de port distante : expose un port local sur le serveur.", "takesValue": true, "valueName": "DISTANT:HÔTE:LOCAL" },
-    { "short": "-J", "description": "Passe par un serveur rebond (bastion) avant d'atteindre l'hôte.", "takesValue": true, "valueName": "HÔTE" },
-    { "short": "-o", "description": "Option de configuration ponctuelle, par exemple -o StrictHostKeyChecking=no.", "takesValue": true, "valueName": "OPTION" },
-    { "short": "-v", "description": "Mode verbeux, pour diagnostiquer un problème de connexion (-vvv pour plus de détails)." },
+    { "short": "-R", "description": "Redirection de port distante : expose un port local sur le serveur.", "takesValue": true, "valueName": "DISTANT:HÔTE:LOCAL", "example": { "command": "ssh -R 9000:localhost:3000 serveur.fr" } },
+    { "short": "-J", "description": "Passe par un serveur rebond (bastion) avant d'atteindre l'hôte.", "takesValue": true, "valueName": "HÔTE", "example": { "command": "ssh -J bastion.fr esprit@10.0.0.12" } },
+    { "short": "-o", "description": "Option de configuration ponctuelle, par exemple -o StrictHostKeyChecking=no.", "takesValue": true, "valueName": "OPTION", "example": { "command": "ssh -o ConnectTimeout=5 serveur.fr" } },
+    { "short": "-v", "description": "Mode verbeux, pour diagnostiquer un problème de connexion (-vvv pour plus de détails).", "example": { "command": "ssh -v serveur.fr", "output": "debug1: Connecting to serveur.fr [51.15.0.12] port 22.\ndebug1: Authenticating with public key \"/home/esprit/.ssh/id_ed25519\"" } },
     { "short": "-N", "description": "N'exécute aucune commande distante (utile pour une simple redirection de port)." },
-    { "short": "-X", "description": "Active le transfert X11 pour lancer des applications graphiques distantes." },
-    { "short": "-C", "description": "Compresse les données échangées." }
+    { "short": "-X", "description": "Active le transfert X11 pour lancer des applications graphiques distantes.", "example": { "command": "ssh -X serveur.fr gedit" } },
+    { "short": "-C", "description": "Compresse les données échangées.", "example": { "command": "ssh -C serveur.fr" } }
   ],
   "arguments": [
     { "name": "UTILISATEUR@HÔTE", "description": "Compte et adresse (nom de domaine, IP ou alias de ~/.ssh/config)." },

@@ -6,8 +6,8 @@
   "synopsis": "awk [OPTION]... 'PROGRAMME' [FICHIER]...",
   "options": [
     { "short": "-F", "long": "--field-separator", "description": "Séparateur de champs (par défaut : espaces et tabulations). -F: pour /etc/passwd, -F, pour un CSV simple.", "takesValue": true, "valueName": "SÉP" },
-    { "short": "-v", "long": "--assign", "description": "Définit une variable avant l'exécution : -v seuil=100.", "takesValue": true, "valueName": "VAR=VALEUR" },
-    { "short": "-f", "long": "--file", "description": "Lit le programme awk depuis un fichier au lieu de la ligne de commande.", "takesValue": true, "valueName": "FICHIER" }
+    { "short": "-v", "long": "--assign", "description": "Définit une variable avant l'exécution : -v seuil=100.", "takesValue": true, "valueName": "VAR=VALEUR", "example": { "command": "awk -v seuil=10 '$2 > seuil' notes.txt", "output": "Sara 14\nYanis 12" } },
+    { "short": "-f", "long": "--file", "description": "Lit le programme awk depuis un fichier au lieu de la ligne de commande.", "takesValue": true, "valueName": "FICHIER", "example": { "command": "awk -f rapport.awk ventes.csv" } }
   ],
   "arguments": [
     { "name": "PROGRAMME", "description": "Programme awk, entre guillemets simples pour que le shell ne touche pas aux $1, $2… Exemple : '{print $1}'." },

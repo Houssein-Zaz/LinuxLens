@@ -6,11 +6,11 @@
   "synopsis": "htop [OPTION]...",
   "options": [
     { "short": "-u", "long": "--user", "description": "N'affiche que les processus de cet utilisateur.", "takesValue": true, "valueName": "UTILISATEUR" },
-    { "short": "-p", "long": "--pid", "description": "N'affiche que les PID donnés (séparés par des virgules).", "takesValue": true, "valueName": "PID" },
-    { "short": "-d", "long": "--delay", "description": "Intervalle de rafraîchissement, en dixièmes de seconde.", "takesValue": true, "valueName": "DIXIÈMES" },
+    { "short": "-p", "long": "--pid", "description": "N'affiche que les PID donnés (séparés par des virgules).", "takesValue": true, "valueName": "PID", "example": { "command": "htop -p 812,905" } },
+    { "short": "-d", "long": "--delay", "description": "Intervalle de rafraîchissement, en dixièmes de seconde.", "takesValue": true, "valueName": "DIXIÈMES", "example": { "command": "htop -d 50" } },
     { "short": "-s", "long": "--sort-key", "description": "Colonne de tri au démarrage (PERCENT_CPU, PERCENT_MEM…).", "takesValue": true, "valueName": "COLONNE" },
     { "short": "-t", "long": "--tree", "description": "Démarre en vue arborescente (parents et enfants)." },
-    { "short": "-C", "long": "--no-color", "description": "Désactive les couleurs." }
+    { "short": "-C", "long": "--no-color", "description": "Désactive les couleurs.", "example": { "command": "htop -C" } }
   ],
   "examples": [
     { "command": "htop", "explanation": "Ouvre le moniteur interactif." },

@@ -2,6 +2,7 @@ import type { ControlOperator, Redirect, Segment, Token, TokenKind } from '../ty
 import type { CommandArgument, CommandDoc } from '../types/command';
 import { findOption, getCommand } from './registry';
 import { describePermissions, describeSymbolicMode, fromOctal, toSymbolic } from './permissions';
+import { exampleFor, type ConcreteExample } from './examples';
 
 export const KIND_LABEL: Record<TokenKind, string> = {
   command: 'Commande',
@@ -26,6 +27,8 @@ export interface Explanation {
   detail?: string;
   /** `false` si LinuxLens ne sait rien de cet élément. */
   known: boolean;
+  /** Exemple concret : commande, sortie et contexte. */
+  example?: ConcreteExample;
 }
 
 export interface ExplainContext {
@@ -100,6 +103,33 @@ function describeWord(token: Token): string | undefined {
 }
 
 export function explainToken(token: Token, segment: Segment, ctx: ExplainContext = {}): Explanation {
+  return describeToken(token, segment, ctx);
+}
+
+/**
+ * Explique tous les tokens d'un segment, avec un exemple concret différent pour chacun :
+ * les éléments précis (options, redirections…) choisissent d'abord, puis la commande
+ * prend un exemple qui n'est pas déjà affiché.
+ */
+export function explainSegment(segment: Segment, ctx: ExplainContext = {}): Explanation[] {
+  const explanations = segment.tokens.map((t) => describeToken(t, segment, ctx));
+  const isCommand = (i: number) => Number(segment.tokens[i]!.kind === 'command');
+  const order = segment.tokens.map((_, i) => i).sort((a, b) => isCommand(a) - isCommand(b));
+  const shown = new Set<string>();
+  for (const i of order) {
+    const example = exampleFor(segment.tokens[i]!, segment, shown);
+    if (example) {
+      shown.add(example.command);
+      explanations[i] = { ...explanations[i]!, example };
+    }
+  }
+  return explanations;
+}
+
+/** Commande donnée par un chemin : ./script.sh, /usr/bin/python3, ~/bin/outil. */
+export const isPathCommand = (name: string) => name.includes('/');
+
+function describeToken(token: Token, segment: Segment, ctx: ExplainContext): Explanation {
   const kindLabel = KIND_LABEL[token.kind];
   const doc = token.command ? getCommand(token.command) : undefined;
 
@@ -107,6 +137,16 @@ export function explainToken(token: Token, segment: Segment, ctx: ExplainContext
     case 'command': {
       const cmd = getCommand(token.value);
       if (cmd) return { kindLabel, text: cmd.summary, known: true };
+      if (isPathCommand(token.value)) {
+        return {
+          kindLabel,
+          text: token.value.startsWith('./')
+            ? `Exécute le programme ou script « ${token.value.slice(2)} » situé dans le répertoire courant.`
+            : 'Exécute le programme situé à ce chemin précis, au lieu de le chercher dans le PATH.',
+          detail: 'Le fichier doit avoir le droit d’exécution (chmod +x). Un script commence en général par une ligne #! qui indique son interpréteur, par exemple #!/bin/bash.',
+          known: true,
+        };
+      }
       const other = ctx.summaryFor?.(token.value);
       if (other) return { kindLabel, text: other, known: true };
       return {

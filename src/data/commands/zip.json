@@ -7,12 +7,12 @@
   "options": [
     { "short": "-r", "long": "--recurse-paths", "description": "Inclut les répertoires et tout leur contenu." },
     { "short": "-e", "long": "--encrypt", "description": "Protège l'archive par un mot de passe (demandé au clavier)." },
-    { "short": "-q", "long": "--quiet", "description": "N'affiche rien." },
-    { "short": "-u", "long": "--update", "description": "Ne remplace que les fichiers modifiés depuis la dernière fois." },
-    { "short": "-d", "long": "--delete", "description": "Supprime de l'archive les fichiers indiqués." },
-    { "short": "-j", "long": "--junk-paths", "description": "Stocke les fichiers sans leurs répertoires." },
+    { "short": "-q", "long": "--quiet", "description": "N'affiche rien.", "example": { "command": "zip -qr projet.zip projet/" } },
+    { "short": "-u", "long": "--update", "description": "Ne remplace que les fichiers modifiés depuis la dernière fois.", "example": { "command": "zip -u projet.zip projet/README.md" } },
+    { "short": "-d", "long": "--delete", "description": "Supprime de l'archive les fichiers indiqués.", "example": { "command": "zip -d projet.zip \"*.log\"", "output": "deleting: projet/debug.log" } },
+    { "short": "-j", "long": "--junk-paths", "description": "Stocke les fichiers sans leurs répertoires.", "example": { "command": "zip -j photos.zip vacances/*.jpg" } },
     { "short": "-x", "long": "--exclude", "description": "Exclut les fichiers qui correspondent aux motifs qui suivent." },
-    { "short": "-9", "description": "Compression maximale (-0 : aucune compression)." }
+    { "short": "-9", "description": "Compression maximale (-0 : aucune compression).", "example": { "command": "zip -9 -r archive.zip documents/" } }
   ],
   "arguments": [
     { "name": "ARCHIVE.zip", "description": "Nom de l'archive à créer ou à modifier." },

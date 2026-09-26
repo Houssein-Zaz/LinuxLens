@@ -8,22 +8,18 @@
     { "short": "-t", "long": "--tcp", "description": "Sockets TCP." },
     { "short": "-u", "long": "--udp", "description": "Sockets UDP." },
     { "short": "-l", "long": "--listening", "description": "Seulement les sockets en écoute." },
-    { "short": "-a", "long": "--all", "description": "Toutes les sockets, en écoute et établies." },
+    { "short": "-a", "long": "--all", "description": "Toutes les sockets, en écoute et établies.", "example": { "command": "ss -a | head -3" } },
     { "short": "-n", "long": "--numeric", "description": "Ports et adresses en chiffres (22 au lieu de ssh)." },
     { "short": "-p", "long": "--processes", "description": "Affiche le programme qui utilise chaque socket (sudo pour tout voir)." },
-    { "short": "-s", "long": "--summary", "description": "Résumé statistique." },
-    { "short": "-4", "long": "--ipv4", "description": "Seulement IPv4." },
-    { "short": "-6", "long": "--ipv6", "description": "Seulement IPv6." }
+    { "short": "-s", "long": "--summary", "description": "Résumé statistique.", "example": { "command": "ss -s", "output": "Total: 812\nTCP:   24 (estab 9, closed 5, orphaned 0, timewait 3)" } },
+    { "short": "-4", "long": "--ipv4", "description": "Seulement IPv4.", "example": { "command": "ss -4 -tn" } },
+    { "short": "-6", "long": "--ipv6", "description": "Seulement IPv6.", "example": { "command": "ss -6 -tln" } }
   ],
   "arguments": [
     { "name": "FILTRE", "description": "Filtre facultatif : state established, sport = :443, dst 192.168.1.10…", "optional": true, "variadic": true }
   ],
   "examples": [
-    {
-      "command": "sudo ss -tulpn",
-      "explanation": "Ports TCP et UDP en écoute, en chiffres, avec le programme associé.",
-      "output": "Netid State  Recv-Q Send-Q Local Address:Port Peer Address:Port Process\ntcp   LISTEN 0      128          0.0.0.0:22        0.0.0.0:*     users:((\"sshd\",pid=812,fd=3))"
-    },
+    { "command": "sudo ss -tulpn", "explanation": "Ports TCP et UDP en écoute, en chiffres, avec le programme associé.", "output": "Netid State  Recv-Q Send-Q Local Address:Port Peer Address:Port Process\ntcp   LISTEN 0      128          0.0.0.0:22        0.0.0.0:*     users:((\"sshd\",pid=812,fd=3))" },
     { "command": "ss -tn state established", "explanation": "Les connexions TCP établies." },
     { "command": "ss -ltn 'sport = :5432'", "explanation": "Vérifie que quelque chose écoute sur le port de PostgreSQL." }
   ],

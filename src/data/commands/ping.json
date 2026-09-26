@@ -6,20 +6,18 @@
   "synopsis": "ping [OPTION]... HÔTE",
   "options": [
     { "short": "-c", "description": "Nombre de paquets à envoyer avant de s'arrêter.", "takesValue": true, "valueName": "N" },
-    { "short": "-i", "description": "Intervalle entre deux paquets, en secondes (1 par défaut).", "takesValue": true, "valueName": "SECONDES" },
+    { "short": "-i", "description": "Intervalle entre deux paquets, en secondes (1 par défaut).", "takesValue": true, "valueName": "SECONDES", "example": { "command": "ping -i 5 serveur.local" } },
     { "short": "-W", "description": "Délai d'attente de chaque réponse, en secondes.", "takesValue": true, "valueName": "SECONDES" },
-    { "short": "-s", "description": "Taille des données de chaque paquet, en octets.", "takesValue": true, "valueName": "OCTETS" },
-    { "short": "-4", "description": "Force l'IPv4." },
-    { "short": "-6", "description": "Force l'IPv6." },
-    { "short": "-q", "description": "Mode silencieux : seulement le résumé final." }
+    { "short": "-s", "description": "Taille des données de chaque paquet, en octets.", "takesValue": true, "valueName": "OCTETS", "example": { "command": "ping -s 1400 -c 2 serveur.local", "output": "1408 octets de serveur.local (192.168.1.20) : icmp_seq=1 ttl=64 temps=1.9 ms" } },
+    { "short": "-4", "description": "Force l'IPv4.", "example": { "command": "ping -4 -c 1 google.com", "output": "64 octets de 142.250.179.110 : icmp_seq=1 ttl=117 temps=12.4 ms" } },
+    { "short": "-6", "description": "Force l'IPv6.", "example": { "command": "ping -6 -c 1 google.com", "output": "64 octets de 2a00:1450:4007:80c::200e : icmp_seq=1 ttl=117 temps=13.1 ms" } },
+    { "short": "-q", "description": "Mode silencieux : seulement le résumé final.", "example": { "command": "ping -q -c 10 google.com", "output": "10 paquets transmis, 10 reçus, 0 % paquets perdus, temps 9013 ms\nrtt min/avg/max/mdev = 11.8/12.4/13.9/0.6 ms" } }
   ],
-  "arguments": [{ "name": "HÔTE", "description": "Nom de domaine ou adresse IP à tester." }],
+  "arguments": [
+    { "name": "HÔTE", "description": "Nom de domaine ou adresse IP à tester." }
+  ],
   "examples": [
-    {
-      "command": "ping -c 4 google.com",
-      "explanation": "Envoie 4 paquets puis affiche le résumé.",
-      "output": "64 octets de par21s23-in-f14.1e100.net (142.250.179.110) : icmp_seq=1 ttl=117 temps=12.4 ms\n...\n4 paquets transmis, 4 reçus, 0 % paquets perdus, temps 3005 ms\nrtt min/avg/max/mdev = 11.9/12.3/12.8/0.3 ms"
-    },
+    { "command": "ping -c 4 google.com", "explanation": "Envoie 4 paquets puis affiche le résumé.", "output": "64 octets de par21s23-in-f14.1e100.net (142.250.179.110) : icmp_seq=1 ttl=117 temps=12.4 ms\n...\n4 paquets transmis, 4 reçus, 0 % paquets perdus, temps 3005 ms\nrtt min/avg/max/mdev = 11.9/12.3/12.8/0.3 ms" },
     { "command": "ping 192.168.1.1", "explanation": "Vérifie que la box ou le routeur répond (Ctrl+C pour arrêter)." },
     { "command": "ping -c 1 -W 2 serveur.local && echo \"en ligne\"", "explanation": "Test rapide dans un script : un paquet, 2 secondes d'attente au maximum." }
   ],

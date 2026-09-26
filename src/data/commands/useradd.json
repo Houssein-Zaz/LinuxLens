@@ -8,13 +8,15 @@
     { "short": "-m", "long": "--create-home", "description": "Crée le répertoire personnel (/home/NOM) à partir de /etc/skel." },
     { "short": "-s", "long": "--shell", "description": "Shell de connexion, par exemple /bin/bash.", "takesValue": true, "valueName": "SHELL" },
     { "short": "-G", "long": "--groups", "description": "Groupes supplémentaires, séparés par des virgules.", "takesValue": true, "valueName": "GROUPES" },
-    { "short": "-g", "long": "--gid", "description": "Groupe principal.", "takesValue": true, "valueName": "GROUPE" },
-    { "short": "-d", "long": "--home-dir", "description": "Chemin du répertoire personnel, s'il ne doit pas être /home/NOM.", "takesValue": true, "valueName": "RÉPERTOIRE" },
+    { "short": "-g", "long": "--gid", "description": "Groupe principal.", "takesValue": true, "valueName": "GROUPE", "example": { "command": "sudo useradd -m -g developpeurs sara" } },
+    { "short": "-d", "long": "--home-dir", "description": "Chemin du répertoire personnel, s'il ne doit pas être /home/NOM.", "takesValue": true, "valueName": "RÉPERTOIRE", "example": { "command": "sudo useradd -m -d /srv/app appuser" } },
     { "short": "-c", "long": "--comment", "description": "Commentaire, en général le nom complet.", "takesValue": true, "valueName": "TEXTE" },
-    { "short": "-e", "long": "--expiredate", "description": "Date d'expiration du compte (AAAA-MM-JJ).", "takesValue": true, "valueName": "DATE" },
+    { "short": "-e", "long": "--expiredate", "description": "Date d'expiration du compte (AAAA-MM-JJ).", "takesValue": true, "valueName": "DATE", "example": { "command": "sudo useradd -m -e 2024-12-31 stagiaire" } },
     { "short": "-r", "long": "--system", "description": "Crée un compte système (pour un service, sans connexion)." }
   ],
-  "arguments": [{ "name": "NOM", "description": "Nom de connexion du nouveau compte (minuscules, sans espace)." }],
+  "arguments": [
+    { "name": "NOM", "description": "Nom de connexion du nouveau compte (minuscules, sans espace)." }
+  ],
   "examples": [
     { "command": "sudo useradd -m -s /bin/bash alice", "explanation": "Crée alice avec un répertoire personnel et bash comme shell." },
     { "command": "sudo useradd -m -G sudo,docker -c \"Alice Martin\" alice", "explanation": "Crée alice et l'ajoute aux groupes sudo et docker." },

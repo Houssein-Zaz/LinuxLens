@@ -7,9 +7,9 @@
   "options": [
     { "short": "-br", "description": "Affichage bref : une ligne par interface (-brief)." },
     { "short": "-c", "description": "Sortie en couleur (-color)." },
-    { "short": "-4", "description": "Seulement IPv4." },
-    { "short": "-6", "description": "Seulement IPv6." },
-    { "short": "-s", "description": "Ajoute des statistiques (paquets, erreurs)." }
+    { "short": "-4", "description": "Seulement IPv4.", "example": { "command": "ip -4 a", "output": "2: wlp2s0: …\n    inet 192.168.1.42/24 brd 192.168.1.255 scope global dynamic wlp2s0" } },
+    { "short": "-6", "description": "Seulement IPv6.", "example": { "command": "ip -6 route", "output": "fe80::/64 dev wlp2s0 proto kernel metric 1024 pref medium" } },
+    { "short": "-s", "description": "Ajoute des statistiques (paquets, erreurs).", "example": { "command": "ip -s link show wlp2s0", "output": "RX:  bytes packets errors\n  182734501  201834      0" } }
   ],
   "subcommands": [
     { "name": "addr", "description": "Adresses IP des interfaces (abréviation : a, address)." },
@@ -24,11 +24,7 @@
     { "name": "COMMANDE", "description": "Action et paramètres : show, add, del, set dev eth0 up…", "optional": true, "variadic": true }
   ],
   "examples": [
-    {
-      "command": "ip a",
-      "explanation": "Toutes les interfaces et leurs adresses.",
-      "output": "2: wlp2s0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 state UP\n    link/ether 3c:a9:f4:12:ab:cd brd ff:ff:ff:ff:ff:ff\n    inet 192.168.1.42/24 brd 192.168.1.255 scope global dynamic wlp2s0"
-    },
+    { "command": "ip a", "explanation": "Toutes les interfaces et leurs adresses.", "output": "2: wlp2s0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 state UP\n    link/ether 3c:a9:f4:12:ab:cd brd ff:ff:ff:ff:ff:ff\n    inet 192.168.1.42/24 brd 192.168.1.255 scope global dynamic wlp2s0" },
     { "command": "ip -br -c a", "explanation": "Une ligne par interface, en couleur : le plus lisible.", "output": "lo        UNKNOWN  127.0.0.1/8 ::1/128\nwlp2s0    UP       192.168.1.42/24" },
     { "command": "ip route", "explanation": "La table de routage ; la ligne « default via » donne la passerelle.", "output": "default via 192.168.1.1 dev wlp2s0 proto dhcp metric 600\n192.168.1.0/24 dev wlp2s0 proto kernel scope link src 192.168.1.42" },
     { "command": "sudo ip link set eth0 down", "explanation": "Désactive l'interface eth0 (up pour la réactiver)." },

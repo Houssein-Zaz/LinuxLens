@@ -8,7 +8,7 @@
     { "short": "-d", "long": "--delete", "description": "Supprime les caractères de l'ENSEMBLE1 au lieu de les remplacer." },
     { "short": "-s", "long": "--squeeze-repeats", "description": "Réduit les répétitions d'un même caractère à une seule occurrence (plusieurs espaces → un seul)." },
     { "short": "-c", "long": "--complement", "description": "Utilise le complément de l'ENSEMBLE1 : tous les caractères qui n'y sont pas." },
-    { "short": "-t", "long": "--truncate-set1", "description": "Tronque l'ENSEMBLE1 à la longueur de l'ENSEMBLE2." }
+    { "short": "-t", "long": "--truncate-set1", "description": "Tronque l'ENSEMBLE1 à la longueur de l'ENSEMBLE2.", "example": { "command": "echo abc | tr -t abc xy", "output": "xyc" } }
   ],
   "arguments": [
     { "name": "ENSEMBLE1", "description": "Caractères à chercher : 'abc', 'a-z', '[:lower:]'…" },

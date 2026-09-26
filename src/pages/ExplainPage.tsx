@@ -5,7 +5,7 @@ import { SegmentCard } from '../components/explain/SegmentCard';
 import { TokenLine, type ExplainedToken } from '../components/explain/TokenLine';
 import { LEGEND, TOKEN_STYLE } from '../components/explain/tokenStyles';
 import { useTldrIndex } from '../hooks/useTldr';
-import { CONTROL_TEXT, explainToken } from '../lib/explain';
+import { CONTROL_TEXT, explainSegment } from '../lib/explain';
 import { parseCommandLine } from '../lib/parser';
 import { getCommand, registrySpec, suggestCommands } from '../lib/registry';
 import type { ControlOperator } from '../types/parser';
@@ -47,11 +47,10 @@ export function ExplainPage() {
   const parsed = useMemo(() => parseCommandLine(input, registrySpec), [input]);
   const perSegment = useMemo(
     () =>
-      parsed.segments.map((segment, s) =>
-        segment.tokens.map(
-          (token, t): ExplainedToken => ({ key: `${s}-${t}`, token, explanation: explainToken(token, segment, { summaryFor }) }),
-        ),
-      ),
+      parsed.segments.map((segment, s) => {
+        const explanations = explainSegment(segment, { summaryFor });
+        return segment.tokens.map((token, t): ExplainedToken => ({ key: `${s}-${t}`, token, explanation: explanations[t]! }));
+      }),
     [parsed, summaryFor],
   );
   const allItems = perSegment.flat();

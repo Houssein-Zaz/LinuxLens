@@ -9,10 +9,10 @@
     { "short": "-y", "long": "--side-by-side", "description": "Affiche les deux fichiers côte à côte." },
     { "short": "-r", "long": "--recursive", "description": "Compare récursivement deux répertoires." },
     { "short": "-q", "long": "--brief", "description": "Indique seulement si les fichiers diffèrent, sans détailler." },
-    { "short": "-i", "long": "--ignore-case", "description": "Ignore les différences de casse." },
-    { "short": "-w", "long": "--ignore-all-space", "description": "Ignore toutes les différences d'espaces." },
-    { "short": "-B", "long": "--ignore-blank-lines", "description": "Ignore les lignes vides ajoutées ou supprimées." },
-    { "short": "-N", "long": "--new-file", "description": "Avec -r, traite un fichier absent d'un côté comme un fichier vide." },
+    { "short": "-i", "long": "--ignore-case", "description": "Ignore les différences de casse.", "example": { "command": "diff -i noms_v1.txt noms_v2.txt" } },
+    { "short": "-w", "long": "--ignore-all-space", "description": "Ignore toutes les différences d'espaces.", "example": { "command": "diff -w ancien.py nouveau.py" } },
+    { "short": "-B", "long": "--ignore-blank-lines", "description": "Ignore les lignes vides ajoutées ou supprimées.", "example": { "command": "diff -B brouillon.txt final.txt" } },
+    { "short": "-N", "long": "--new-file", "description": "Avec -r, traite un fichier absent d'un côté comme un fichier vide.", "example": { "command": "diff -rN projet-v1/ projet-v2/", "output": "diff -rN projet-v1/NOUVEAU.md projet-v2/NOUVEAU.md\n0a1\n> # Nouveau fichier" } },
     { "long": "--color", "description": "Colore les différences.", "takesValue": true, "valueName": "QUAND", "values": ["auto", "always", "never"] }
   ],
   "arguments": [
@@ -20,11 +20,7 @@
     { "name": "FICHIER2", "description": "Fichier (ou répertoire) à comparer, le « nouveau »." }
   ],
   "examples": [
-    {
-      "command": "diff -u ancien.conf nouveau.conf",
-      "explanation": "Différences au format unifié.",
-      "output": "--- ancien.conf\n+++ nouveau.conf\n@@ -1,3 +1,3 @@\n port=8080\n-debug=true\n+debug=false\n host=localhost"
-    },
+    { "command": "diff -u ancien.conf nouveau.conf", "explanation": "Différences au format unifié.", "output": "--- ancien.conf\n+++ nouveau.conf\n@@ -1,3 +1,3 @@\n port=8080\n-debug=true\n+debug=false\n host=localhost" },
     { "command": "diff -y --color=auto a.txt b.txt", "explanation": "Comparaison côte à côte, en couleur." },
     { "command": "diff -rq projet-v1/ projet-v2/", "explanation": "Liste les fichiers qui diffèrent entre deux versions d'un projet." },
     { "command": "diff -u ancien.py nouveau.py > correctif.patch", "explanation": "Enregistre les différences dans un fichier correctif, applicable avec patch." }

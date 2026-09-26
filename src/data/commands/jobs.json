@@ -7,17 +7,15 @@
   "options": [
     { "short": "-l", "description": "Ajoute le PID de chaque tâche." },
     { "short": "-p", "description": "N'affiche que les PID." },
-    { "short": "-r", "description": "Seulement les tâches en cours d'exécution." },
-    { "short": "-s", "description": "Seulement les tâches suspendues (stoppées)." },
-    { "short": "-n", "description": "Seulement les tâches dont l'état a changé depuis le dernier affichage." }
+    { "short": "-r", "description": "Seulement les tâches en cours d'exécution.", "example": { "command": "jobs -r", "output": "[1]-  Running                 sleep 300 &" } },
+    { "short": "-s", "description": "Seulement les tâches suspendues (stoppées).", "example": { "command": "jobs -s", "output": "[2]+  Stopped                 vim notes.txt" } },
+    { "short": "-n", "description": "Seulement les tâches dont l'état a changé depuis le dernier affichage.", "example": { "command": "jobs -n", "output": "[1]-  Done                    sleep 300" } }
   ],
-  "arguments": [{ "name": "%TÂCHE", "description": "Tâche(s) à afficher : %1, %+ (courante), %- (précédente).", "optional": true, "variadic": true }],
+  "arguments": [
+    { "name": "%TÂCHE", "description": "Tâche(s) à afficher : %1, %+ (courante), %- (précédente).", "optional": true, "variadic": true }
+  ],
   "examples": [
-    {
-      "command": "jobs",
-      "explanation": "Liste les tâches de la session.",
-      "output": "[1]-  Running                 sleep 300 &\n[2]+  Stopped                 vim notes.txt"
-    },
+    { "command": "jobs", "explanation": "Liste les tâches de la session.", "output": "[1]-  Running                 sleep 300 &\n[2]+  Stopped                 vim notes.txt" },
     { "command": "jobs -l", "explanation": "Même liste avec le PID de chaque tâche.", "output": "[1]- 48213 Running                 sleep 300 &\n[2]+ 48260 Stopped                 vim notes.txt" },
     { "command": "jobs -p | xargs kill", "explanation": "Arrête toutes les tâches de la session : jobs -p fournit les PID, xargs les passe à kill." }
   ],

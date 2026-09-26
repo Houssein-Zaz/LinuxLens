@@ -27,6 +27,13 @@ export interface CommandOption {
   valueName?: string;
   /** Valeurs possibles, si l'ensemble est fermé. */
   values?: string[];
+  /** Exemple concret d'utilisation, affiché avec l'explication de l'option. */
+  example?: OptionExample;
+}
+
+export interface OptionExample {
+  command: string;
+  output?: string;
 }
 
 export interface CommandArgument {

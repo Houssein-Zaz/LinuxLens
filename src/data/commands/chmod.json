@@ -6,10 +6,10 @@
   "synopsis": "chmod [OPTION]... MODE FICHIER...",
   "options": [
     { "short": "-R", "long": "--recursive", "description": "Applique le changement aux répertoires et à tout leur contenu." },
-    { "short": "-v", "long": "--verbose", "description": "Affiche un message pour chaque fichier traité." },
-    { "short": "-c", "long": "--changes", "description": "Comme -v, mais seulement quand un changement a réellement lieu." },
-    { "short": "-f", "long": "--silent", "description": "Supprime la plupart des messages d'erreur." },
-    { "long": "--reference", "description": "Copie les permissions d'un autre fichier au lieu de donner un MODE.", "takesValue": true, "valueName": "FICHIER" }
+    { "short": "-v", "long": "--verbose", "description": "Affiche un message pour chaque fichier traité.", "example": { "command": "chmod -v 644 notes.txt", "output": "le mode de 'notes.txt' a été modifié de 0664 (rw-rw-r--) en 0644 (rw-r--r--)" } },
+    { "short": "-c", "long": "--changes", "description": "Comme -v, mais seulement quand un changement a réellement lieu.", "example": { "command": "chmod -c u+x *.sh", "output": "le mode de 'deploy.sh' a été modifié de 0644 (rw-r--r--) en 0744 (rwxr--r--)" } },
+    { "short": "-f", "long": "--silent", "description": "Supprime la plupart des messages d'erreur.", "example": { "command": "chmod -f 600 fichier_absent.txt" } },
+    { "long": "--reference", "description": "Copie les permissions d'un autre fichier au lieu de donner un MODE.", "takesValue": true, "valueName": "FICHIER", "example": { "command": "chmod --reference=modele.sh nouveau.sh" } }
   ],
   "arguments": [
     { "name": "MODE", "description": "Nouvelles permissions : octal (644, 755) ou symbolique (u+x, go-w, a=r)." },

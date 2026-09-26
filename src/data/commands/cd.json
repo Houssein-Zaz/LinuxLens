@@ -5,8 +5,8 @@
   "description": "Commande interne du shell qui déplace le répertoire de travail. Sans argument, elle ramène au répertoire personnel ($HOME). Les chemins peuvent être absolus (/etc) ou relatifs au répertoire courant (../docs).",
   "synopsis": "cd [-L|-P] [RÉPERTOIRE]",
   "options": [
-    { "short": "-L", "description": "Suit les liens symboliques de façon logique (comportement par défaut) : « .. » remonte le chemin tel qu'il a été saisi." },
-    { "short": "-P", "description": "Utilise la structure physique du disque : les liens symboliques sont résolus avant de traiter « .. »." }
+    { "short": "-L", "description": "Suit les liens symboliques de façon logique (comportement par défaut) : « .. » remonte le chemin tel qu'il a été saisi.", "example": { "command": "cd -L raccourci/.. && pwd", "output": "/home/esprit" } },
+    { "short": "-P", "description": "Utilise la structure physique du disque : les liens symboliques sont résolus avant de traiter « .. ».", "example": { "command": "cd -P raccourci && pwd", "output": "/var/www/monsite" } }
   ],
   "arguments": [
     { "name": "RÉPERTOIRE", "description": "Destination. « ~ » désigne le répertoire personnel, « .. » le parent, « - » le répertoire précédent.", "optional": true }

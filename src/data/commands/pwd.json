@@ -5,7 +5,7 @@
   "description": "Print Working Directory : écrit le chemin absolu du répertoire dans lequel se trouve le shell.",
   "synopsis": "pwd [-L|-P]",
   "options": [
-    { "short": "-L", "long": "--logical", "description": "Affiche le chemin logique, liens symboliques compris (par défaut dans bash)." },
+    { "short": "-L", "long": "--logical", "description": "Affiche le chemin logique, liens symboliques compris (par défaut dans bash).", "example": { "command": "pwd -L", "output": "/home/esprit/raccourci" } },
     { "short": "-P", "long": "--physical", "description": "Affiche le chemin physique, liens symboliques résolus." }
   ],
   "examples": [

@@ -6,12 +6,12 @@
   "synopsis": "mv [OPTION]... SOURCE... DESTINATION",
   "options": [
     { "short": "-i", "long": "--interactive", "description": "Demande confirmation avant d'écraser un fichier existant." },
-    { "short": "-n", "long": "--no-clobber", "description": "N'écrase jamais un fichier existant." },
-    { "short": "-f", "long": "--force", "description": "N'avertit jamais avant d'écraser." },
+    { "short": "-n", "long": "--no-clobber", "description": "N'écrase jamais un fichier existant.", "example": { "command": "mv -n rapport.pdf archives/" } },
+    { "short": "-f", "long": "--force", "description": "N'avertit jamais avant d'écraser.", "example": { "command": "mv -f nouveau.conf app.conf" } },
     { "short": "-v", "long": "--verbose", "description": "Affiche chaque déplacement effectué." },
-    { "short": "-u", "long": "--update", "description": "Ne déplace que si la source est plus récente que la destination." },
-    { "short": "-b", "long": "--backup", "description": "Sauvegarde le fichier de destination (suffixe ~) avant de l'écraser." },
-    { "short": "-t", "long": "--target-directory", "description": "Déplace toutes les sources dans ce répertoire.", "takesValue": true, "valueName": "RÉPERTOIRE" }
+    { "short": "-u", "long": "--update", "description": "Ne déplace que si la source est plus récente que la destination.", "example": { "command": "mv -u *.jpg ~/Images/" } },
+    { "short": "-b", "long": "--backup", "description": "Sauvegarde le fichier de destination (suffixe ~) avant de l'écraser.", "example": { "command": "mv -b nouveau.conf app.conf" } },
+    { "short": "-t", "long": "--target-directory", "description": "Déplace toutes les sources dans ce répertoire.", "takesValue": true, "valueName": "RÉPERTOIRE", "example": { "command": "mv -t archives/ 2022.pdf 2023.pdf" } }
   ],
   "arguments": [
     { "name": "SOURCE", "description": "Fichier(s) ou répertoire(s) à déplacer.", "variadic": true },

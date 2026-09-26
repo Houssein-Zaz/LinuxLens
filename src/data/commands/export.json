@@ -6,10 +6,12 @@
   "synopsis": "export [-n] [-p] [NOM[=VALEUR]]...",
   "options": [
     { "short": "-p", "description": "Liste toutes les variables exportées." },
-    { "short": "-n", "description": "Retire l'attribut d'export : la variable redevient locale au shell." },
-    { "short": "-f", "description": "Exporte une fonction du shell au lieu d'une variable." }
+    { "short": "-n", "description": "Retire l'attribut d'export : la variable redevient locale au shell.", "example": { "command": "export -n API_KEY" } },
+    { "short": "-f", "description": "Exporte une fonction du shell au lieu d'une variable.", "example": { "command": "export -f saluer" } }
   ],
-  "arguments": [{ "name": "NOM=VALEUR", "description": "Variable à exporter, avec ou sans nouvelle valeur. Pas d'espace autour du =.", "optional": true, "variadic": true }],
+  "arguments": [
+    { "name": "NOM=VALEUR", "description": "Variable à exporter, avec ou sans nouvelle valeur. Pas d'espace autour du =.", "optional": true, "variadic": true }
+  ],
   "examples": [
     { "command": "export EDITOR=nano", "explanation": "Les programmes qui ouvrent un éditeur (git, crontab…) utiliseront nano." },
     { "command": "export PATH=\"$HOME/.local/bin:$PATH\"", "explanation": "Ajoute un répertoire au début du PATH, pour y trouver des commandes." },

@@ -7,8 +7,8 @@
   "options": [
     { "short": "-k", "long": "--apropos", "description": "Cherche un mot-clé dans les descriptions de toutes les pages (comme apropos)." },
     { "short": "-f", "long": "--whatis", "description": "Affiche la description courte de la page (comme whatis)." },
-    { "short": "-a", "long": "--all", "description": "Affiche successivement toutes les pages de ce nom, dans toutes les sections." },
-    { "short": "-L", "long": "--locale", "description": "Langue des pages, par exemple fr.", "takesValue": true, "valueName": "LANGUE" }
+    { "short": "-a", "long": "--all", "description": "Affiche successivement toutes les pages de ce nom, dans toutes les sections.", "example": { "command": "man -a passwd" } },
+    { "short": "-L", "long": "--locale", "description": "Langue des pages, par exemple fr.", "takesValue": true, "valueName": "LANGUE", "example": { "command": "man -L fr ls" } }
   ],
   "arguments": [
     { "name": "SECTION", "description": "Numéro de section, si le même nom existe dans plusieurs sections.", "optional": true },

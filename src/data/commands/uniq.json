@@ -8,9 +8,9 @@
     { "short": "-c", "long": "--count", "description": "Préfixe chaque ligne par son nombre d'occurrences." },
     { "short": "-d", "long": "--repeated", "description": "N'affiche que les lignes répétées (une fois chacune)." },
     { "short": "-u", "long": "--unique", "description": "N'affiche que les lignes qui n'apparaissent qu'une fois." },
-    { "short": "-i", "long": "--ignore-case", "description": "Ignore la casse lors de la comparaison." },
-    { "short": "-f", "long": "--skip-fields", "description": "Ignore les N premiers champs lors de la comparaison.", "takesValue": true, "valueName": "N" },
-    { "short": "-s", "long": "--skip-chars", "description": "Ignore les N premiers caractères lors de la comparaison.", "takesValue": true, "valueName": "N" }
+    { "short": "-i", "long": "--ignore-case", "description": "Ignore la casse lors de la comparaison.", "example": { "command": "sort -f noms.txt | uniq -i", "output": "Alice\nBob" } },
+    { "short": "-f", "long": "--skip-fields", "description": "Ignore les N premiers champs lors de la comparaison.", "takesValue": true, "valueName": "N", "example": { "command": "uniq -f 1 connexions.log" } },
+    { "short": "-s", "long": "--skip-chars", "description": "Ignore les N premiers caractères lors de la comparaison.", "takesValue": true, "valueName": "N", "example": { "command": "uniq -s 11 journal.txt" } }
   ],
   "arguments": [
     { "name": "ENTRÉE", "description": "Fichier à lire. Sans fichier : l'entrée standard.", "optional": true },

@@ -5,12 +5,14 @@
   "description": "Sous Linux, l'extension d'un fichier n'est qu'une convention. file examine le contenu (les premiers octets, appelés « nombre magique ») pour dire ce qu'est vraiment un fichier : texte et encodage, image, archive, exécutable, script…",
   "synopsis": "file [OPTION]... FICHIER...",
   "options": [
-    { "short": "-b", "long": "--brief", "description": "N'affiche pas le nom du fichier devant le résultat." },
+    { "short": "-b", "long": "--brief", "description": "N'affiche pas le nom du fichier devant le résultat.", "example": { "command": "file -b photo.jpg", "output": "JPEG image data, JFIF standard 1.01" } },
     { "short": "-i", "long": "--mime", "description": "Affiche le type MIME (image/png, text/plain; charset=utf-8…)." },
-    { "short": "-L", "long": "--dereference", "description": "Suit les liens symboliques et décrit la cible." },
-    { "short": "-z", "long": "--uncompress", "description": "Regarde aussi à l'intérieur des fichiers compressés." }
+    { "short": "-L", "long": "--dereference", "description": "Suit les liens symboliques et décrit la cible.", "example": { "command": "file -L /usr/bin/python3", "output": "/usr/bin/python3: ELF 64-bit LSB executable, x86-64" } },
+    { "short": "-z", "long": "--uncompress", "description": "Regarde aussi à l'intérieur des fichiers compressés.", "example": { "command": "file -z journal.log.gz", "output": "journal.log.gz: ASCII text (gzip compressed data)" } }
   ],
-  "arguments": [{ "name": "FICHIER", "description": "Fichier(s) à analyser.", "variadic": true }],
+  "arguments": [
+    { "name": "FICHIER", "description": "Fichier(s) à analyser.", "variadic": true }
+  ],
   "examples": [
     { "command": "file photo.jpg script.sh", "explanation": "Type de chaque fichier.", "output": "photo.jpg: JPEG image data, JFIF standard 1.01, 1920x1080\nscript.sh: Bourne-Again shell script, ASCII text executable" },
     { "command": "file document.pdf", "explanation": "Vérifie qu'un fichier est bien ce que son extension prétend.", "output": "document.pdf: Zip archive data, at least v2.0 to extract" },

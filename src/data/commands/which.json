@@ -7,7 +7,9 @@
   "options": [
     { "short": "-a", "description": "Affiche tous les exécutables correspondants dans le PATH, pas seulement le premier." }
   ],
-  "arguments": [{ "name": "COMMANDE", "description": "Nom(s) de commande à localiser.", "variadic": true }],
+  "arguments": [
+    { "name": "COMMANDE", "description": "Nom(s) de commande à localiser.", "variadic": true }
+  ],
   "examples": [
     { "command": "which python3", "explanation": "Chemin du python3 utilisé.", "output": "/usr/bin/python3" },
     { "command": "which -a node", "explanation": "Toutes les versions de node présentes dans le PATH.", "output": "/home/esprit/.nvm/versions/node/v22.4.0/bin/node\n/usr/bin/node" },

@@ -6,10 +6,12 @@
   "synopsis": "more [OPTION]... FICHIER...",
   "options": [
     { "short": "-d", "long": "--silent", "description": "Affiche une aide (« Appuyez sur espace pour continuer, q pour quitter ») au lieu de sonner en cas de mauvaise touche." },
-    { "short": "-s", "long": "--squeeze", "description": "Réduit les suites de lignes vides à une seule." },
-    { "short": "-n", "long": "--lines", "description": "Nombre de lignes par écran.", "takesValue": true, "valueName": "N" }
+    { "short": "-s", "long": "--squeeze", "description": "Réduit les suites de lignes vides à une seule.", "example": { "command": "more -s brouillon.txt" } },
+    { "short": "-n", "long": "--lines", "description": "Nombre de lignes par écran.", "takesValue": true, "valueName": "N", "example": { "command": "more -n 20 journal.txt" } }
   ],
-  "arguments": [{ "name": "FICHIER", "description": "Fichier(s) à lire. Sans fichier : l'entrée standard.", "optional": true, "variadic": true }],
+  "arguments": [
+    { "name": "FICHIER", "description": "Fichier(s) à lire. Sans fichier : l'entrée standard.", "optional": true, "variadic": true }
+  ],
   "examples": [
     { "command": "more /etc/services", "explanation": "Lit un long fichier écran par écran." },
     { "command": "ls -la /etc | more", "explanation": "Parcourt une longue liste de fichiers." },

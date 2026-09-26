@@ -6,18 +6,14 @@
   "synopsis": "free [OPTION]...",
   "options": [
     { "short": "-h", "long": "--human", "description": "Unités lisibles (Mi, Gi)." },
-    { "short": "-m", "long": "--mebi", "description": "Valeurs en mébioctets." },
-    { "short": "-g", "long": "--gibi", "description": "Valeurs en gibioctets." },
-    { "short": "-t", "long": "--total", "description": "Ajoute une ligne de total (mémoire + swap)." },
-    { "short": "-w", "long": "--wide", "description": "Sépare les colonnes buffers et cache." },
+    { "short": "-m", "long": "--mebi", "description": "Valeurs en mébioctets.", "example": { "command": "free -m", "output": "        total   utilisé   libre\nMem:     7851      3120    2143" } },
+    { "short": "-g", "long": "--gibi", "description": "Valeurs en gibioctets.", "example": { "command": "free -g", "output": "        total   utilisé   libre\nMem:        7         3       2" } },
+    { "short": "-t", "long": "--total", "description": "Ajoute une ligne de total (mémoire + swap).", "example": { "command": "free -h -t", "output": "…\nTotal:    9,7Gi   3,0Gi   4,1Gi" } },
+    { "short": "-w", "long": "--wide", "description": "Sépare les colonnes buffers et cache.", "example": { "command": "free -h -w", "output": "        total  utilisé  libre  partagé  tampons  cache  disponible\nMem:    7,7Gi  3,0Gi    2,1Gi  312Mi    180Mi    2,3Gi  4,4Gi" } },
     { "short": "-s", "long": "--seconds", "description": "Rafraîchit l'affichage toutes les N secondes.", "takesValue": true, "valueName": "N" }
   ],
   "examples": [
-    {
-      "command": "free -h",
-      "explanation": "État de la mémoire en unités lisibles.",
-      "output": "               total    utilisé      libre   partagé tamp/cache disponible\nMem:           7,7Gi      3,0Gi      2,1Gi     312Mi      2,5Gi      4,4Gi\nÉchange:       2,0Gi         0B      2,0Gi"
-    },
+    { "command": "free -h", "explanation": "État de la mémoire en unités lisibles.", "output": "               total    utilisé      libre   partagé tamp/cache disponible\nMem:           7,7Gi      3,0Gi      2,1Gi     312Mi      2,5Gi      4,4Gi\nÉchange:       2,0Gi         0B      2,0Gi" },
     { "command": "free -h -s 2", "explanation": "Réaffiche l'état toutes les 2 secondes (Ctrl+C pour arrêter)." }
   ],
   "seeAlso": ["top", "htop", "vmstat"],

@@ -5,7 +5,9 @@
   "description": "Commande interne du shell qui remet une tâche (en arrière-plan ou suspendue) au premier plan : elle reprend le contrôle du terminal et reçoit à nouveau le clavier, Ctrl+C compris. Sans argument, fg agit sur la tâche courante (marquée + dans jobs).",
   "synopsis": "fg [%TÂCHE]",
   "options": [],
-  "arguments": [{ "name": "%TÂCHE", "description": "Tâche à reprendre : %1, %2… (numéros affichés par jobs).", "optional": true }],
+  "arguments": [
+    { "name": "%TÂCHE", "description": "Tâche à reprendre : %1, %2… (numéros affichés par jobs).", "optional": true }
+  ],
   "examples": [
     { "command": "fg", "explanation": "Reprend la tâche courante, par exemple un éditeur suspendu avec Ctrl+Z." },
     { "command": "fg %1", "explanation": "Ramène la tâche numéro 1 au premier plan." }

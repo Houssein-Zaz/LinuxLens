@@ -6,8 +6,8 @@
   "synopsis": "snap SOUS-COMMANDE [OPTION]... [SNAP]...",
   "options": [
     { "long": "--classic", "description": "Installe sans confinement : nécessaire pour les outils qui doivent accéder à tout le système (éditeurs de code, compilateurs)." },
-    { "long": "--channel", "description": "Canal de version : stable, candidate, beta, edge.", "takesValue": true, "valueName": "CANAL" },
-    { "long": "--beta", "description": "Raccourci pour le canal beta." }
+    { "long": "--channel", "description": "Canal de version : stable, candidate, beta, edge.", "takesValue": true, "valueName": "CANAL", "example": { "command": "sudo snap install node --channel=20/stable --classic" } },
+    { "long": "--beta", "description": "Raccourci pour le canal beta.", "example": { "command": "sudo snap install firefox --beta" } }
   ],
   "subcommands": [
     { "name": "install", "description": "Installe un snap." },
@@ -18,7 +18,9 @@
     { "name": "refresh", "description": "Met à jour un snap, ou tous sans argument." },
     { "name": "revert", "description": "Revient à la version précédente d'un snap." }
   ],
-  "arguments": [{ "name": "SNAP", "description": "Nom du ou des snaps visés.", "optional": true, "variadic": true }],
+  "arguments": [
+    { "name": "SNAP", "description": "Nom du ou des snaps visés.", "optional": true, "variadic": true }
+  ],
   "examples": [
     { "command": "sudo snap install code --classic", "explanation": "Installe Visual Studio Code (qui exige --classic)." },
     { "command": "snap find postman", "explanation": "Cherche un snap dans le catalogue." },

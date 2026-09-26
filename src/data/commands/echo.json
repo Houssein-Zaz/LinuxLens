@@ -5,11 +5,13 @@
   "description": "Écrit ses arguments séparés par un espace, suivis d'un retour à la ligne. Très utilisé pour afficher la valeur d'une variable ou écrire dans un fichier avec une redirection. Entre guillemets doubles, les variables ($HOME) sont remplacées ; entre guillemets simples, le texte est affiché tel quel.",
   "synopsis": "echo [OPTION]... [TEXTE]...",
   "options": [
-    { "short": "-n", "description": "N'ajoute pas de retour à la ligne à la fin." },
+    { "short": "-n", "description": "N'ajoute pas de retour à la ligne à la fin.", "example": { "command": "echo -n \"Nom : \"", "output": "Nom : " } },
     { "short": "-e", "description": "Interprète les séquences d'échappement : \\n (retour à la ligne), \\t (tabulation), \\\\ (antislash)." },
-    { "short": "-E", "description": "N'interprète pas les séquences d'échappement (comportement par défaut de bash)." }
+    { "short": "-E", "description": "N'interprète pas les séquences d'échappement (comportement par défaut de bash).", "example": { "command": "echo -E \"a\\tb\"", "output": "a\\tb" } }
   ],
-  "arguments": [{ "name": "TEXTE", "description": "Texte à afficher. Plusieurs arguments sont séparés par un espace.", "optional": true, "variadic": true }],
+  "arguments": [
+    { "name": "TEXTE", "description": "Texte à afficher. Plusieurs arguments sont séparés par un espace.", "optional": true, "variadic": true }
+  ],
   "examples": [
     { "command": "echo \"Bonjour $USER\"", "explanation": "Affiche un message avec la valeur de la variable USER.", "output": "Bonjour esprit" },
     { "command": "echo '$HOME'", "explanation": "Entre guillemets simples, la variable n'est pas remplacée.", "output": "$HOME" },

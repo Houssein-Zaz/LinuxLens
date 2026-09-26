@@ -5,9 +5,9 @@
   "description": "Switch user : change d'identité dans le terminal. Contrairement à sudo, su demande le mot de passe de l'utilisateur CIBLE (celui de root pour su tout court). Sur Ubuntu, le compte root n'a pas de mot de passe par défaut : on utilise alors sudo -i ou sudo su. Tapez exit pour revenir à votre compte.",
   "synopsis": "su [OPTION]... [-] [UTILISATEUR]",
   "options": [
-    { "short": "-l", "long": "--login", "description": "Shell de connexion : charge l'environnement complet de l'utilisateur cible (répertoire, variables). Équivaut à « su - »." },
+    { "short": "-l", "long": "--login", "description": "Shell de connexion : charge l'environnement complet de l'utilisateur cible (répertoire, variables). Équivaut à « su - ».", "example": { "command": "su -l alice" } },
     { "short": "-c", "long": "--command", "description": "Exécute une seule commande en tant que l'utilisateur, puis revient.", "takesValue": true, "valueName": "COMMANDE" },
-    { "short": "-s", "long": "--shell", "description": "Utilise ce shell au lieu de celui de l'utilisateur cible.", "takesValue": true, "valueName": "SHELL" }
+    { "short": "-s", "long": "--shell", "description": "Utilise ce shell au lieu de celui de l'utilisateur cible.", "takesValue": true, "valueName": "SHELL", "example": { "command": "sudo su -s /bin/bash www-data" } }
   ],
   "arguments": [
     { "name": "UTILISATEUR", "description": "Compte à utiliser. Par défaut : root. Un tiret seul avant le nom (su - nom) charge son environnement complet.", "optional": true }

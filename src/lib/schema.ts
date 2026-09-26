@@ -64,6 +64,11 @@ export function validateCommandDoc(doc: unknown): string[] {
         errors.push(`${path}values : tableau de chaînes attendu`);
       }
       if (opt.values !== undefined && opt.takesValue !== true) errors.push(`${path}values sans takesValue`);
+      if (opt.example !== undefined) {
+        const ex = opt.example;
+        if (!isObj(ex) || !isNonEmptyString(ex.command)) errors.push(`${path}example.command : chaîne non vide attendue`);
+        else if (ex.output !== undefined && typeof ex.output !== 'string') errors.push(`${path}example.output : chaîne attendue`);
+      }
     });
   }
 

@@ -7,13 +7,15 @@
   "options": [
     { "short": "-k", "long": "--keep", "description": "Garde le fichier .gz." },
     { "short": "-c", "long": "--stdout", "description": "Écrit le contenu décompressé sur la sortie standard, sans créer de fichier." },
-    { "short": "-f", "long": "--force", "description": "Écrase un fichier existant du même nom." },
-    { "short": "-t", "long": "--test", "description": "Vérifie l'intégrité du fichier compressé." },
-    { "short": "-l", "long": "--list", "description": "Affiche les tailles et le taux de compression." },
-    { "short": "-r", "long": "--recursive", "description": "Décompresse les fichiers des répertoires, récursivement." },
-    { "short": "-v", "long": "--verbose", "description": "Affiche le nom et le taux de chaque fichier." }
+    { "short": "-f", "long": "--force", "description": "Écrase un fichier existant du même nom.", "example": { "command": "gunzip -f rapport.txt.gz" } },
+    { "short": "-t", "long": "--test", "description": "Vérifie l'intégrité du fichier compressé.", "example": { "command": "gunzip -t sauvegarde.sql.gz" } },
+    { "short": "-l", "long": "--list", "description": "Affiche les tailles et le taux de compression.", "example": { "command": "gunzip -l sauvegarde.sql.gz", "output": "  compressed  uncompressed  ratio uncompressed_name\n     2048576      12582912  83.7% sauvegarde.sql" } },
+    { "short": "-r", "long": "--recursive", "description": "Décompresse les fichiers des répertoires, récursivement.", "example": { "command": "gunzip -r archives/" } },
+    { "short": "-v", "long": "--verbose", "description": "Affiche le nom et le taux de chaque fichier.", "example": { "command": "gunzip -v journal.log.gz", "output": "journal.log.gz:\t 79.2% -- replaced with journal.log" } }
   ],
-  "arguments": [{ "name": "FICHIER", "description": "Fichier(s) .gz à décompresser.", "optional": true, "variadic": true }],
+  "arguments": [
+    { "name": "FICHIER", "description": "Fichier(s) .gz à décompresser.", "optional": true, "variadic": true }
+  ],
   "examples": [
     { "command": "gunzip journal.log.gz", "explanation": "Restaure journal.log." },
     { "command": "gunzip -k sauvegarde.sql.gz", "explanation": "Décompresse en gardant le fichier .gz." },

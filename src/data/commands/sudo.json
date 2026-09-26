@@ -7,11 +7,11 @@
   "options": [
     { "short": "-u", "long": "--user", "description": "Exécute la commande en tant que cet utilisateur au lieu de root.", "takesValue": true, "valueName": "UTILISATEUR" },
     { "short": "-i", "long": "--login", "description": "Ouvre un shell de connexion root complet (environnement de root)." },
-    { "short": "-s", "long": "--shell", "description": "Ouvre un shell root en gardant l'environnement actuel." },
+    { "short": "-s", "long": "--shell", "description": "Ouvre un shell root en gardant l'environnement actuel.", "example": { "command": "sudo -s" } },
     { "short": "-l", "long": "--list", "description": "Liste les commandes que vous avez le droit d'exécuter." },
-    { "short": "-k", "long": "--reset-timestamp", "description": "Oublie le mot de passe mémorisé : il sera redemandé la prochaine fois." },
-    { "short": "-E", "long": "--preserve-env", "description": "Conserve les variables d'environnement de l'utilisateur." },
-    { "short": "-g", "long": "--group", "description": "Exécute la commande avec ce groupe principal.", "takesValue": true, "valueName": "GROUPE" }
+    { "short": "-k", "long": "--reset-timestamp", "description": "Oublie le mot de passe mémorisé : il sera redemandé la prochaine fois.", "example": { "command": "sudo -k" } },
+    { "short": "-E", "long": "--preserve-env", "description": "Conserve les variables d'environnement de l'utilisateur.", "example": { "command": "sudo -E npm install -g pnpm" } },
+    { "short": "-g", "long": "--group", "description": "Exécute la commande avec ce groupe principal.", "takesValue": true, "valueName": "GROUPE", "example": { "command": "sudo -g docker docker ps" } }
   ],
   "arguments": [
     { "name": "COMMANDE", "description": "Commande à exécuter avec des privilèges élevés, suivie de ses propres options." }

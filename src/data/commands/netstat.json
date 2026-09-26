@@ -12,14 +12,10 @@
     { "short": "-n", "long": "--numeric", "description": "Adresses et ports en chiffres, sans résolution de noms (plus rapide)." },
     { "short": "-p", "long": "--program", "description": "Affiche le PID et le nom du programme (sudo pour voir ceux des autres utilisateurs)." },
     { "short": "-r", "long": "--route", "description": "Affiche la table de routage." },
-    { "short": "-s", "long": "--statistics", "description": "Statistiques par protocole." }
+    { "short": "-s", "long": "--statistics", "description": "Statistiques par protocole.", "example": { "command": "netstat -s", "output": "Tcp:\n    1834 active connection openings\n    12 failed connection attempts" } }
   ],
   "examples": [
-    {
-      "command": "sudo netstat -tulpn",
-      "explanation": "Tous les ports TCP et UDP en écoute, avec le programme associé.",
-      "output": "Proto Adresse locale    Adresse distante  Etat     PID/Program name\ntcp   0.0.0.0:22        0.0.0.0:*         LISTEN   812/sshd\ntcp   127.0.0.1:5432    0.0.0.0:*         LISTEN   905/postgres"
-    },
+    { "command": "sudo netstat -tulpn", "explanation": "Tous les ports TCP et UDP en écoute, avec le programme associé.", "output": "Proto Adresse locale    Adresse distante  Etat     PID/Program name\ntcp   0.0.0.0:22        0.0.0.0:*         LISTEN   812/sshd\ntcp   127.0.0.1:5432    0.0.0.0:*         LISTEN   905/postgres" },
     { "command": "netstat -rn", "explanation": "La table de routage, sans résolution de noms." },
     { "command": "netstat -an | grep :80", "explanation": "Les connexions sur le port 80." }
   ],

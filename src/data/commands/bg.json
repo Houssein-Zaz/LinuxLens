@@ -5,7 +5,9 @@
   "description": "Commande interne du shell. Après avoir suspendu un programme avec Ctrl+Z, bg le fait repartir en arrière-plan : il continue de tourner pendant que vous récupérez le terminal. Sans argument, bg agit sur la tâche courante (marquée + dans jobs).",
   "synopsis": "bg [%TÂCHE...]",
   "options": [],
-  "arguments": [{ "name": "%TÂCHE", "description": "Tâche à relancer : %1, %2… (numéros affichés par jobs).", "optional": true, "variadic": true }],
+  "arguments": [
+    { "name": "%TÂCHE", "description": "Tâche à relancer : %1, %2… (numéros affichés par jobs).", "optional": true, "variadic": true }
+  ],
   "examples": [
     { "command": "bg", "explanation": "Relance en arrière-plan la dernière tâche suspendue avec Ctrl+Z.", "output": "[1]+ ./compilation.sh &" },
     { "command": "bg %2", "explanation": "Relance la tâche numéro 2." }

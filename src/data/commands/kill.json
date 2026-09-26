@@ -5,12 +5,12 @@
   "description": "Malgré son nom, kill envoie un signal, qui ne tue pas forcément le processus. Le signal par défaut est SIGTERM (15) : une demande polie d'arrêt, que le programme peut intercepter pour se fermer proprement. SIGKILL (9) arrête le processus immédiatement, sans lui laisser le temps de sauvegarder.",
   "synopsis": "kill [-SIGNAL] PID...",
   "options": [
-    { "short": "-s", "description": "Signal à envoyer, par nom (TERM, KILL, HUP) ou par numéro.", "takesValue": true, "valueName": "SIGNAL" },
+    { "short": "-s", "description": "Signal à envoyer, par nom (TERM, KILL, HUP) ou par numéro.", "takesValue": true, "valueName": "SIGNAL", "example": { "command": "kill -s HUP 812" } },
     { "short": "-l", "description": "Liste les noms de signaux disponibles." },
     { "short": "-9", "description": "SIGKILL : arrêt immédiat et forcé, impossible à intercepter. En dernier recours." },
-    { "short": "-15", "description": "SIGTERM : demande d'arrêt propre (signal par défaut)." },
-    { "short": "-1", "description": "SIGHUP : souvent utilisé pour demander à un service de relire sa configuration." },
-    { "short": "-2", "description": "SIGINT : interruption, comme Ctrl+C." }
+    { "short": "-15", "description": "SIGTERM : demande d'arrêt propre (signal par défaut).", "example": { "command": "kill -15 1234" } },
+    { "short": "-1", "description": "SIGHUP : souvent utilisé pour demander à un service de relire sa configuration.", "example": { "command": "sudo kill -1 812" } },
+    { "short": "-2", "description": "SIGINT : interruption, comme Ctrl+C.", "example": { "command": "kill -2 4321" } }
   ],
   "arguments": [
     { "name": "PID", "description": "Identifiant du ou des processus visés (voir ps ou pgrep). %1 désigne le job 1 du shell.", "variadic": true }

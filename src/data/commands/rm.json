@@ -6,15 +6,17 @@
   "synopsis": "rm [OPTION]... FICHIER...",
   "options": [
     { "short": "-r", "long": "--recursive", "description": "Supprime les répertoires et tout leur contenu, récursivement. -R est équivalent." },
-    { "short": "-R", "description": "Synonyme de -r." },
-    { "short": "-f", "long": "--force", "description": "Ne demande jamais de confirmation et ignore les fichiers inexistants." },
+    { "short": "-R", "description": "Synonyme de -r.", "example": { "command": "rm -R cache/" } },
+    { "short": "-f", "long": "--force", "description": "Ne demande jamais de confirmation et ignore les fichiers inexistants.", "example": { "command": "rm -f fichier_peut_etre_absent.tmp" } },
     { "short": "-i", "description": "Demande confirmation avant chaque suppression." },
-    { "short": "-I", "description": "Demande une seule confirmation avant de supprimer plus de trois fichiers ou en mode récursif." },
-    { "short": "-d", "long": "--dir", "description": "Supprime les répertoires vides." },
-    { "short": "-v", "long": "--verbose", "description": "Affiche chaque fichier supprimé." },
-    { "long": "--preserve-root", "description": "Refuse d'opérer sur « / » (comportement par défaut)." }
+    { "short": "-I", "description": "Demande une seule confirmation avant de supprimer plus de trois fichiers ou en mode récursif.", "example": { "command": "rm -I *.log", "output": "rm : supprimer 12 arguments ? " } },
+    { "short": "-d", "long": "--dir", "description": "Supprime les répertoires vides.", "example": { "command": "rm -d dossier_vide" } },
+    { "short": "-v", "long": "--verbose", "description": "Affiche chaque fichier supprimé.", "example": { "command": "rm -v *.tmp", "output": "'a.tmp' supprimé\n'b.tmp' supprimé" } },
+    { "long": "--preserve-root", "description": "Refuse d'opérer sur « / » (comportement par défaut).", "example": { "command": "rm -r --preserve-root build/" } }
   ],
-  "arguments": [{ "name": "FICHIER", "description": "Fichier(s) ou répertoire(s) à supprimer.", "variadic": true }],
+  "arguments": [
+    { "name": "FICHIER", "description": "Fichier(s) ou répertoire(s) à supprimer.", "variadic": true }
+  ],
   "examples": [
     { "command": "rm vieux.log", "explanation": "Supprime un fichier." },
     { "command": "rm -i *.tmp", "explanation": "Supprime les fichiers .tmp en demandant confirmation pour chacun." },

@@ -6,9 +6,9 @@
   "synopsis": "apt [OPTION]... SOUS-COMMANDE [PAQUET]...",
   "options": [
     { "short": "-y", "long": "--yes", "description": "Répond « oui » automatiquement aux confirmations." },
-    { "long": "--no-install-recommends", "description": "N'installe pas les paquets simplement recommandés, seulement les dépendances obligatoires." },
-    { "short": "-s", "long": "--simulate", "description": "Montre ce qui serait fait, sans rien modifier." },
-    { "long": "--installed", "description": "Avec list, seulement les paquets installés." },
+    { "long": "--no-install-recommends", "description": "N'installe pas les paquets simplement recommandés, seulement les dépendances obligatoires.", "example": { "command": "sudo apt install --no-install-recommends ffmpeg" } },
+    { "short": "-s", "long": "--simulate", "description": "Montre ce qui serait fait, sans rien modifier.", "example": { "command": "apt -s remove python3", "output": "Inst … (simulation) : 142 paquets seraient supprimés" } },
+    { "long": "--installed", "description": "Avec list, seulement les paquets installés.", "example": { "command": "apt list --installed | grep python3", "output": "python3/noble,now 3.12.3-0ubuntu1 amd64 [installé]" } },
     { "long": "--upgradable", "description": "Avec list, seulement les paquets qui ont une mise à jour." }
   ],
   "subcommands": [
@@ -23,7 +23,9 @@
     { "name": "show", "description": "Affiche les détails d'un paquet : version, taille, dépendances, description." },
     { "name": "list", "description": "Liste des paquets, à filtrer avec --installed ou --upgradable." }
   ],
-  "arguments": [{ "name": "PAQUET", "description": "Nom(s) de paquet visés par la sous-commande.", "optional": true, "variadic": true }],
+  "arguments": [
+    { "name": "PAQUET", "description": "Nom(s) de paquet visés par la sous-commande.", "optional": true, "variadic": true }
+  ],
   "examples": [
     { "command": "sudo apt update && sudo apt upgrade", "explanation": "La mise à jour classique : rafraîchir la liste, puis installer les nouvelles versions." },
     { "command": "sudo apt install -y git curl", "explanation": "Installe git et curl sans demander de confirmation." },

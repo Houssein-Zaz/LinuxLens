@@ -6,10 +6,10 @@
   "synopsis": "chown [OPTION]... [PROPRIÉTAIRE][:[GROUPE]] FICHIER...",
   "options": [
     { "short": "-R", "long": "--recursive", "description": "Applique le changement aux répertoires et à tout leur contenu." },
-    { "short": "-v", "long": "--verbose", "description": "Affiche un message pour chaque fichier traité." },
-    { "short": "-c", "long": "--changes", "description": "N'affiche que les fichiers réellement modifiés." },
-    { "short": "-h", "long": "--no-dereference", "description": "Modifie le lien symbolique lui-même plutôt que sa cible." },
-    { "long": "--reference", "description": "Copie le propriétaire et le groupe d'un autre fichier.", "takesValue": true, "valueName": "FICHIER" }
+    { "short": "-v", "long": "--verbose", "description": "Affiche un message pour chaque fichier traité.", "example": { "command": "sudo chown -v esprit rapport.pdf", "output": "le propriétaire de 'rapport.pdf' a été modifié de root en esprit" } },
+    { "short": "-c", "long": "--changes", "description": "N'affiche que les fichiers réellement modifiés.", "example": { "command": "sudo chown -R -c esprit projet/", "output": "le propriétaire de 'projet/build.log' a été modifié de root en esprit" } },
+    { "short": "-h", "long": "--no-dereference", "description": "Modifie le lien symbolique lui-même plutôt que sa cible.", "example": { "command": "sudo chown -h esprit lien_config" } },
+    { "long": "--reference", "description": "Copie le propriétaire et le groupe d'un autre fichier.", "takesValue": true, "valueName": "FICHIER", "example": { "command": "sudo chown --reference=index.html nouvelle_page.html" } }
   ],
   "arguments": [
     { "name": "PROPRIÉTAIRE:GROUPE", "description": "Nouvel utilisateur, éventuellement suivi de « : » et du nouveau groupe." },

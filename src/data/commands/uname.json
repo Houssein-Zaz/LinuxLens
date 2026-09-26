@@ -6,11 +6,11 @@
   "synopsis": "uname [OPTION]...",
   "options": [
     { "short": "-a", "long": "--all", "description": "Toutes les informations." },
-    { "short": "-s", "long": "--kernel-name", "description": "Nom du noyau (par défaut)." },
+    { "short": "-s", "long": "--kernel-name", "description": "Nom du noyau (par défaut).", "example": { "command": "uname -s", "output": "Linux" } },
     { "short": "-r", "long": "--kernel-release", "description": "Version du noyau." },
-    { "short": "-n", "long": "--nodename", "description": "Nom de la machine sur le réseau (hostname)." },
+    { "short": "-n", "long": "--nodename", "description": "Nom de la machine sur le réseau (hostname).", "example": { "command": "uname -n", "output": "portable" } },
     { "short": "-m", "long": "--machine", "description": "Architecture matérielle : x86_64, aarch64 (ARM 64 bits)…" },
-    { "short": "-o", "long": "--operating-system", "description": "Système d'exploitation (GNU/Linux)." }
+    { "short": "-o", "long": "--operating-system", "description": "Système d'exploitation (GNU/Linux).", "example": { "command": "uname -o", "output": "GNU/Linux" } }
   ],
   "examples": [
     { "command": "uname -a", "explanation": "Toutes les informations sur une ligne.", "output": "Linux portable 6.8.0-45-generic #45-Ubuntu SMP PREEMPT_DYNAMIC x86_64 x86_64 x86_64 GNU/Linux" },

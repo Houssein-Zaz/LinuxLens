@@ -6,17 +6,15 @@
   "synopsis": "id [OPTION]... [UTILISATEUR]",
   "options": [
     { "short": "-u", "long": "--user", "description": "Affiche seulement l'UID." },
-    { "short": "-g", "long": "--group", "description": "Affiche seulement le GID du groupe principal." },
+    { "short": "-g", "long": "--group", "description": "Affiche seulement le GID du groupe principal.", "example": { "command": "id -g", "output": "1000" } },
     { "short": "-G", "long": "--groups", "description": "Affiche les numéros de tous les groupes." },
     { "short": "-n", "long": "--name", "description": "Avec -u, -g ou -G, affiche les noms au lieu des numéros." }
   ],
-  "arguments": [{ "name": "UTILISATEUR", "description": "Utilisateur à décrire. Par défaut : vous.", "optional": true }],
+  "arguments": [
+    { "name": "UTILISATEUR", "description": "Utilisateur à décrire. Par défaut : vous.", "optional": true }
+  ],
   "examples": [
-    {
-      "command": "id",
-      "explanation": "Votre identité complète.",
-      "output": "uid=1000(esprit) gid=1000(esprit) groupes=1000(esprit),4(adm),27(sudo),998(docker)"
-    },
+    { "command": "id", "explanation": "Votre identité complète.", "output": "uid=1000(esprit) gid=1000(esprit) groupes=1000(esprit),4(adm),27(sudo),998(docker)" },
     { "command": "id -nG", "explanation": "Les noms de vos groupes.", "output": "esprit adm sudo docker" },
     { "command": "id -u", "explanation": "Votre UID seulement ; 0 signifie root.", "output": "1000" },
     { "command": "id www-data", "explanation": "L'identité d'un autre compte." }

@@ -8,15 +8,17 @@
     { "short": "-n", "long": "--numeric-sort", "description": "Tri numérique : 10 vient après 9, et non après 1." },
     { "short": "-h", "long": "--human-numeric-sort", "description": "Tri numérique qui comprend les unités (2K, 1G), pratique avec du -h." },
     { "short": "-r", "long": "--reverse", "description": "Inverse l'ordre du tri." },
-    { "short": "-u", "long": "--unique", "description": "Supprime les lignes en double." },
-    { "short": "-f", "long": "--ignore-case", "description": "Ignore la casse." },
+    { "short": "-u", "long": "--unique", "description": "Supprime les lignes en double.", "example": { "command": "sort -u villes.txt", "output": "Paris\nSfax\nTunis" } },
+    { "short": "-f", "long": "--ignore-case", "description": "Ignore la casse.", "example": { "command": "sort -f noms.txt", "output": "alice\nBob\ncharlie" } },
     { "short": "-k", "long": "--key", "description": "Trie selon un champ : -k2 pour la 2ᵉ colonne, -k2,2n pour un tri numérique limité à cette colonne.", "takesValue": true, "valueName": "CLÉ" },
     { "short": "-t", "long": "--field-separator", "description": "Séparateur de champs (par défaut : les blancs).", "takesValue": true, "valueName": "SÉP" },
-    { "short": "-o", "long": "--output", "description": "Écrit le résultat dans un fichier (peut être le fichier d'entrée).", "takesValue": true, "valueName": "FICHIER" },
-    { "short": "-V", "long": "--version-sort", "description": "Tri naturel des numéros de version (1.2 < 1.10)." },
-    { "short": "-c", "long": "--check", "description": "Vérifie seulement si l'entrée est déjà triée." }
+    { "short": "-o", "long": "--output", "description": "Écrit le résultat dans un fichier (peut être le fichier d'entrée).", "takesValue": true, "valueName": "FICHIER", "example": { "command": "sort -o noms.txt noms.txt" } },
+    { "short": "-V", "long": "--version-sort", "description": "Tri naturel des numéros de version (1.2 < 1.10).", "example": { "command": "sort -V versions.txt", "output": "1.2\n1.9\n1.10" } },
+    { "short": "-c", "long": "--check", "description": "Vérifie seulement si l'entrée est déjà triée.", "example": { "command": "sort -c noms.txt", "output": "sort: noms.txt:3: désordre: Alice" } }
   ],
-  "arguments": [{ "name": "FICHIER", "description": "Fichier(s) à trier. Sans fichier : l'entrée standard.", "optional": true, "variadic": true }],
+  "arguments": [
+    { "name": "FICHIER", "description": "Fichier(s) à trier. Sans fichier : l'entrée standard.", "optional": true, "variadic": true }
+  ],
   "examples": [
     { "command": "sort noms.txt", "explanation": "Trie les lignes par ordre alphabétique." },
     { "command": "sort -n -r scores.txt", "explanation": "Trie des nombres du plus grand au plus petit." },

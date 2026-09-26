@@ -6,7 +6,7 @@
   "synopsis": "umask [-p] [-S] [MASQUE]",
   "options": [
     { "short": "-S", "description": "Affiche ou accepte le masque sous forme symbolique : les droits conservés (u=rwx,g=rx,o=rx)." },
-    { "short": "-p", "description": "Affiche le masque sous une forme réutilisable comme commande." }
+    { "short": "-p", "description": "Affiche le masque sous une forme réutilisable comme commande.", "example": { "command": "umask -p", "output": "umask 0022" } }
   ],
   "arguments": [
     { "name": "MASQUE", "description": "Nouveau masque en octal (022, 077) ou en symbolique (u=rwx,g=,o=). Sans argument, affiche le masque actuel.", "optional": true }

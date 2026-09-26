@@ -5,14 +5,16 @@
   "description": "Sans argument, change votre propre mot de passe (l'ancien est demandé d'abord). Avec sudo et un nom d'utilisateur, l'administrateur peut définir le mot de passe d'un autre compte, le verrouiller ou le faire expirer. La saisie n'affiche rien, pas même des étoiles : c'est normal. Les mots de passe sont stockés sous forme de hachage dans /etc/shadow.",
   "synopsis": "passwd [OPTION]... [UTILISATEUR]",
   "options": [
-    { "short": "-l", "long": "--lock", "description": "Verrouille le compte : la connexion par mot de passe devient impossible." },
-    { "short": "-u", "long": "--unlock", "description": "Déverrouille un compte verrouillé." },
+    { "short": "-l", "long": "--lock", "description": "Verrouille le compte : la connexion par mot de passe devient impossible.", "example": { "command": "sudo passwd -l alice", "output": "passwd: password changed." } },
+    { "short": "-u", "long": "--unlock", "description": "Déverrouille un compte verrouillé.", "example": { "command": "sudo passwd -u alice", "output": "passwd: password changed." } },
     { "short": "-e", "long": "--expire", "description": "Force l'utilisateur à changer son mot de passe à la prochaine connexion." },
-    { "short": "-d", "long": "--delete", "description": "Supprime le mot de passe (compte sans mot de passe : à éviter)." },
+    { "short": "-d", "long": "--delete", "description": "Supprime le mot de passe (compte sans mot de passe : à éviter).", "example": { "command": "sudo passwd -d invite" } },
     { "short": "-S", "long": "--status", "description": "Affiche l'état du mot de passe (actif, verrouillé, dates)." },
-    { "short": "-x", "long": "--maxdays", "description": "Durée de validité maximale du mot de passe, en jours.", "takesValue": true, "valueName": "JOURS" }
+    { "short": "-x", "long": "--maxdays", "description": "Durée de validité maximale du mot de passe, en jours.", "takesValue": true, "valueName": "JOURS", "example": { "command": "sudo passwd -x 90 alice" } }
   ],
-  "arguments": [{ "name": "UTILISATEUR", "description": "Compte visé (administrateur uniquement). Par défaut : vous.", "optional": true }],
+  "arguments": [
+    { "name": "UTILISATEUR", "description": "Compte visé (administrateur uniquement). Par défaut : vous.", "optional": true }
+  ],
   "examples": [
     { "command": "passwd", "explanation": "Change votre mot de passe." },
     { "command": "sudo passwd alice", "explanation": "Définit le mot de passe d'alice (par exemple après useradd)." },

@@ -5,16 +5,18 @@
   "description": "Compresse chaque fichier individuellement et le remplace par une version .gz : le fichier d'origine disparaît, sauf avec -k. gzip ne regroupe pas plusieurs fichiers en un seul ; pour un répertoire, on crée d'abord une archive avec tar (tar -czf fait les deux d'un coup).",
   "synopsis": "gzip [OPTION]... [FICHIER]...",
   "options": [
-    { "short": "-d", "long": "--decompress", "description": "Décompresse (équivalent de gunzip)." },
+    { "short": "-d", "long": "--decompress", "description": "Décompresse (équivalent de gunzip).", "example": { "command": "gzip -d journal.log.gz" } },
     { "short": "-k", "long": "--keep", "description": "Garde le fichier d'origine." },
-    { "short": "-c", "long": "--stdout", "description": "Écrit le résultat sur la sortie standard sans toucher aux fichiers." },
-    { "short": "-r", "long": "--recursive", "description": "Compresse chaque fichier des répertoires, récursivement." },
+    { "short": "-c", "long": "--stdout", "description": "Écrit le résultat sur la sortie standard sans toucher aux fichiers.", "example": { "command": "gzip -c rapport.txt > rapport.txt.gz" } },
+    { "short": "-r", "long": "--recursive", "description": "Compresse chaque fichier des répertoires, récursivement.", "example": { "command": "gzip -r logs/" } },
     { "short": "-v", "long": "--verbose", "description": "Affiche le taux de compression de chaque fichier." },
     { "short": "-l", "long": "--list", "description": "Affiche taille compressée, taille d'origine et taux." },
-    { "short": "-1", "long": "--fast", "description": "Compression la plus rapide, fichier moins réduit." },
+    { "short": "-1", "long": "--fast", "description": "Compression la plus rapide, fichier moins réduit.", "example": { "command": "gzip -1 gros_dump.sql" } },
     { "short": "-9", "long": "--best", "description": "Compression maximale, plus lente (6 par défaut)." }
   ],
-  "arguments": [{ "name": "FICHIER", "description": "Fichier(s) à compresser. Sans fichier : l'entrée standard.", "optional": true, "variadic": true }],
+  "arguments": [
+    { "name": "FICHIER", "description": "Fichier(s) à compresser. Sans fichier : l'entrée standard.", "optional": true, "variadic": true }
+  ],
   "examples": [
     { "command": "gzip journal.log", "explanation": "Remplace journal.log par journal.log.gz." },
     { "command": "gzip -kv -9 dump.sql", "explanation": "Compression maximale en gardant l'original, avec le taux obtenu.", "output": "dump.sql:\t 84.3% -- created dump.sql.gz" },

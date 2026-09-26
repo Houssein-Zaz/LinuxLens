@@ -9,12 +9,14 @@
     { "short": "-9", "description": "Envoie SIGKILL : arrêt forcé et immédiat." },
     { "short": "-i", "long": "--interactive", "description": "Demande confirmation avant chaque processus." },
     { "short": "-u", "long": "--user", "description": "Ne vise que les processus de cet utilisateur.", "takesValue": true, "valueName": "UTILISATEUR" },
-    { "short": "-v", "long": "--verbose", "description": "Indique si le signal a bien été envoyé." },
-    { "short": "-w", "long": "--wait", "description": "Attend que tous les processus visés soient terminés." },
-    { "short": "-I", "long": "--ignore-case", "description": "Ignore la casse du nom." },
-    { "short": "-l", "long": "--list", "description": "Liste les noms de signaux disponibles." }
+    { "short": "-v", "long": "--verbose", "description": "Indique si le signal a bien été envoyé.", "example": { "command": "killall -v firefox", "output": "firefox(4521) tué par le signal 15" } },
+    { "short": "-w", "long": "--wait", "description": "Attend que tous les processus visés soient terminés.", "example": { "command": "killall -w serveur_dev" } },
+    { "short": "-I", "long": "--ignore-case", "description": "Ignore la casse du nom.", "example": { "command": "killall -I Firefox" } },
+    { "short": "-l", "long": "--list", "description": "Liste les noms de signaux disponibles.", "example": { "command": "killall -l", "output": "HUP INT QUIT ILL TRAP ABRT BUS FPE KILL USR1 SEGV USR2 PIPE ALRM TERM" } }
   ],
-  "arguments": [{ "name": "NOM", "description": "Nom exact du ou des programmes visés.", "variadic": true }],
+  "arguments": [
+    { "name": "NOM", "description": "Nom exact du ou des programmes visés.", "variadic": true }
+  ],
   "examples": [
     { "command": "killall firefox", "explanation": "Demande à toutes les fenêtres de Firefox de se fermer proprement." },
     { "command": "killall -9 chrome", "explanation": "Force l'arrêt de tous les processus chrome." },

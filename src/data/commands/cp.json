@@ -6,16 +6,16 @@
   "synopsis": "cp [OPTION]... SOURCE... DESTINATION",
   "options": [
     { "short": "-r", "long": "--recursive", "description": "Copie les répertoires et tout leur contenu. Indispensable pour copier un dossier. -R est équivalent." },
-    { "short": "-R", "description": "Synonyme de -r." },
+    { "short": "-R", "description": "Synonyme de -r.", "example": { "command": "cp -R config/ config.bak" } },
     { "short": "-i", "long": "--interactive", "description": "Demande confirmation avant d'écraser un fichier existant." },
-    { "short": "-n", "long": "--no-clobber", "description": "N'écrase jamais un fichier existant." },
+    { "short": "-n", "long": "--no-clobber", "description": "N'écrase jamais un fichier existant.", "example": { "command": "cp -n modele.txt notes.txt" } },
     { "short": "-v", "long": "--verbose", "description": "Affiche chaque fichier copié." },
-    { "short": "-p", "description": "Préserve le mode, le propriétaire et les dates des fichiers." },
+    { "short": "-p", "description": "Préserve le mode, le propriétaire et les dates des fichiers.", "example": { "command": "cp -p photo.jpg sauvegarde/" } },
     { "short": "-a", "long": "--archive", "description": "Mode archive : copie récursive qui préserve tout (liens, permissions, dates). Équivaut à -dR --preserve=all." },
-    { "short": "-u", "long": "--update", "description": "Ne copie que si la source est plus récente que la destination, ou si la destination n'existe pas." },
-    { "short": "-l", "long": "--link", "description": "Crée des liens physiques au lieu de copier." },
-    { "short": "-s", "long": "--symbolic-link", "description": "Crée des liens symboliques au lieu de copier." },
-    { "short": "-t", "long": "--target-directory", "description": "Copie toutes les sources dans ce répertoire.", "takesValue": true, "valueName": "RÉPERTOIRE" }
+    { "short": "-u", "long": "--update", "description": "Ne copie que si la source est plus récente que la destination, ou si la destination n'existe pas.", "example": { "command": "cp -u *.md ~/sauvegarde/" } },
+    { "short": "-l", "long": "--link", "description": "Crée des liens physiques au lieu de copier.", "example": { "command": "cp -l gros_fichier.iso copie.iso" } },
+    { "short": "-s", "long": "--symbolic-link", "description": "Crée des liens symboliques au lieu de copier.", "example": { "command": "cp -s /opt/app/config.yml config.yml" } },
+    { "short": "-t", "long": "--target-directory", "description": "Copie toutes les sources dans ce répertoire.", "takesValue": true, "valueName": "RÉPERTOIRE", "example": { "command": "cp -t sauvegarde/ a.txt b.txt c.txt" } }
   ],
   "arguments": [
     { "name": "SOURCE", "description": "Fichier(s) ou répertoire(s) à copier.", "variadic": true },

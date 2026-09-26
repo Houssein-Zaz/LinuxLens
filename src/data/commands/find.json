@@ -6,22 +6,22 @@
   "synopsis": "find [CHEMIN...] [EXPRESSION]",
   "options": [
     { "short": "-name", "description": "Nom du fichier correspondant au motif (jokers * ? [ ] autorisés, à mettre entre guillemets).", "takesValue": true, "valueName": "MOTIF" },
-    { "short": "-iname", "description": "Comme -name, sans tenir compte de la casse.", "takesValue": true, "valueName": "MOTIF" },
+    { "short": "-iname", "description": "Comme -name, sans tenir compte de la casse.", "takesValue": true, "valueName": "MOTIF", "example": { "command": "find . -iname \"readme*\"", "output": "./README.md\n./docs/Readme.txt" } },
     { "short": "-type", "description": "Type de fichier : f (fichier), d (répertoire), l (lien symbolique).", "takesValue": true, "valueName": "TYPE", "values": ["f", "d", "l", "b", "c", "p", "s"] },
     { "short": "-size", "description": "Taille : +10M (plus de 10 Mio), -1k (moins de 1 Kio), 100c (exactement 100 octets).", "takesValue": true, "valueName": "N" },
     { "short": "-mtime", "description": "Modifié il y a N jours : -7 (moins de 7 jours), +30 (plus de 30 jours).", "takesValue": true, "valueName": "N" },
-    { "short": "-mmin", "description": "Modifié il y a N minutes.", "takesValue": true, "valueName": "N" },
-    { "short": "-user", "description": "Appartenant à l'utilisateur donné.", "takesValue": true, "valueName": "UTILISATEUR" },
-    { "short": "-perm", "description": "Permissions exactes (644) ou au moins ces permissions (-u+x).", "takesValue": true, "valueName": "MODE" },
-    { "short": "-maxdepth", "description": "Descend au plus N niveaux sous les chemins de départ.", "takesValue": true, "valueName": "N" },
-    { "short": "-mindepth", "description": "N'applique les tests qu'à partir de N niveaux de profondeur.", "takesValue": true, "valueName": "N" },
-    { "short": "-empty", "description": "Fichiers ou répertoires vides." },
-    { "short": "-newer", "description": "Modifié plus récemment que le fichier donné.", "takesValue": true, "valueName": "FICHIER" },
+    { "short": "-mmin", "description": "Modifié il y a N minutes.", "takesValue": true, "valueName": "N", "example": { "command": "find . -mmin -30", "output": "./notes.txt\n./src/app.js" } },
+    { "short": "-user", "description": "Appartenant à l'utilisateur donné.", "takesValue": true, "valueName": "UTILISATEUR", "example": { "command": "find /tmp -user esprit", "output": "/tmp/export.csv" } },
+    { "short": "-perm", "description": "Permissions exactes (644) ou au moins ces permissions (-u+x).", "takesValue": true, "valueName": "MODE", "example": { "command": "find . -perm 777", "output": "./script_dangereux.sh" } },
+    { "short": "-maxdepth", "description": "Descend au plus N niveaux sous les chemins de départ.", "takesValue": true, "valueName": "N", "example": { "command": "find . -maxdepth 1 -type d", "output": ".\n./src\n./docs" } },
+    { "short": "-mindepth", "description": "N'applique les tests qu'à partir de N niveaux de profondeur.", "takesValue": true, "valueName": "N", "example": { "command": "find . -mindepth 2 -name \"*.js\"", "output": "./src/app.js" } },
+    { "short": "-empty", "description": "Fichiers ou répertoires vides.", "example": { "command": "find . -type f -empty", "output": "./vide.txt" } },
+    { "short": "-newer", "description": "Modifié plus récemment que le fichier donné.", "takesValue": true, "valueName": "FICHIER", "example": { "command": "find . -newer derniere_sauvegarde.txt", "output": "./rapport.docx" } },
     { "short": "-exec", "description": "Exécute une commande sur chaque résultat ; {} est remplacé par le fichier, la commande se termine par \\; (un appel par fichier) ou + (un appel groupé)." },
     { "short": "-delete", "description": "Supprime les fichiers trouvés. À utiliser en dernier, après avoir vérifié les résultats sans cette option." },
-    { "short": "-print", "description": "Affiche le chemin (action par défaut)." },
-    { "short": "-not", "description": "Inverse le test suivant (équivalent de !)." },
-    { "short": "-o", "description": "OU logique entre deux tests (par défaut, les tests sont combinés par ET)." }
+    { "short": "-print", "description": "Affiche le chemin (action par défaut).", "example": { "command": "find /etc -maxdepth 1 -name \"*.conf\" -print", "output": "/etc/host.conf\n/etc/resolv.conf" } },
+    { "short": "-not", "description": "Inverse le test suivant (équivalent de !).", "example": { "command": "find . -type f -not -name \"*.md\"", "output": "./package.json\n./src/app.js" } },
+    { "short": "-o", "description": "OU logique entre deux tests (par défaut, les tests sont combinés par ET).", "example": { "command": "find . -name \"*.jpg\" -o -name \"*.png\"", "output": "./photo.jpg\n./logo.png" } }
   ],
   "arguments": [
     { "name": "CHEMIN", "description": "Répertoire(s) de départ. Par défaut : le répertoire courant.", "optional": true, "variadic": true }

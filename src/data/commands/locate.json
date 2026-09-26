@@ -8,11 +8,13 @@
     { "short": "-i", "long": "--ignore-case", "description": "Ignore la casse." },
     { "short": "-c", "long": "--count", "description": "Affiche seulement le nombre de résultats." },
     { "short": "-l", "long": "--limit", "description": "Limite le nombre de résultats.", "takesValue": true, "valueName": "N" },
-    { "short": "-b", "long": "--basename", "description": "Ne cherche que dans le nom du fichier, pas dans tout le chemin." },
-    { "short": "-e", "long": "--existing", "description": "N'affiche que les fichiers qui existent encore." },
+    { "short": "-b", "long": "--basename", "description": "Ne cherche que dans le nom du fichier, pas dans tout le chemin.", "example": { "command": "locate -b '\\nginx.conf'", "output": "/etc/nginx/nginx.conf" } },
+    { "short": "-e", "long": "--existing", "description": "N'affiche que les fichiers qui existent encore.", "example": { "command": "locate -e rapport.pdf", "output": "/home/esprit/Documents/rapport.pdf" } },
     { "short": "-r", "long": "--regex", "description": "Interprète le motif comme une expression régulière." }
   ],
-  "arguments": [{ "name": "MOTIF", "description": "Texte recherché dans les chemins. Sans joker, il suffit qu'il apparaisse n'importe où dans le chemin.", "variadic": true }],
+  "arguments": [
+    { "name": "MOTIF", "description": "Texte recherché dans les chemins. Sans joker, il suffit qu'il apparaisse n'importe où dans le chemin.", "variadic": true }
+  ],
   "examples": [
     { "command": "locate nginx.conf", "explanation": "Trouve tous les chemins contenant nginx.conf.", "output": "/etc/nginx/nginx.conf\n/usr/share/doc/nginx/examples/nginx.conf" },
     { "command": "locate -i readme -l 5", "explanation": "Les 5 premiers fichiers dont le chemin contient « readme », quelle que soit la casse." },

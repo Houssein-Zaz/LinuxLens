@@ -8,14 +8,16 @@
     { "short": "-O", "long": "--output-document", "description": "Nom du fichier de sortie ; -O - écrit sur la sortie standard.", "takesValue": true, "valueName": "FICHIER" },
     { "short": "-P", "long": "--directory-prefix", "description": "Répertoire où enregistrer les fichiers.", "takesValue": true, "valueName": "RÉPERTOIRE" },
     { "short": "-c", "long": "--continue", "description": "Reprend un téléchargement interrompu." },
-    { "short": "-q", "long": "--quiet", "description": "N'affiche rien." },
-    { "short": "-b", "long": "--background", "description": "Continue le téléchargement en arrière-plan (journal dans wget-log)." },
+    { "short": "-q", "long": "--quiet", "description": "N'affiche rien.", "example": { "command": "wget -q https://exemple.fr/data.csv" } },
+    { "short": "-b", "long": "--background", "description": "Continue le téléchargement en arrière-plan (journal dans wget-log).", "example": { "command": "wget -b https://exemple.fr/ubuntu.iso", "output": "Continuing in background, pid 4521.\nOutput will be written to 'wget-log'." } },
     { "short": "-i", "long": "--input-file", "description": "Télécharge toutes les URL listées dans un fichier.", "takesValue": true, "valueName": "FICHIER" },
-    { "short": "-r", "long": "--recursive", "description": "Téléchargement récursif : suit les liens des pages." },
-    { "long": "--no-parent", "description": "Avec -r, ne remonte jamais dans les répertoires parents (forme courte : -np)." },
-    { "long": "--limit-rate", "description": "Limite le débit, par exemple 500k ou 2m.", "takesValue": true, "valueName": "DÉBIT" }
+    { "short": "-r", "long": "--recursive", "description": "Téléchargement récursif : suit les liens des pages.", "example": { "command": "wget -r -l 1 https://exemple.fr/docs/" } },
+    { "long": "--no-parent", "description": "Avec -r, ne remonte jamais dans les répertoires parents (forme courte : -np).", "example": { "command": "wget -r --no-parent https://exemple.fr/docs/" } },
+    { "long": "--limit-rate", "description": "Limite le débit, par exemple 500k ou 2m.", "takesValue": true, "valueName": "DÉBIT", "example": { "command": "wget --limit-rate=500k https://exemple.fr/ubuntu.iso" } }
   ],
-  "arguments": [{ "name": "URL", "description": "Adresse(s) à télécharger.", "variadic": true }],
+  "arguments": [
+    { "name": "URL", "description": "Adresse(s) à télécharger.", "variadic": true }
+  ],
   "examples": [
     { "command": "wget https://exemple.fr/ubuntu.iso", "explanation": "Télécharge le fichier dans le répertoire courant, avec une barre de progression." },
     { "command": "wget -c https://exemple.fr/ubuntu.iso", "explanation": "Reprend le téléchargement là où il s'était arrêté." },

@@ -5,14 +5,16 @@
   "description": "Son rôle premier est de mettre à jour la date d'accès et de modification d'un fichier à l'instant présent. Si le fichier n'existe pas, touch le crée vide : c'est l'usage le plus courant. Le contenu d'un fichier existant n'est jamais modifié.",
   "synopsis": "touch [OPTION]... FICHIER...",
   "options": [
-    { "short": "-c", "long": "--no-create", "description": "Ne crée pas le fichier s'il n'existe pas." },
-    { "short": "-a", "description": "Ne change que la date de dernier accès." },
-    { "short": "-m", "description": "Ne change que la date de dernière modification." },
+    { "short": "-c", "long": "--no-create", "description": "Ne crée pas le fichier s'il n'existe pas.", "example": { "command": "touch -c absent.txt" } },
+    { "short": "-a", "description": "Ne change que la date de dernier accès.", "example": { "command": "touch -a notes.txt" } },
+    { "short": "-m", "description": "Ne change que la date de dernière modification.", "example": { "command": "touch -m notes.txt" } },
     { "short": "-d", "long": "--date", "description": "Utilise la date indiquée au lieu de maintenant : \"2024-01-15 08:30\", \"yesterday\"…", "takesValue": true, "valueName": "DATE" },
-    { "short": "-t", "description": "Date au format [[SS]AA]MMJJhhmm[.ss], par exemple 202401150830.", "takesValue": true, "valueName": "HORODATAGE" },
-    { "short": "-r", "long": "--reference", "description": "Copie les dates d'un autre fichier.", "takesValue": true, "valueName": "FICHIER" }
+    { "short": "-t", "description": "Date au format [[SS]AA]MMJJhhmm[.ss], par exemple 202401150830.", "takesValue": true, "valueName": "HORODATAGE", "example": { "command": "touch -t 202401150830 rapport.pdf" } },
+    { "short": "-r", "long": "--reference", "description": "Copie les dates d'un autre fichier.", "takesValue": true, "valueName": "FICHIER", "example": { "command": "touch -r original.jpg copie.jpg" } }
   ],
-  "arguments": [{ "name": "FICHIER", "description": "Fichier(s) à créer ou à mettre à jour.", "variadic": true }],
+  "arguments": [
+    { "name": "FICHIER", "description": "Fichier(s) à créer ou à mettre à jour.", "variadic": true }
+  ],
   "examples": [
     { "command": "touch notes.txt", "explanation": "Crée notes.txt vide s'il n'existe pas, sinon met sa date à jour." },
     { "command": "touch index.html style.css app.js", "explanation": "Crée plusieurs fichiers d'un coup." },

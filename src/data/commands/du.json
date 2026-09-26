@@ -7,13 +7,15 @@
   "options": [
     { "short": "-h", "long": "--human-readable", "description": "Tailles en unités lisibles (K, M, G)." },
     { "short": "-s", "long": "--summarize", "description": "Affiche seulement le total de chaque argument." },
-    { "short": "-a", "long": "--all", "description": "Liste aussi les fichiers, pas seulement les répertoires." },
-    { "short": "-c", "long": "--total", "description": "Ajoute un total général à la fin." },
+    { "short": "-a", "long": "--all", "description": "Liste aussi les fichiers, pas seulement les répertoires.", "example": { "command": "du -ah projet/ | sort -rh | head -3", "output": "12M\tprojet/\n9,8M\tprojet/assets/video.mp4\n1,1M\tprojet/assets" } },
+    { "short": "-c", "long": "--total", "description": "Ajoute un total général à la fin.", "example": { "command": "du -ch *.log", "output": "4,0K\taccess.log\n20K\terror.log\n24K\ttotal" } },
     { "short": "-d", "long": "--max-depth", "description": "Ne détaille que jusqu'à N niveaux de profondeur.", "takesValue": true, "valueName": "N" },
     { "long": "--exclude", "description": "Ignore les fichiers correspondant au motif.", "takesValue": true, "valueName": "MOTIF" },
-    { "long": "--apparent-size", "description": "Affiche la taille des données plutôt que la place occupée sur le disque." }
+    { "long": "--apparent-size", "description": "Affiche la taille des données plutôt que la place occupée sur le disque.", "example": { "command": "du -sh --apparent-size notes.txt", "output": "47\tnotes.txt" } }
   ],
-  "arguments": [{ "name": "FICHIER", "description": "Fichier(s) ou répertoire(s) à mesurer. Par défaut : le répertoire courant.", "optional": true, "variadic": true }],
+  "arguments": [
+    { "name": "FICHIER", "description": "Fichier(s) ou répertoire(s) à mesurer. Par défaut : le répertoire courant.", "optional": true, "variadic": true }
+  ],
   "examples": [
     { "command": "du -sh ~/Téléchargements", "explanation": "Taille totale d'un répertoire.", "output": "3,2G\t/home/esprit/Téléchargements" },
     { "command": "du -sh * | sort -rh | head -5", "explanation": "Les 5 éléments les plus volumineux du répertoire courant." },

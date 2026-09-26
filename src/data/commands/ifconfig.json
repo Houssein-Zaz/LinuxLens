@@ -5,19 +5,15 @@
   "description": "Outil historique du paquet net-tools, encore très présent dans les cours et les tutoriels. Il n'est plus installé par défaut sur les distributions récentes : son remplaçant est ip (ifconfig correspond à ip a). Sans argument, il affiche les interfaces actives avec leurs adresses IPv4, IPv6 et MAC.",
   "synopsis": "ifconfig [-a] [INTERFACE] [PARAMÈTRES]",
   "options": [
-    { "short": "-a", "description": "Affiche toutes les interfaces, y compris celles qui sont désactivées." },
-    { "short": "-s", "description": "Affichage court, sous forme de tableau." }
+    { "short": "-a", "description": "Affiche toutes les interfaces, y compris celles qui sont désactivées.", "example": { "command": "ifconfig -a", "output": "eth0: flags=4098<BROADCAST,MULTICAST>  mtu 1500\n…" } },
+    { "short": "-s", "description": "Affichage court, sous forme de tableau.", "example": { "command": "ifconfig -s", "output": "Iface   MTU    RX-OK RX-ERR TX-OK TX-ERR Flg\nwlp2s0  1500  182734      0 90211      0 BMRU" } }
   ],
   "arguments": [
     { "name": "INTERFACE", "description": "Interface à afficher ou configurer : eth0, wlan0, lo…", "optional": true },
     { "name": "PARAMÈTRES", "description": "up, down, une adresse IP, netmask 255.255.255.0…", "optional": true, "variadic": true }
   ],
   "examples": [
-    {
-      "command": "ifconfig",
-      "explanation": "Les interfaces actives et leurs adresses.",
-      "output": "wlp2s0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500\n        inet 192.168.1.42  netmask 255.255.255.0  broadcast 192.168.1.255\n        ether 3c:a9:f4:12:ab:cd  txqueuelen 1000  (Ethernet)"
-    },
+    { "command": "ifconfig", "explanation": "Les interfaces actives et leurs adresses.", "output": "wlp2s0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500\n        inet 192.168.1.42  netmask 255.255.255.0  broadcast 192.168.1.255\n        ether 3c:a9:f4:12:ab:cd  txqueuelen 1000  (Ethernet)" },
     { "command": "ifconfig eth0", "explanation": "Seulement l'interface eth0." },
     { "command": "sudo ifconfig eth0 192.168.1.50 netmask 255.255.255.0 up", "explanation": "Attribue une adresse à eth0 et l'active (équivalent moderne : ip addr add)." }
   ],

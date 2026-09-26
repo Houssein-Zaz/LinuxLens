@@ -7,12 +7,12 @@
   "options": [
     { "short": "-d", "description": "Répertoire où extraire (créé s'il n'existe pas).", "takesValue": true, "valueName": "RÉPERTOIRE" },
     { "short": "-l", "description": "Liste le contenu de l'archive sans l'extraire." },
-    { "short": "-o", "description": "Écrase les fichiers existants sans demander." },
-    { "short": "-n", "description": "N'écrase jamais un fichier existant." },
-    { "short": "-q", "description": "N'affiche rien." },
-    { "short": "-t", "description": "Vérifie l'intégrité de l'archive." },
-    { "short": "-j", "description": "Extrait tous les fichiers au même niveau, sans recréer les répertoires." },
-    { "short": "-x", "description": "Exclut les fichiers qui correspondent aux motifs qui suivent." }
+    { "short": "-o", "description": "Écrase les fichiers existants sans demander.", "example": { "command": "unzip -o mise_a_jour.zip" } },
+    { "short": "-n", "description": "N'écrase jamais un fichier existant.", "example": { "command": "unzip -n archive.zip" } },
+    { "short": "-q", "description": "N'affiche rien.", "example": { "command": "unzip -q archive.zip" } },
+    { "short": "-t", "description": "Vérifie l'intégrité de l'archive.", "example": { "command": "unzip -t archive.zip", "output": "testing: projet/README.md   OK\nNo errors detected in compressed data of archive.zip." } },
+    { "short": "-j", "description": "Extrait tous les fichiers au même niveau, sans recréer les répertoires.", "example": { "command": "unzip -j photos.zip -d toutes_les_photos" } },
+    { "short": "-x", "description": "Exclut les fichiers qui correspondent aux motifs qui suivent.", "example": { "command": "unzip archive.zip -x \"*.log\"" } }
   ],
   "arguments": [
     { "name": "ARCHIVE.zip", "description": "Archive à extraire." },

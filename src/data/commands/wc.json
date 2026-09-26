@@ -6,12 +6,14 @@
   "synopsis": "wc [OPTION]... [FICHIER]...",
   "options": [
     { "short": "-l", "long": "--lines", "description": "Compte seulement les lignes." },
-    { "short": "-w", "long": "--words", "description": "Compte seulement les mots (séparés par des blancs)." },
-    { "short": "-c", "long": "--bytes", "description": "Compte seulement les octets." },
-    { "short": "-m", "long": "--chars", "description": "Compte les caractères (un caractère accentué compte pour un, contre deux octets en UTF-8)." },
-    { "short": "-L", "long": "--max-line-length", "description": "Affiche la longueur de la ligne la plus longue." }
+    { "short": "-w", "long": "--words", "description": "Compte seulement les mots (séparés par des blancs).", "example": { "command": "wc -w rapport.txt", "output": "318 rapport.txt" } },
+    { "short": "-c", "long": "--bytes", "description": "Compte seulement les octets.", "example": { "command": "wc -c photo.jpg", "output": "248913 photo.jpg" } },
+    { "short": "-m", "long": "--chars", "description": "Compte les caractères (un caractère accentué compte pour un, contre deux octets en UTF-8).", "example": { "command": "echo -n \"été\" | wc -m", "output": "3" } },
+    { "short": "-L", "long": "--max-line-length", "description": "Affiche la longueur de la ligne la plus longue.", "example": { "command": "wc -L code.py", "output": "112 code.py" } }
   ],
-  "arguments": [{ "name": "FICHIER", "description": "Fichier(s) à analyser. Sans fichier : l'entrée standard.", "optional": true, "variadic": true }],
+  "arguments": [
+    { "name": "FICHIER", "description": "Fichier(s) à analyser. Sans fichier : l'entrée standard.", "optional": true, "variadic": true }
+  ],
   "examples": [
     { "command": "wc rapport.txt", "explanation": "Lignes, mots et octets du fichier.", "output": "  42  318 2051 rapport.txt" },
     { "command": "wc -l *.py", "explanation": "Nombre de lignes de chaque script Python, avec le total.", "output": "  120 app.py\n   45 utils.py\n  165 total" },

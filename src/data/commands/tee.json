@@ -6,9 +6,11 @@
   "synopsis": "tee [OPTION]... [FICHIER]...",
   "options": [
     { "short": "-a", "long": "--append", "description": "Ajoute à la fin des fichiers au lieu de les écraser." },
-    { "short": "-i", "long": "--ignore-interrupts", "description": "Ignore Ctrl+C (SIGINT)." }
+    { "short": "-i", "long": "--ignore-interrupts", "description": "Ignore Ctrl+C (SIGINT).", "example": { "command": "ping google.com | tee -i ping.log" } }
   ],
-  "arguments": [{ "name": "FICHIER", "description": "Fichier(s) où copier l'entrée.", "optional": true, "variadic": true }],
+  "arguments": [
+    { "name": "FICHIER", "description": "Fichier(s) où copier l'entrée.", "optional": true, "variadic": true }
+  ],
   "examples": [
     { "command": "npm run build | tee build.log", "explanation": "Affiche la compilation et l'enregistre dans build.log." },
     { "command": "echo \"vm.swappiness=10\" | sudo tee -a /etc/sysctl.conf", "explanation": "Ajoute une ligne à un fichier système protégé." },

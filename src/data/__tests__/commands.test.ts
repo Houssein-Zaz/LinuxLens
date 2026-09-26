@@ -1,7 +1,8 @@
 import { COMMAND_FILES, COMMANDS } from '..';
 import { validateCommandDoc } from '../../lib/schema';
 import { parseCommandLine } from '../../lib/parser';
-import { registrySpec } from '../../lib/registry';
+import { findOption, registrySpec } from '../../lib/registry';
+import { optionExample } from '../../lib/examples';
 
 const docs = [...COMMANDS.values()];
 
@@ -27,6 +28,25 @@ describe('fiches de commandes', () => {
       expect(parsed.errors, ex.command).toEqual([]);
       expect(parsed.segments.flatMap((s) => s.commands), ex.command).toContain(name);
     }
+  });
+
+  it.each(docs.map((d) => [d.name, d] as const))('%s : chaque exemple d’option utilise bien cette option', (name, doc) => {
+    for (const opt of doc.options) {
+      if (!opt.example) continue;
+      const parsed = parseCommandLine(opt.example.command, registrySpec);
+      expect(parsed.errors, opt.example.command).toEqual([]);
+      const uses = parsed.segments
+        .flatMap((s) => s.tokens)
+        .some((t) => t.kind === 'option' && t.command === name && findOption(doc, t.value) === opt);
+      expect(uses, `${name} ${opt.short ?? opt.long} : ${opt.example.command}`).toBe(true);
+    }
+  });
+
+  it('chaque option a un exemple concret (dans la fiche ou ses exemples)', () => {
+    const missing = docs.flatMap((doc) =>
+      doc.options.filter((o) => !optionExample(doc, o.short ?? o.long!)).map((o) => `${doc.name} ${o.short ?? o.long}`),
+    );
+    expect(missing).toEqual([]);
   });
 
   it('seeAlso ne se référence pas lui-même', () => {

@@ -7,10 +7,10 @@
   "options": [
     { "short": "-i", "long": "--in-place", "description": "Modifie le fichier directement au lieu d'afficher le résultat. -i.bak garde une copie de sauvegarde." },
     { "short": "-n", "long": "--quiet", "description": "N'affiche pas automatiquement chaque ligne ; seules les lignes demandées avec la commande p sont affichées." },
-    { "short": "-e", "long": "--expression", "description": "Ajoute un script ; permet d'enchaîner plusieurs commandes.", "takesValue": true, "valueName": "SCRIPT" },
-    { "short": "-f", "long": "--file", "description": "Lit le script depuis un fichier.", "takesValue": true, "valueName": "FICHIER" },
-    { "short": "-E", "long": "--regexp-extended", "description": "Expressions régulières étendues (+, ?, |, () sans antislash). -r est équivalent." },
-    { "short": "-r", "description": "Synonyme de -E." }
+    { "short": "-e", "long": "--expression", "description": "Ajoute un script ; permet d'enchaîner plusieurs commandes.", "takesValue": true, "valueName": "SCRIPT", "example": { "command": "sed -e 's/chat/chien/' -e 's/souris/lapin/' animaux.txt", "output": "le chien et le lapin" } },
+    { "short": "-f", "long": "--file", "description": "Lit le script depuis un fichier.", "takesValue": true, "valueName": "FICHIER", "example": { "command": "sed -f corrections.sed texte.txt" } },
+    { "short": "-E", "long": "--regexp-extended", "description": "Expressions régulières étendues (+, ?, |, () sans antislash). -r est équivalent.", "example": { "command": "sed -E 's/[0-9]+/N/g' commande.txt", "output": "Commande N : N articles" } },
+    { "short": "-r", "description": "Synonyme de -E.", "example": { "command": "sed -r 's/(\\w+)@(\\w+)/\\2 chez \\1/' contacts.txt", "output": "exemple chez ali" } }
   ],
   "arguments": [
     { "name": "SCRIPT", "description": "Commandes sed : s/motif/remplacement/g remplace, /motif/d supprime, 5p affiche la ligne 5…" },
