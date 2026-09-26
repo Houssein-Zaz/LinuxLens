@@ -1,6 +1,8 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { createSupabaseBackend, translateAuthError } from '../supabase';
-import { createBackend } from '..';
+import { createBackend, lazyBackend } from '..';
+import { createDemoBackend } from '../demo';
+import { memoryStore } from '../../../test-utils';
 
 /** Faux client Supabase : enregistre les appels et renvoie les réponses programmées. */
 function fakeClient(opts: { session?: { user: { id: string; email: string; user_metadata?: object } } | null } = {}) {
@@ -131,5 +133,38 @@ describe('createBackend', () => {
   it('mode démo sans configuration, Supabase avec', () => {
     expect(createBackend({}).mode).toBe('demo');
     expect(createBackend({ VITE_SUPABASE_URL: 'https://x.supabase.co', VITE_SUPABASE_ANON_KEY: 'cle' }).mode).toBe('supabase');
+  });
+});
+
+describe('lazyBackend', () => {
+  it('ne charge le vrai backend qu’au premier appel, une seule fois', async () => {
+    const real = createDemoBackend(memoryStore());
+    const load = vi.fn(() => Promise.resolve(real));
+    const backend = lazyBackend('supabase', load);
+    expect(load).not.toHaveBeenCalled();
+
+    await backend.auth.signUp('sara@exemple.fr', 'motdepasse1');
+    await backend.data.setFavorite('ls', true);
+    expect(await backend.data.getFavorites()).toEqual(['ls']);
+    expect(await backend.auth.getUser()).toMatchObject({ email: 'sara@exemple.fr' });
+    expect(load).toHaveBeenCalledTimes(1);
+  });
+
+  it('onChange s’abonne après le chargement et se désabonne', async () => {
+    const backend = lazyBackend('supabase', () => Promise.resolve(createDemoBackend(memoryStore())));
+    const listener = vi.fn();
+    const unsubscribe = backend.auth.onChange(listener);
+    await backend.auth.signUp('sara@exemple.fr', 'motdepasse1');
+    expect(listener).toHaveBeenLastCalledWith(expect.objectContaining({ email: 'sara@exemple.fr' }));
+
+    unsubscribe();
+    listener.mockClear();
+    await backend.auth.signOut();
+    expect(listener).not.toHaveBeenCalled();
+  });
+
+  it('n’est pas pris pour une promesse', async () => {
+    const backend = lazyBackend('supabase', () => Promise.resolve(createDemoBackend(memoryStore())));
+    expect(await Promise.resolve(backend.auth)).toBe(backend.auth);
   });
 });

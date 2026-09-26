@@ -59,6 +59,34 @@ begin
 end $$;
 
 -- ---------------------------------------------------------------------
+-- Historique limité à 50 commandes par utilisateur (HISTORY_LIMIT)
+-- L'application n'en affiche pas plus ; sans cette limite, un appel direct
+-- à l'API avec la clé publique pourrait remplir la base sans fin.
+-- ---------------------------------------------------------------------
+
+create or replace function public.trim_history()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  delete from public.history
+  where user_id = new.user_id
+    and id not in (
+      select id from public.history where user_id = new.user_id order by created_at desc limit 50
+    );
+  return null; -- déclencheur « after » : la valeur de retour est ignorée
+end;
+$$;
+
+revoke all on function public.trim_history() from public, anon, authenticated;
+
+drop trigger if exists history_trim on public.history;
+create trigger history_trim after insert or update on public.history
+  for each row execute function public.trim_history();
+
+-- ---------------------------------------------------------------------
 -- Suppression de compte par l'utilisateur lui-même
 -- Le client ne peut pas supprimer auth.users directement : cette fonction
 -- s'exécute avec les droits de son propriétaire (security definer) mais ne

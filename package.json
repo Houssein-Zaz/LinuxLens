@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "tldr": "tsx scripts/build-tldr.ts",
-    "prebuild": "npm run tldr",
+    "seo": "tsx scripts/build-seo.ts",
+    "prebuild": "npm run tldr && npm run seo",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "test": "vitest run",

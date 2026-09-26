@@ -2,6 +2,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, useLocation } from 'react-router';
 import App from '../../App';
+import { safeNext } from '../../components/auth/RequireAuth';
 import { testBackend } from '../../test-utils';
 import type { Backend } from '../../types/backend';
 
@@ -22,7 +23,8 @@ function renderApp(url: string, backend: Backend) {
 }
 
 const location = () => screen.getByTestId('location').textContent;
-const fill = async (label: string | RegExp, value: string) => userEvent.type(screen.getByLabelText(label), value);
+// `find…` : les pages sont chargées à la demande, le formulaire apparaît après un instant
+const fill = async (label: string | RegExp, value: string) => userEvent.type(await screen.findByLabelText(label), value);
 
 beforeEach(() => localStorage.clear());
 
@@ -73,6 +75,13 @@ describe('inscription et connexion', () => {
     await waitFor(() => expect(location()).toBe('/compte'));
   });
 
+  it('safeNext : garde les chemins internes, refuse les autres sites même déguisés', () => {
+    expect(safeNext('/exercices?mode=qcm#q2')).toBe('/exercices?mode=qcm#q2');
+    for (const evil of ['//pirate.example', '/\\pirate.example', '/\t/pirate.example', '/\n/pirate.example', 'https://pirate.example', 'javascript:alert(1)', null]) {
+      expect(safeNext(evil)).toBe('/compte');
+    }
+  });
+
   it('page du compte protégée', async () => {
     renderApp('/compte', await testBackend());
     await waitFor(() => expect(location()).toBe('/connexion?next=%2Fcompte'));
@@ -80,7 +89,7 @@ describe('inscription et connexion', () => {
 
   it('afficher / masquer le mot de passe', async () => {
     renderApp('/connexion', await testBackend());
-    const field = screen.getByLabelText('Mot de passe');
+    const field = await screen.findByLabelText('Mot de passe');
     expect(field).toHaveAttribute('type', 'password');
     await userEvent.click(screen.getByRole('button', { name: 'Afficher' }));
     expect(field).toHaveAttribute('type', 'text');
@@ -88,7 +97,7 @@ describe('inscription et connexion', () => {
 
   it('mot de passe oublié : message clair en mode démo', async () => {
     renderApp('/mot-de-passe-oublie', await testBackend());
-    expect(screen.getByRole('note')).toHaveTextContent('Mode démo');
+    expect(await screen.findByRole('note')).toHaveTextContent('Mode démo');
     await fill('Adresse e-mail', 'sara@exemple.fr');
     await userEvent.click(screen.getByRole('button', { name: 'Envoyer le lien' }));
     expect(await screen.findByRole('alert')).toHaveTextContent('mode démo');

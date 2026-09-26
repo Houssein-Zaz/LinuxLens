@@ -21,6 +21,8 @@ const OUT_DIR = join(ROOT, 'public', 'tldr');
 const RELEASE = 'https://github.com/tldr-pages/tldr/releases/latest/download';
 const ARCHIVES: Record<Lang, string> = { fr: 'tldr-pages.fr.zip', en: 'tldr-pages.en.zip' };
 const PLATFORMS: Platform[] = ['common', 'linux'];
+/** CI et Vercel définissent ces variables : un échec y est bloquant. */
+const STRICT = Boolean(process.env.CI || process.env.VERCEL);
 
 async function getArchive(lang: Lang, refresh: boolean): Promise<Uint8Array | null> {
   const file = join(CACHE_DIR, ARCHIVES[lang]);
@@ -74,11 +76,15 @@ async function main() {
   writeFileSync(join(OUT_DIR, 'index.json'), JSON.stringify(index));
 
   const fr = index.filter((e) => e.lang === 'fr').length;
-  if (index.length === 0) console.warn('⚠ Aucune page tldr : l’application fonctionnera avec les seules fiches détaillées.');
-  else console.log(`✓ ${index.length} pages tldr (${fr} en français, ${index.length - fr} en anglais) → public/tldr/`);
+  if (index.length === 0) {
+    // En déploiement, publier le site sans ses 6 000 fiches serait une régression silencieuse
+    if (STRICT) throw new Error('aucune page tldr générée');
+    console.warn('⚠ Aucune page tldr : l’application fonctionnera avec les seules fiches détaillées.');
+  } else console.log(`✓ ${index.length} pages tldr (${fr} en français, ${index.length - fr} en anglais) → public/tldr/`);
 }
 
 main().catch((err: unknown) => {
-  // Ne jamais bloquer le build pour des données facultatives
+  // En local, ne jamais bloquer le build pour des données facultatives ; en CI ou sur Vercel, échouer
   console.warn('⚠ build-tldr :', err);
+  if (STRICT) process.exit(1);
 });

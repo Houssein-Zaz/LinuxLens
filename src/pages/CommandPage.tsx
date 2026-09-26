@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { Link, useParams } from 'react-router';
 import { DangerNote } from '../components/ui/DangerNote';
 import { FavoriteButton } from '../components/auth/FavoriteButton';
+import { DocumentTitle } from '../components/ui/DocumentTitle';
 import { ExampleBlock } from '../components/ui/ExampleBlock';
 import { PageHeader } from '../components/ui/PageHeader';
 import { CATEGORY_BY_ID } from '../data/categories';
@@ -73,6 +74,7 @@ function DetailedDoc({ doc }: { doc: CommandDoc }) {
   const category = CATEGORY_BY_ID[doc.category];
   return (
     <article>
+      <DocumentTitle title={`${doc.name} : ${doc.summary}`} />
       <Link
         to={`/explorer`}
         className="mb-4 inline-block text-sm text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
@@ -159,6 +161,7 @@ function DetailedDoc({ doc }: { doc: CommandDoc }) {
 function TldrView({ doc }: { doc: TldrDoc }) {
   return (
     <article>
+      <DocumentTitle title={doc.name} />
       <Link to="/explorer" className="mb-4 inline-block text-sm text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100">
         ← Explorer
       </Link>

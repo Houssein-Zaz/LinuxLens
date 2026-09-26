@@ -11,7 +11,18 @@ export function RequireAuth({ children }: { children: ReactNode }) {
   return <>{children}</>;
 }
 
-/** Destination après connexion : `?next=` si c'est un chemin interne, sinon /compte. */
+/**
+ * Destination après connexion : `?next=` si c'est un chemin interne, sinon /compte.
+ * Les navigateurs ignorent tabulations et retours à la ligne et lisent `\` comme `/` :
+ * `/\t/pirate.example` mène à un autre site. On résout donc l'adresse comme eux.
+ */
 export function safeNext(next: string | null): string {
-  return next && next.startsWith('/') && !next.startsWith('//') ? next : '/compte';
+  if (!next?.startsWith('/')) return '/compte';
+  const base = 'https://linuxlens.invalid';
+  try {
+    const url = new URL(next, base);
+    return url.origin === base ? url.pathname + url.search + url.hash : '/compte';
+  } catch {
+    return '/compte';
+  }
 }

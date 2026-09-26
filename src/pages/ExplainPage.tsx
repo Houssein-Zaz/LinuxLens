@@ -2,6 +2,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router';
 import { CommandInput, type Suggestion } from '../components/explain/CommandInput';
 import { SegmentCard } from '../components/explain/SegmentCard';
+import { DocumentTitle } from '../components/ui/DocumentTitle';
 import { TokenLine, type ExplainedToken } from '../components/explain/TokenLine';
 import { LEGEND, TOKEN_STYLE } from '../components/explain/tokenStyles';
 import { useTldrIndex } from '../hooks/useTldr';
@@ -59,6 +60,7 @@ export function ExplainPage() {
 
   return (
     <div className="space-y-8">
+      <DocumentTitle />
       <div className="mx-auto max-w-3xl space-y-3 pt-4 text-center sm:pt-10">
         <h1 className="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">Comprendre une commande Linux</h1>
         <p className="text-zinc-600 text-balance dark:text-zinc-400">

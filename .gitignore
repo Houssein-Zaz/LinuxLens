@@ -4,4 +4,7 @@ dist
 .vercel
 # Généré par scripts/build-tldr.ts
 public/tldr
+# Généré par scripts/build-seo.ts
+public/robots.txt
+public/sitemap.xml
 .cache
