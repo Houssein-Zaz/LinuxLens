@@ -28,7 +28,7 @@ function fakeClient(opts: { session?: { user: { id: string; email: string; user_
     resetPasswordForEmail: vi.fn(async () => ({ error: null })),
     updateUser: vi.fn(async () => ({ error: null })),
   };
-  const client = { auth, from: vi.fn(query), rpc: vi.fn(async () => ({ error: null })) };
+  const client = { auth, from: vi.fn(query), rpc: vi.fn(async (..._args: unknown[]): Promise<{ data?: unknown; error: unknown }> => ({ error: null })) };
   return { client: client as unknown as SupabaseClient, auth, rpc: client.rpc, calls, responses };
 }
 
@@ -85,6 +85,84 @@ describe('backend Supabase', () => {
     const { client, auth } = fakeClient();
     await createSupabaseBackend(client).auth.requestPasswordReset('a@b.fr');
     expect(auth.resetPasswordForEmail).toHaveBeenCalledWith('a@b.fr', { redirectTo: expect.stringMatching(/\/nouveau-mot-de-passe$/) });
+  });
+
+  it('jeton anti-robot transmis à l’inscription, la connexion et la réinitialisation', async () => {
+    const { client, auth } = fakeClient();
+    auth.signUp.mockResolvedValue({ data: { user: { identities: [{}] }, session: {} }, error: null });
+    auth.signInWithPassword.mockResolvedValue({ error: null });
+    const b = createSupabaseBackend(client);
+
+    await b.auth.signUp('a@b.fr', 'motdepasse1', undefined, 'jeton');
+    expect(auth.signUp.mock.calls[0]![0].options).toMatchObject({ captchaToken: 'jeton' });
+    await b.auth.signIn('a@b.fr', 'motdepasse1', 'jeton');
+    expect(auth.signInWithPassword).toHaveBeenCalledWith({ email: 'a@b.fr', password: 'motdepasse1', options: { captchaToken: 'jeton' } });
+    await b.auth.requestPasswordReset('a@b.fr', 'jeton');
+    expect(auth.resetPasswordForEmail).toHaveBeenLastCalledWith('a@b.fr', expect.objectContaining({ captchaToken: 'jeton' }));
+  });
+
+  it('vérification anti-robot refusée : message en français', () => {
+    expect(translateAuthError({ message: 'captcha protection: request disallowed (timeout-or-duplicate)' })).toMatch(/anti-robot/);
+  });
+
+  it('erreur d’authentification inconnue : signalée au journal ; erreur connue : non', async () => {
+    const { client, auth, calls } = fakeClient();
+    auth.signInWithPassword.mockResolvedValue({ error: { message: 'Database error granting user', status: 500 } });
+    const b = createSupabaseBackend(client);
+    expect(await b.auth.signIn('a@b.fr', 'motdepasse1')).toEqual({ error: expect.stringMatching(/Une erreur est survenue/) });
+    await vi.waitFor(() =>
+      expect(calls).toContainEqual(['error_logs.insert', expect.objectContaining({ source: 'auth', message: 'Connexion : Database error granting user' })]),
+    );
+
+    calls.length = 0;
+    auth.signInWithPassword.mockResolvedValue({ error: { message: 'Invalid login credentials', code: 'invalid_credentials' } });
+    await b.auth.signIn('a@b.fr', 'motdepasse1');
+    expect(calls.filter(([c]) => c === 'error_logs.insert')).toEqual([]);
+  });
+
+  it('journal : message tronqué, et jamais d’exception même si l’envoi échoue', async () => {
+    const { client, calls } = fakeClient();
+    const b = createSupabaseBackend(client);
+    await b.monitoring.report({ source: 'page', message: 'x'.repeat(900) });
+    const [, row] = calls.find(([c]) => c === 'error_logs.insert')! as [string, { message: string }];
+    expect(row.message).toHaveLength(500);
+
+    (client.from as ReturnType<typeof vi.fn>).mockImplementationOnce(() => {
+      throw new Error('réseau');
+    });
+    await expect(b.monitoring.report({ source: 'page', message: 'y' })).resolves.toBeUndefined();
+  });
+
+  it('admin : fonctions SQL appelées et lignes converties', async () => {
+    const { client, rpc } = fakeClient({ session });
+    const responses: Record<string, unknown> = {
+      is_admin: true,
+      admin_overview: { users: 3, users_7d: 1, confirmed: 2, active_7d: 2, attempts: 10, attempts_7d: 4, correct_7d: 3, errors_7d: 0 },
+      admin_users: [
+        { id: 'u1', email: 'a@b.fr', display_name: null, created_at: 't', last_sign_in_at: null, confirmed: true, attempts: '12', solved: '5' },
+      ],
+      admin_errors: [{ id: 1, email: null, source: 'page', message: 'm', detail: 'd', path: '/', user_agent: 'ua', created_at: 't' }],
+    };
+    rpc.mockImplementation(async (...args: unknown[]) => ({ data: responses[args[0] as string] ?? null, error: null }));
+    const admin = createSupabaseBackend(client).admin!;
+
+    expect(await admin.isAdmin()).toBe(true);
+    expect(await admin.overview()).toMatchObject({ users: 3, usersLast7Days: 1, correctLast7Days: 3 });
+    expect(await admin.users()).toEqual([
+      { id: 'u1', email: 'a@b.fr', displayName: null, createdAt: 't', lastSignInAt: null, confirmed: true, attempts: 12, solved: 5 },
+    ]);
+    expect((await admin.errors())[0]).toMatchObject({ userAgent: 'ua', createdAt: 't' });
+    responses.admin_attempts = [{ user_id: 'u1', exercise_id: 'w-pwd', kind: 'write', correct: true, used_help: false, created_at: 't' }];
+    expect(await admin.attempts(20)).toEqual([{ userId: 'u1', exerciseId: 'w-pwd', kind: 'write', correct: true, usedHelp: false, createdAt: 't' }]);
+    expect(rpc).toHaveBeenCalledWith('admin_attempts', { max_rows: 20 });
+  });
+
+  it('admin : un refus de la base n’est jamais pris pour un accès', async () => {
+    const { client, rpc } = fakeClient({ session });
+    rpc.mockImplementation(async () => ({ data: null, error: { message: 'Accès réservé aux administrateurs' } }));
+    const admin = createSupabaseBackend(client).admin!;
+    expect(await admin.isAdmin()).toBe(false);
+    await expect(admin.overview()).rejects.toThrow('Accès réservé');
   });
 
   it('suppression du compte via la fonction SQL delete_user', async () => {

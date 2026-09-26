@@ -22,4 +22,9 @@ describe('vercel.json', () => {
   it('autorise Supabase', () => {
     expect(csp).toMatch(/connect-src[^;]*https:\/\/\*\.supabase\.co/);
   });
+
+  it('autorise la vérification anti-robot Cloudflare Turnstile (script et cadre)', () => {
+    expect(csp).toMatch(/script-src[^;]*https:\/\/challenges\.cloudflare\.com/);
+    expect(csp).toMatch(/frame-src[^;]*https:\/\/challenges\.cloudflare\.com/);
+  });
 });

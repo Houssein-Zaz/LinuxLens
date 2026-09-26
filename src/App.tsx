@@ -19,6 +19,8 @@ const LsPage = page(() => import('./pages/LsPage'), 'LsPage');
 const ChmodPage = page(() => import('./pages/ChmodPage'), 'ChmodPage');
 const PracticePage = page(() => import('./pages/PracticePage'), 'PracticePage');
 const PrivacyPage = page(() => import('./pages/PrivacyPage'), 'PrivacyPage');
+const LegalPage = page(() => import('./pages/LegalPage'), 'LegalPage');
+const AdminPage = page(() => import('./admin/AdminPage'), 'AdminPage');
 const AccountPage = page(() => import('./pages/auth/AccountPage'), 'AccountPage');
 const ForgotPasswordPage = page(() => import('./pages/auth/ForgotPasswordPage'), 'ForgotPasswordPage');
 const ResetPasswordPage = page(() => import('./pages/auth/ResetPasswordPage'), 'ResetPasswordPage');
@@ -61,6 +63,15 @@ export default function App({ backend }: { backend?: Backend }) {
                   }
                 />
                 <Route path="/confidentialite" element={<PrivacyPage />} />
+                <Route path="/mentions-legales" element={<LegalPage />} />
+                <Route
+                  path="/admin"
+                  element={
+                    <RequireAuth>
+                      <AdminPage />
+                    </RequireAuth>
+                  }
+                />
                 <Route path="*" element={<NotFoundPage />} />
               </Routes>
             </Suspense>

@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { Link, Navigate, useNavigate, useSearchParams } from 'react-router';
 import { AuthCard } from '../../components/auth/AuthCard';
+import { useCaptcha } from '../../components/auth/Captcha';
 import { FormError, PasswordField, SubmitButton, TextField } from '../../components/auth/FormFields';
 import { safeNext } from '../../components/auth/RequireAuth';
 import { useAuth } from '../../hooks/useAuth';
@@ -16,6 +17,7 @@ export function SignInPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string>();
   const [pending, setPending] = useState(false);
+  const captcha = useCaptcha();
 
   // Déjà connecté (ou retour du lien de confirmation par e-mail)
   if (user && !pending) return <Navigate to={next} replace />;
@@ -24,9 +26,12 @@ export function SignInPage() {
     e.preventDefault();
     setPending(true);
     setError(undefined);
-    const result = await backend.auth.signIn(email, password);
+    const result = await backend.auth.signIn(email, password, captcha.token);
     setPending(false);
-    if (result.error) setError(result.error);
+    if (result.error) {
+      setError(result.error);
+      captcha.reset();
+    }
     else navigate(next, { replace: true });
   };
 
@@ -52,7 +57,10 @@ export function SignInPage() {
             Mot de passe oublié ?
           </Link>
         </div>
-        <SubmitButton pending={pending}>Se connecter</SubmitButton>
+        {captcha.element}
+        <SubmitButton pending={pending} disabled={!captcha.ready}>
+          Se connecter
+        </SubmitButton>
       </form>
     </AuthCard>
   );

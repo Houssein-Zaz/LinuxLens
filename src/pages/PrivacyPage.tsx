@@ -1,14 +1,6 @@
-import type { ReactNode } from 'react';
+import { TURNSTILE_SITE_KEY } from '../components/auth/Captcha';
 import { PageHeader } from '../components/ui/PageHeader';
-
-function Section({ title, children }: { title: string; children: ReactNode }) {
-  return (
-    <section className="mt-8">
-      <h2 className="mb-2 text-lg font-semibold tracking-tight">{title}</h2>
-      <div className="space-y-2 text-zinc-700 dark:text-zinc-300">{children}</div>
-    </section>
-  );
-}
+import { Section } from '../components/ui/Section';
 
 export function PrivacyPage() {
   return (
@@ -30,13 +22,35 @@ export function PrivacyPage() {
           <li>les exercices réussis et vos réponses aux exercices (juste ou fausse, avec ou sans aide), pour vos statistiques ;</li>
           <li>vos commandes favorites et l’historique des commandes expliquées.</li>
         </ul>
+        {TURNSTILE_SITE_KEY && (
+          <p>
+            Pour bloquer les robots, l’inscription et la connexion passent par une vérification{' '}
+            <a className="underline underline-offset-2" href="https://www.cloudflare.com/fr-fr/privacypolicy/">
+              Cloudflare Turnstile
+            </a>
+            , qui analyse des signaux techniques du navigateur, sans cookie publicitaire.
+          </p>
+        )}
         <p>
-          Ces données servent seulement à vous les restituer d’un appareil à l’autre. Elles ne sont ni vendues, ni
-          partagées, ni utilisées à des fins publicitaires. Elles sont hébergées par Supabase.
+          Ces données servent à vous les restituer d’un appareil à l’autre. Elles ne sont ni vendues, ni partagées, ni
+          utilisées à des fins publicitaires. Elles sont hébergées par Supabase.
+        </p>
+        <p>
+          L’éditeur du site peut consulter la liste des comptes (adresse, date d’inscription et de dernière connexion) et
+          les réponses aux exercices, pour suivre le fonctionnement du site. L’historique des commandes expliquées n’est
+          visible que par vous.
         </p>
         <p className="text-sm text-zinc-500 dark:text-zinc-400">
           Évitez de taper des informations sensibles (mots de passe, clés d’API) dans le champ d’explication : les commandes
           expliquées sont ajoutées à votre historique.
+        </p>
+      </Section>
+
+      <Section title="Erreurs techniques">
+        <p>
+          Quand une page plante ou qu’une erreur inattendue survient, un rapport est enregistré pour pouvoir la corriger :
+          le message d’erreur, la page concernée, le type de navigateur et, si vous êtes connecté, votre compte. Ces rapports
+          sont effacés régulièrement.
         </p>
       </Section>
 

@@ -17,6 +17,10 @@ export function Footer() {
       <Link className={linkClass} to="/confidentialite">
         Confidentialité
       </Link>
+      {' · '}
+      <Link className={linkClass} to="/mentions-legales">
+        Mentions légales
+      </Link>
     </footer>
   );
 }

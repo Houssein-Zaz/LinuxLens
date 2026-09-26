@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { Link } from 'react-router';
 import { AuthCard } from '../../components/auth/AuthCard';
+import { useCaptcha } from '../../components/auth/Captcha';
 import { FormError, FormSuccess, SubmitButton, TextField } from '../../components/auth/FormFields';
 import { useAuth } from '../../hooks/useAuth';
 
@@ -10,14 +11,18 @@ export function ForgotPasswordPage() {
   const [error, setError] = useState<string>();
   const [sent, setSent] = useState(false);
   const [pending, setPending] = useState(false);
+  const captcha = useCaptcha();
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
     setPending(true);
     setError(undefined);
-    const result = await backend.auth.requestPasswordReset(email);
+    const result = await backend.auth.requestPasswordReset(email, captcha.token);
     setPending(false);
-    if (result.error) setError(result.error);
+    if (result.error) {
+      setError(result.error);
+      captcha.reset();
+    }
     else setSent(true);
   };
 
@@ -38,7 +43,10 @@ export function ForgotPasswordPage() {
         <form onSubmit={submit} className="space-y-4" noValidate>
           <FormError>{error}</FormError>
           <TextField label="Adresse e-mail" type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
-          <SubmitButton pending={pending}>Envoyer le lien</SubmitButton>
+          {captcha.element}
+          <SubmitButton pending={pending} disabled={!captcha.ready}>
+            Envoyer le lien
+          </SubmitButton>
         </form>
       )}
     </AuthCard>

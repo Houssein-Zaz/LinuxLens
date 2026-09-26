@@ -5,6 +5,9 @@ import '@fontsource-variable/inter';
 import '@fontsource-variable/jetbrains-mono';
 import './index.css';
 import App from './App';
+import { installErrorReporting } from './lib/errorReporting';
+
+installErrorReporting();
 
 const root = document.getElementById('root');
 if (!root) throw new Error('Élément #root introuvable');

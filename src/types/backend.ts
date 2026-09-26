@@ -23,11 +23,12 @@ export interface AuthApi {
   getUser(): Promise<User | null>;
   /** Appelé à chaque connexion ou déconnexion. Renvoie la fonction de désabonnement. */
   onChange(listener: (user: User | null) => void): () => void;
-  signUp(email: string, password: string, displayName?: string): Promise<SignUpResult>;
-  signIn(email: string, password: string): Promise<ActionResult>;
+  /** `captchaToken` : jeton anti-robot, exigé par Supabase quand la protection CAPTCHA est activée. */
+  signUp(email: string, password: string, displayName?: string, captchaToken?: string): Promise<SignUpResult>;
+  signIn(email: string, password: string, captchaToken?: string): Promise<ActionResult>;
   signOut(): Promise<void>;
   /** Envoie un lien de réinitialisation du mot de passe. */
-  requestPasswordReset(email: string): Promise<ActionResult>;
+  requestPasswordReset(email: string, captchaToken?: string): Promise<ActionResult>;
   /** Change le mot de passe de l'utilisateur connecté (après le lien de réinitialisation). */
   updatePassword(password: string): Promise<ActionResult>;
   updateProfile(displayName: string): Promise<ActionResult>;
@@ -67,9 +68,79 @@ export interface DataApi {
   clearHistory(): Promise<void>;
 }
 
+/** Erreur envoyée au journal, consultable dans le tableau de bord admin. */
+export interface ErrorReport {
+  /** Origine : `page` (plantage d'une page), `window`, `promise`, `auth`… */
+  source: string;
+  message: string;
+  detail?: string;
+}
+
+export interface MonitoringApi {
+  /** Ne lève jamais d'erreur : un signalement raté est simplement perdu. */
+  report(error: ErrorReport): Promise<void>;
+}
+
+export interface AdminOverview {
+  users: number;
+  usersLast7Days: number;
+  confirmed: number;
+  activeLast7Days: number;
+  attempts: number;
+  attemptsLast7Days: number;
+  correctLast7Days: number;
+  errorsLast7Days: number;
+}
+
+export interface AdminUser {
+  id: string;
+  email: string;
+  displayName: string | null;
+  createdAt: string;
+  lastSignInAt: string | null;
+  confirmed: boolean;
+  attempts: number;
+  solved: number;
+}
+
+/** Une réponse à un exercice, vue par l'administrateur (sans le texte de la réponse). */
+export interface AdminAttempt {
+  userId: string;
+  exerciseId: string;
+  kind: ExerciseKind;
+  correct: boolean;
+  usedHelp: boolean;
+  createdAt: string;
+}
+
+export interface ErrorLog {
+  id: number;
+  email: string | null;
+  source: string;
+  message: string;
+  detail: string;
+  path: string;
+  userAgent: string;
+  createdAt: string;
+}
+
+/** Réservé aux administrateurs : chaque appel est vérifié par la base. */
+export interface AdminApi {
+  isAdmin(): Promise<boolean>;
+  overview(): Promise<AdminOverview>;
+  users(): Promise<AdminUser[]>;
+  /** Réponses les plus récentes de tous les utilisateurs. */
+  attempts(limit?: number): Promise<AdminAttempt[]>;
+  errors(): Promise<ErrorLog[]>;
+  clearErrors(): Promise<void>;
+}
+
 export interface Backend {
   /** `demo` : comptes stockés dans ce navigateur ; `supabase` : vraie base de données. */
   mode: 'demo' | 'supabase';
   auth: AuthApi;
   data: DataApi;
+  monitoring: MonitoringApi;
+  /** Absent en mode démo : le tableau de bord a besoin de la vraie base. */
+  admin?: AdminApi;
 }

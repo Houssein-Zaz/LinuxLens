@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
-import { createBackend } from '../lib/backend';
+import { defaultBackend } from '../lib/backend';
 import type { Backend, User } from '../types/backend';
 
 interface AuthState {
@@ -11,11 +11,9 @@ interface AuthState {
 
 const AuthContext = createContext<AuthState | null>(null);
 
-let defaultBackend: Backend | null = null;
-const getDefaultBackend = () => (defaultBackend ??= createBackend());
 
 export function AuthProvider({ backend, children }: { backend?: Backend; children: ReactNode }) {
-  const active = useMemo(() => backend ?? getDefaultBackend(), [backend]);
+  const active = useMemo(() => backend ?? defaultBackend(), [backend]);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 

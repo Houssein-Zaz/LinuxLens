@@ -38,6 +38,18 @@ export function AccountPage() {
   const { solved } = useProgress();
   const { favorites, toggle } = useFavorites();
   const [history, setHistory] = useState<HistoryEntry[]>([]);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    let alive = true;
+    backend.admin
+      ?.isAdmin()
+      .then((ok) => alive && setIsAdmin(ok))
+      .catch(() => undefined);
+    return () => {
+      alive = false;
+    };
+  }, [backend]);
 
   useEffect(() => {
     let alive = true;
@@ -63,6 +75,15 @@ export function AccountPage() {
         Connecté en tant que <strong className="font-medium text-zinc-900 dark:text-zinc-100">{user.email}</strong>
       </PageHeader>
       <DemoBanner className="mb-6" />
+      {isAdmin && (
+        <Link
+          to="/admin"
+          className="mb-6 flex items-center justify-between rounded-xl border border-indigo-200 bg-indigo-50 px-4 py-3 text-sm font-medium text-indigo-800 hover:bg-indigo-100 dark:border-indigo-400/30 dark:bg-indigo-400/10 dark:text-indigo-200 dark:hover:bg-indigo-400/20"
+        >
+          Tableau de bord administrateur
+          <span aria-hidden="true">→</span>
+        </Link>
+      )}
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Card title="Progression" id="progression">

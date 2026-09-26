@@ -1,4 +1,4 @@
-import { buildRobots, buildSitemap, siteUrl } from './seo';
+import { absoluteMetaTags, buildRobots, buildSitemap, siteUrl } from './seo';
 
 describe('siteUrl', () => {
   it('préfère SITE_URL et retire la barre finale', () => {
@@ -29,5 +29,12 @@ describe('buildRobots', () => {
   it('pointe vers le sitemap quand le site est connu', () => {
     expect(buildRobots('https://linuxlens.fr')).toContain('Sitemap: https://linuxlens.fr/sitemap.xml');
     expect(buildRobots(null)).not.toContain('Sitemap');
+  });
+});
+
+describe('absoluteMetaTags', () => {
+  it('image d’aperçu en adresse absolue, rien sans adresse de site', () => {
+    expect(absoluteMetaTags('https://linuxlens.fr')).toContain('<meta property="og:image" content="https://linuxlens.fr/og-image.png" />');
+    expect(absoluteMetaTags(null)).toBe('');
   });
 });

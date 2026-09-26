@@ -82,6 +82,29 @@ Sans configuration, l’application tourne en **mode démo** : inscription, conn
 
 La clé « anon » est publique par conception : la sécurité repose sur les règles RLS. La clé `service_role` ne doit jamais être utilisée côté navigateur.
 
+#### Tableau de bord administrateur
+
+La page `/admin` (code dans `src/admin/`) montre les inscrits avec, pour chacun, son score aux exercices, sa réussite par catégorie, son point faible et les exercices à revoir, ainsi que les **problèmes** : plantages de page, erreurs JavaScript et erreurs de connexion inexpliquées, enregistrés automatiquement.
+
+1. Dans **SQL Editor**, exécuter [`supabase/admin.sql`](supabase/admin.sql) (après `schema.sql`).
+2. Se déclarer administrateur, une fois son compte créé sur le site :
+   ```sql
+   insert into public.admins (user_id) select id from auth.users where email = 'votre@adresse.fr';
+   ```
+3. Se reconnecter : un lien « Tableau de bord administrateur » apparaît sur « Mon compte ».
+
+La protection est dans la base : chaque fonction `admin_*` refuse un appelant qui n’est pas dans `public.admins`, et personne ne peut s’y ajouter depuis le site. Pour un autre visiteur, `/admin` affiche « Page introuvable ». L’historique des commandes expliquées n’apparaît jamais dans le tableau de bord. Les comptes administrateurs sont exclus des chiffres et de la liste des utilisateurs, pour que vos propres tests ne faussent pas les statistiques.
+
+#### Protection anti-robot (facultatif)
+
+Pour empêcher la création de comptes en masse, LinuxLens peut afficher une vérification [Cloudflare Turnstile](https://www.cloudflare.com/fr-fr/application-services/products/turnstile/) (gratuite) sur l’inscription, la connexion et « mot de passe oublié » :
+
+1. Cloudflare → **Turnstile** → ajouter un widget avec le domaine du site (et `localhost` pour le développement). On obtient une clé de site et une clé secrète.
+2. Supabase → **Authentication → Attack Protection** → activer **CAPTCHA protection**, choisir Turnstile et coller la **clé secrète**.
+3. Ajouter `VITE_TURNSTILE_SITE_KEY` (la **clé de site**) dans `.env.local` et sur Vercel.
+
+Les deux côtés vont ensemble : clé de site sans protection Supabase, la vérification est inutile ; protection Supabase sans clé de site, plus personne ne peut se connecter.
+
 ### Déploiement sur Vercel
 Importer le dépôt : Vercel détecte Vite (build `npm run build`, sortie `dist`). Le script `prebuild` télécharge tldr-pages à chaque déploiement ; en CI et sur Vercel, un échec de ce téléchargement fait échouer le build plutôt que de publier un site sans ses fiches.
 
@@ -93,7 +116,7 @@ Importer le dépôt : Vercel détecte Vite (build `npm run build`, sortie `dist`
 
 ```
 scripts/             build-tldr.ts (téléchargement) + tldr-convert.ts (conversion testée)
-supabase/            schema.sql : tables, règles RLS, suppression de compte
+supabase/            schema.sql : tables, règles RLS, suppression de compte ; admin.sql : tableau de bord, journal des erreurs
 src/
   types/             command.ts (schéma des fiches), parser.ts, lsl.ts
   lib/               parser.ts, explain.ts, exercise.ts, permissions.ts, chmod.ts, lsl.ts, registry.ts, schema.ts, search.ts
@@ -103,6 +126,7 @@ src/
   lib/backend/       interface commune : demo.ts (navigateur) et supabase.ts (base réelle)
   pages/             Expliquer, Explorer, fiche, ls -l, chmod, exercices, confidentialité
   pages/auth/        connexion, inscription, mot de passe oublié / nouveau, mon compte
+  admin/             tableau de bord administrateur (/admin)
 ```
 
 ## Choix techniques

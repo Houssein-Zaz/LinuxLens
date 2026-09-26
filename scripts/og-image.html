@@ -1,0 +1,74 @@
+<!doctype html>
+<!--
+  Source de public/og-image.png (image d'aperçu des liens partagés, 1200×630).
+  Régénérer avec Chrome ou Edge, depuis la racine du projet :
+    chrome --headless=new --hide-scrollbars --window-size=1200,630 --screenshot=public/og-image.png scripts/og-image.html
+-->
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      @font-face {
+        font-family: 'Inter';
+        src: url('../node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2') format('woff2');
+        font-weight: 100 900;
+      }
+      @font-face {
+        font-family: 'JetBrains Mono';
+        src: url('../node_modules/@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2') format('woff2');
+        font-weight: 100 800;
+      }
+      * { box-sizing: border-box; margin: 0; }
+      html, body { width: 1200px; height: 630px; overflow: hidden; }
+      body {
+        font-family: 'Inter', sans-serif;
+        color: #fafafa;
+        background:
+          radial-gradient(800px 420px at 85% -10%, rgba(99, 102, 241, 0.35), transparent 70%),
+          radial-gradient(600px 360px at -5% 110%, rgba(16, 185, 129, 0.18), transparent 70%),
+          #0b0b12;
+        padding: 72px 80px;
+        display: flex;
+        flex-direction: column;
+      }
+      .brand { display: flex; align-items: center; gap: 18px; font-size: 40px; font-weight: 650; letter-spacing: -0.02em; }
+      .brand svg { width: 56px; height: 56px; }
+      h1 { margin-top: 64px; font-size: 68px; line-height: 1.05; font-weight: 700; letter-spacing: -0.035em; max-width: 900px; }
+      h1 span { color: #a5b4fc; }
+      .terminal {
+        margin-top: auto;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 26px 30px;
+        border-radius: 22px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 38px;
+      }
+      .prompt { color: #71717a; }
+      .t { padding: 4px 14px; border-radius: 10px; border: 1.5px solid; }
+      .command { color: #a5b4fc; background: rgba(129, 140, 248, 0.15); border-color: rgba(129, 140, 248, 0.35); }
+      .option { color: #fcd34d; background: rgba(251, 191, 36, 0.13); border-color: rgba(251, 191, 36, 0.35); }
+      .argument { color: #6ee7b7; background: rgba(52, 211, 153, 0.13); border-color: rgba(52, 211, 153, 0.35); }
+      .pipe { color: #e4e4e7; background: rgba(113, 113, 122, 0.3); border-color: rgba(161, 161, 170, 0.45); }
+    </style>
+  </head>
+  <body>
+    <div class="brand">
+      <svg viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="#4f46e5"/><path d="M9 11l5 5-5 5" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 22h7" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg>
+      LinuxLens
+    </div>
+    <h1>Les commandes Linux, <span>expliquées en français.</span></h1>
+    <div class="terminal">
+      <span class="prompt">$</span>
+      <span class="t command">ls</span>
+      <span class="t option">-la</span>
+      <span class="t argument">/home</span>
+      <span class="t pipe">|</span>
+      <span class="t command">grep</span>
+      <span class="t argument">log</span>
+    </div>
+  </body>
+</html>

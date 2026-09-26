@@ -1,4 +1,4 @@
-import type { AuthApi, Backend, DataApi } from '../../types/backend';
+import type { AdminApi, AuthApi, Backend, DataApi, MonitoringApi } from '../../types/backend';
 import { createDemoBackend } from './demo';
 
 /**
@@ -15,6 +15,13 @@ export function createBackend(env: { VITE_SUPABASE_URL?: string; VITE_SUPABASE_A
     });
   }
   return createDemoBackend();
+}
+
+let shared: Backend | null = null;
+
+/** Backend du site, partagé par l'authentification et le signalement des erreurs. */
+export function defaultBackend(): Backend {
+  return (shared ??= createBackend());
 }
 
 /**
@@ -60,5 +67,12 @@ export function lazyBackend(mode: Backend['mode'], load: () => Promise<Backend>)
     };
   };
 
-  return { mode, auth: defer<AuthApi>((b) => b.auth, { onChange }), data: defer<DataApi>((b) => b.data) };
+  return {
+    mode,
+    auth: defer<AuthApi>((b) => b.auth, { onChange }),
+    data: defer<DataApi>((b) => b.data),
+    monitoring: defer<MonitoringApi>((b) => b.monitoring),
+    // Le vrai backend (Supabase) fournit toujours le tableau de bord
+    admin: defer<AdminApi>((b) => b.admin!),
+  };
 }

@@ -26,6 +26,13 @@ describe('App', () => {
     await waitFor(() => expect(document.title).toBe('LinuxLens — les commandes Linux expliquées'));
   });
 
+  it('mentions légales accessibles depuis le pied de page', async () => {
+    renderApp('/mentions-legales');
+    expect(await screen.findByRole('heading', { level: 1, name: 'Mentions légales' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Hébergement' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Mentions légales' })).toHaveAttribute('href', '/mentions-legales');
+  });
+
   it('charge les pages à la demande, titre compris', async () => {
     renderApp('/commande/chmod');
     expect(await screen.findByRole('heading', { level: 1, name: 'chmod' })).toBeInTheDocument();

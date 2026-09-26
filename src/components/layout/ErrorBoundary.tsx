@@ -1,4 +1,5 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react';
+import { reportError } from '../../lib/errorReporting';
 import { PageHeader } from '../ui/PageHeader';
 
 /**
@@ -14,6 +15,7 @@ export class ErrorBoundary extends Component<{ children: ReactNode }, { error: E
 
   componentDidCatch(error: Error, info: ErrorInfo) {
     console.error('Erreur dans une page :', error, info.componentStack);
+    reportError('page', error);
   }
 
   render() {

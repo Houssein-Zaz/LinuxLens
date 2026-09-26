@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { Link, Navigate, useNavigate, useSearchParams } from 'react-router';
 import { AuthCard } from '../../components/auth/AuthCard';
+import { useCaptcha } from '../../components/auth/Captcha';
 import { FormError, FormSuccess, PasswordField, SubmitButton, TextField } from '../../components/auth/FormFields';
 import { safeNext } from '../../components/auth/RequireAuth';
 import { useAuth } from '../../hooks/useAuth';
@@ -18,6 +19,7 @@ export function SignUpPage() {
   const [error, setError] = useState<string>();
   const [pending, setPending] = useState(false);
   const [checkEmail, setCheckEmail] = useState(false);
+  const captcha = useCaptcha();
 
   if (user && !pending) return <Navigate to={next} replace />;
 
@@ -38,9 +40,12 @@ export function SignUpPage() {
 
     setPending(true);
     setError(undefined);
-    const result = await backend.auth.signUp(form.email, form.password, form.name);
+    const result = await backend.auth.signUp(form.email, form.password, form.name, captcha.token);
     setPending(false);
-    if (result.error) setError(result.error);
+    if (result.error) {
+      setError(result.error);
+      captcha.reset();
+    }
     else if (result.needsConfirmation) setCheckEmail(true);
     else navigate(next, { replace: true });
   };
@@ -84,7 +89,10 @@ export function SignUpPage() {
           hint={`Au moins ${PASSWORD_MIN_LENGTH} caractères, dont une lettre et un chiffre.`}
         />
         <PasswordField label="Confirmer le mot de passe" autoComplete="new-password" required value={form.confirm} onChange={set('confirm')} error={errors.confirm} />
-        <SubmitButton pending={pending}>Créer mon compte</SubmitButton>
+        {captcha.element}
+        <SubmitButton pending={pending} disabled={!captcha.ready}>
+          Créer mon compte
+        </SubmitButton>
         <p className="text-xs text-zinc-500 dark:text-zinc-400">
           En créant un compte, vous acceptez la{' '}
           <Link to="/confidentialite" className="underline underline-offset-2">
