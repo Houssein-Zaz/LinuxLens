@@ -63,7 +63,7 @@ export function CommandInput({ value, onChange, suggest }: Props) {
           aria-expanded={expanded}
           aria-controls={listId}
           aria-activedescendant={expanded ? `${listId}-${active}` : undefined}
-          placeholder="ls -la /home | grep esprit"
+          placeholder="ls -la | grep .txt"
           spellCheck={false}
           autoCapitalize="off"
           autoCorrect="off"
