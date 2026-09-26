@@ -69,7 +69,7 @@ describe('ExplainPage', () => {
     expect(screen.getByText('parted -l', { selector: 'code' })).toBeInTheDocument();
     const send = screen.getByRole('button', { name: 'Envoyer' });
     expect(send).toBeDisabled();
-    await user.type(screen.getByLabelText('Qu’est-ce qui n’allait pas ?'), 'Il manque des explications');
+    await user.type(screen.getByLabelText(/Ce qui ne vous a pas plu/), 'Il manque des explications');
     await user.click(send);
     expect(await screen.findByRole('status')).toHaveTextContent('Merci');
   });

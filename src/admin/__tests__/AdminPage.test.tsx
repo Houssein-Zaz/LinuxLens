@@ -8,8 +8,8 @@ const now = new Date().toISOString();
 
 function fakeAdmin(isAdmin = true): AdminApi {
   let feedback: FeedbackEntry[] = [
-    { id: 1, email: null, canReply: false, message: 'L’option -s de parted n’est pas expliquée.', command: 'parted -s /dev/sda print', path: '/', createdAt: now, reply: null, repliedAt: null },
-    { id: 2, email: 'sara@exemple.fr', canReply: true, message: 'Il manque la commande mkfs.', command: '', path: '/', createdAt: now, reply: null, repliedAt: null },
+    { id: 1, email: null, canReply: false, liked: '', disliked: '', message: 'L’option -s de parted n’est pas expliquée.', command: 'parted -s /dev/sda print', path: '/', createdAt: now, reply: null, repliedAt: null },
+    { id: 2, email: 'sara@exemple.fr', canReply: true, liked: 'Les exercices.', disliked: '', message: 'Il manque la commande mkfs.', command: '', path: '/', createdAt: now, reply: null, repliedAt: null },
   ];
   let errors = [
     { id: 1, email: null, source: 'page', message: 'TypeError: x is undefined', detail: 'at LsPage', path: '/ls', userAgent: 'Mozilla/5.0 (Windows NT 10.0) Chrome/130.0', createdAt: now },
@@ -159,6 +159,30 @@ describe('AdminPage', () => {
     await user.click(within(messages).getByRole('button', { name: 'Oui, effacer' }));
     expect(admin.clearFeedback).toHaveBeenCalled();
     expect(await screen.findByText(/Aucun message/)).toBeInTheDocument();
+  });
+
+  it('avis : parties remplies sous leur titre, export PDF', async () => {
+    const user = userEvent.setup();
+    await renderAdmin(fakeAdmin());
+    const messages = await screen.findByRole('region', { name: 'Messages des visiteurs (2)' });
+    expect(within(messages).getByText('Ce qui a plu')).toBeInTheDocument();
+    expect(within(messages).getByText('Les exercices.')).toBeInTheDocument();
+    expect(within(messages).queryByText('Ce qui n’a pas plu')).not.toBeInTheDocument();
+
+    const doc = { open: vi.fn(), write: vi.fn(), close: vi.fn() };
+    const popup = { document: doc, addEventListener: vi.fn(), focus: vi.fn(), print: vi.fn(), close: vi.fn() };
+    const open = vi.spyOn(window, 'open').mockReturnValue(popup as unknown as Window);
+    await user.click(within(messages).getByRole('button', { name: 'Exporter en PDF' }));
+    expect(popup.print).toHaveBeenCalled();
+    expect(doc.write.mock.calls[0]![0]).toContain('2 avis');
+
+    await user.click(within(messages).getByRole('button', { name: 'Exporter l’avis de sara@exemple.fr en PDF' }));
+    expect(doc.write.mock.calls[1]![0]).toContain('1 avis');
+
+    open.mockReturnValue(null);
+    await user.click(within(messages).getByRole('button', { name: 'Exporter en PDF' }));
+    expect(within(messages).getByRole('alert')).toHaveTextContent(/fenêtres pop-up/);
+    open.mockRestore();
   });
 
   it('répondre à un message, puis modifier ou retirer la réponse', async () => {

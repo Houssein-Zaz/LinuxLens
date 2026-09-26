@@ -15,8 +15,7 @@ import type {
 import {
   ANSWER_MAX_LENGTH,
   ATTEMPTS_LIMIT,
-  FEEDBACK_COMMAND_MAX_LENGTH,
-  FEEDBACK_MAX_LENGTH,
+  cleanFeedback,
   FEEDBACK_REPLY_MAX_LENGTH,
   HISTORY_LIMIT,
   MY_FEEDBACK_LIMIT,
@@ -103,6 +102,8 @@ interface ErrorLogRow {
 
 interface MyFeedbackRow {
   id: number;
+  liked: string;
+  disliked: string;
   message: string;
   command: string;
   created_at: string;
@@ -145,14 +146,13 @@ export function createSupabaseBackend(client: SupabaseClient): Backend {
     }
   };
 
-  const sendFeedback = async ({ message, command = '' }: FeedbackInput) => {
-    const text = message.trim();
-    if (!text) return { error: 'Écrivez votre message.' };
+  const sendFeedback = async (input: FeedbackInput) => {
+    const { fields, error: invalid } = cleanFeedback(input);
+    if (invalid) return { error: invalid };
     try {
       // user_id est rempli par la base, comme pour le journal des erreurs
       const { error } = await client.from('feedback').insert({
-        message: text.slice(0, FEEDBACK_MAX_LENGTH),
-        command: command.trim().slice(0, FEEDBACK_COMMAND_MAX_LENGTH),
+        ...fields,
         path: typeof window === 'undefined' ? '' : window.location.pathname.slice(0, 300),
       });
       return error ? { error: UNKNOWN_ERROR } : {};
@@ -300,7 +300,7 @@ export function createSupabaseBackend(client: SupabaseClient): Backend {
         // La règle RLS ne laisse lire que ses propres messages
         const { data, error } = await client
           .from('feedback')
-          .select('id, message, command, created_at, reply, replied_at')
+          .select('id, liked, disliked, message, command, created_at, reply, replied_at')
           .eq('user_id', await userId())
           .order('created_at', { ascending: false })
           .limit(MY_FEEDBACK_LIMIT);
@@ -308,6 +308,8 @@ export function createSupabaseBackend(client: SupabaseClient): Backend {
         return (data ?? []).map(
           (r: MyFeedbackRow): MyFeedback => ({
             id: r.id,
+            liked: r.liked,
+            disliked: r.disliked,
             message: r.message,
             command: r.command,
             createdAt: r.created_at,
@@ -423,6 +425,8 @@ export function createSupabaseBackend(client: SupabaseClient): Backend {
             id: r.id,
             email: r.email,
             canReply: r.can_reply,
+            liked: r.liked,
+            disliked: r.disliked,
             message: r.message,
             command: r.command,
             path: r.path,

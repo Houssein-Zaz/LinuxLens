@@ -2,8 +2,7 @@ import type { Attempt, Backend, HistoryEntry, MyFeedback, User } from '../../typ
 import {
   ANSWER_MAX_LENGTH,
   ATTEMPTS_LIMIT,
-  FEEDBACK_COMMAND_MAX_LENGTH,
-  FEEDBACK_MAX_LENGTH,
+  cleanFeedback,
   HISTORY_LIMIT,
   MY_FEEDBACK_LIMIT,
   normalizeEmail, validateEmail, validatePassword } from './validation';
@@ -26,7 +25,8 @@ interface UserData {
   /** Plus récents d'abord. Absent des données enregistrées avant l'ajout des essais. */
   attempts?: Attempt[];
   /** Messages envoyés avec « Dites-le-nous ». Pas de réponse en mode démo : il n'y a pas d'administrateur. */
-  feedback?: MyFeedback[];
+  // liked et disliked manquent dans les messages enregistrés avant le formulaire d'avis
+  feedback?: Array<Omit<MyFeedback, 'liked' | 'disliked'> & Partial<MyFeedback>>;
 }
 
 export interface KeyValueStore {
@@ -239,21 +239,20 @@ export function createDemoBackend(store: KeyValueStore = safeLocalStorage): Back
         });
       },
       async getMyFeedback() {
-        return readData(requireUser().id).feedback ?? [];
+        return (readData(requireUser().id).feedback ?? []).map((f): MyFeedback => ({ liked: '', disliked: '', ...f }));
       },
     },
     // Pas de journal ni de tableau de bord en mode démo : tout reste dans ce navigateur
     monitoring: {
       async report() {},
-      async sendFeedback({ message, command = '' }) {
-        const text = message.trim();
-        if (!text) return { error: 'Écrivez votre message.' };
+      async sendFeedback(input) {
+        const { fields, error } = cleanFeedback(input);
+        if (error) return { error };
         if (current()) {
           updateData((d) => {
             const entry: MyFeedback = {
               id: Date.now(),
-              message: text.slice(0, FEEDBACK_MAX_LENGTH),
-              command: command.trim().slice(0, FEEDBACK_COMMAND_MAX_LENGTH),
+              ...fields,
               createdAt: new Date().toISOString(),
               reply: null,
               repliedAt: null,

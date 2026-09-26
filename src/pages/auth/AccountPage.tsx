@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent, type ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { DemoBanner } from '../../components/auth/DemoBanner';
 import { FormError, FormSuccess, PasswordField, TextField } from '../../components/auth/FormFields';
+import { FeedbackSections } from '../../components/explain/FeedbackSections';
 import { buttonClass } from '../../components/practice/Feedback';
 import { useConfirm } from '../../components/ui/ConfirmDialog';
 import { PageHeader } from '../../components/ui/PageHeader';
@@ -324,7 +325,7 @@ function MessagesCard() {
         <p className="text-sm text-zinc-500">Chargement…</p>
       ) : messages.length === 0 ? (
         <p className="text-sm text-zinc-600 dark:text-zinc-400">
-          Un problème ou une explication manquante ? Utilisez « Dites-le-nous » sous l’
+          Un avis, un problème ou une explication manquante ? Utilisez « Dites-le-nous » sous l’
           <Link to="/" className="underline underline-offset-2">
             explication d’une commande
           </Link>
@@ -344,7 +345,7 @@ function MessagesCard() {
                   {dateFormat.format(new Date(m.createdAt))}
                 </time>
               </div>
-              <p className="mt-1 text-sm whitespace-pre-line [overflow-wrap:anywhere]">{m.message}</p>
+              <FeedbackSections f={m} />
               {m.command && (
                 <Link
                   to={`/?c=${encodeURIComponent(m.command)}`}

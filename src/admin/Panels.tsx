@@ -1,9 +1,11 @@
 import { Fragment, useId, useState, type FormEvent, type ReactNode } from 'react';
+import { FeedbackSections } from '../components/explain/FeedbackSections';
 import { buttonClass } from '../components/practice/Feedback';
 import { CATEGORY_BY_ID } from '../data/categories';
 import { FEEDBACK_REPLY_MAX_LENGTH } from '../lib/backend/validation';
 import { ALL_EXERCISES, EXERCISE_BY_ID, exerciseTitle } from '../data/exercises';
 import type { AdminOverview, AdminUser, ErrorLog, FeedbackEntry } from '../types/backend';
+import { printFeedback } from './feedbackPdf';
 import { fullDate, percent, shortAgent, timeAgo } from './format';
 import type { UserResults } from './userResults';
 
@@ -143,16 +145,33 @@ interface FeedbackPanelProps {
   onReply(id: number, reply: string): Promise<void>;
 }
 
+const POPUP_BLOCKED = 'Le navigateur a bloqué la fenêtre du PDF : autorisez les fenêtres pop-up pour ce site, puis réessayez.';
+
 export function FeedbackPanel({ feedback, onClear, onReply }: FeedbackPanelProps) {
-  const action = feedback.length === 0 ? null : <ClearAll question={`Effacer les ${feedback.length} messages ?`} onClear={onClear} />;
+  const [pdfError, setPdfError] = useState<string>();
+  const exportPdf = (entries: FeedbackEntry[]) => setPdfError(printFeedback(entries) ? undefined : POPUP_BLOCKED);
+  const action =
+    feedback.length === 0 ? null : (
+      <span className="flex flex-wrap items-center gap-2">
+        <button type="button" className={buttonClass.secondary} onClick={() => exportPdf(feedback)}>
+          Exporter en PDF
+        </button>
+        <ClearAll question={`Effacer les ${feedback.length} messages ?`} onClear={onClear} />
+      </span>
+    );
   const waiting = feedback.filter((f) => f.canReply && !f.reply).length;
 
   return (
     <Panel title={`Messages des visiteurs${feedback.length ? ` (${feedback.length})` : ''}`} id="admin-messages" action={action}>
       {feedback.length === 0 ? (
-        <p className={`text-sm ${muted}`}>Aucun message. Ceux envoyés depuis la page d’explication (« Dites-le-nous ») apparaîtront ici.</p>
+        <p className={`text-sm ${muted}`}>Aucun message. Les avis envoyés depuis la page d’explication (« Dites-le-nous ») apparaîtront ici.</p>
       ) : (
         <>
+          {pdfError && (
+            <p role="alert" className="mb-2 text-sm text-red-600 dark:text-red-400">
+              {pdfError}
+            </p>
+          )}
           {waiting > 0 && (
             <p className="mb-2 text-sm font-medium text-amber-700 dark:text-amber-300">
               ⚠ {waiting} message{waiting > 1 ? 's' : ''} en attente de réponse
@@ -160,7 +179,7 @@ export function FeedbackPanel({ feedback, onClear, onReply }: FeedbackPanelProps
           )}
           <ul className="divide-y divide-zinc-100 dark:divide-zinc-800">
             {feedback.map((f) => (
-              <FeedbackItem key={f.id} f={f} onReply={onReply} />
+              <FeedbackItem key={f.id} f={f} onReply={onReply} onPdf={() => exportPdf([f])} />
             ))}
           </ul>
         </>
@@ -169,7 +188,7 @@ export function FeedbackPanel({ feedback, onClear, onReply }: FeedbackPanelProps
   );
 }
 
-function FeedbackItem({ f, onReply }: { f: FeedbackEntry; onReply: FeedbackPanelProps['onReply'] }) {
+function FeedbackItem({ f, onReply, onPdf }: { f: FeedbackEntry; onReply: FeedbackPanelProps['onReply']; onPdf(): void }) {
   const id = useId();
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState('');
@@ -216,7 +235,7 @@ function FeedbackItem({ f, onReply }: { f: FeedbackEntry; onReply: FeedbackPanel
           {timeAgo(f.createdAt)}
         </time>
       </div>
-      <p className="mt-1.5 text-sm whitespace-pre-line [overflow-wrap:anywhere]">{f.message}</p>
+      <FeedbackSections f={f} />
       {f.command && (
         <p className="mt-1.5 text-xs">
           <span className={muted}>Commande : </span>
@@ -275,31 +294,38 @@ function FeedbackItem({ f, onReply }: { f: FeedbackEntry; onReply: FeedbackPanel
             </button>
           </div>
         </form>
-      ) : f.canReply ? (
-        <div className="mt-2 flex flex-wrap gap-3 text-sm">
-          <button
-            type="button"
-            onClick={() => {
-              setDraft(f.reply ?? '');
-              setEditing(true);
-            }}
-            className="font-medium text-indigo-700 underline-offset-2 hover:underline dark:text-indigo-300"
-          >
-            {f.reply ? 'Modifier la réponse' : 'Répondre'}
-          </button>
-          {f.reply && (
-            <button
-              type="button"
-              onClick={() => void save('')}
-              disabled={saving}
-              className={`underline-offset-2 hover:underline ${muted}`}
-            >
-              Retirer la réponse
-            </button>
-          )}
-        </div>
       ) : (
-        <p className={`mt-2 text-xs ${muted}`}>Envoyé sans compte : l’auteur ne pourra pas lire de réponse.</p>
+        <div className="mt-2 flex flex-wrap items-baseline gap-3 text-sm">
+          {f.canReply ? (
+            <>
+              <button
+                type="button"
+                onClick={() => {
+                  setDraft(f.reply ?? '');
+                  setEditing(true);
+                }}
+                className="font-medium text-indigo-700 underline-offset-2 hover:underline dark:text-indigo-300"
+              >
+                {f.reply ? 'Modifier la réponse' : 'Répondre'}
+              </button>
+              {f.reply && (
+                <button
+                  type="button"
+                  onClick={() => void save('')}
+                  disabled={saving}
+                  className={`underline-offset-2 hover:underline ${muted}`}
+                >
+                  Retirer la réponse
+                </button>
+              )}
+            </>
+          ) : (
+            <span className={`text-xs ${muted}`}>Envoyé sans compte : l’auteur ne pourra pas lire de réponse.</span>
+          )}
+          <button type="button" onClick={onPdf} aria-label={`Exporter l’avis de ${author} en PDF`} className={`underline-offset-2 hover:underline ${muted}`}>
+            PDF
+          </button>
+        </div>
       )}
       {error && !editing && (
         <p role="alert" className="mt-1 text-xs text-red-600 dark:text-red-400">

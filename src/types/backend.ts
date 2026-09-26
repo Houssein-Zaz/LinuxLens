@@ -78,9 +78,14 @@ export interface ErrorReport {
   detail?: string;
 }
 
-/** Message laissé par un visiteur : problème rencontré, explication manquante ou fausse. */
+/** Avis laissé par un visiteur : au moins un des trois champs est rempli. */
 export interface FeedbackInput {
-  message: string;
+  /** Ce qui lui a plu. */
+  liked?: string;
+  /** Ce qui ne lui a pas plu. */
+  disliked?: string;
+  /** Commentaire libre (problème rencontré, explication manquante…). */
+  message?: string;
   /** Commande affichée au moment de l'envoi, s'il y en a une. */
   command?: string;
 }
@@ -88,6 +93,8 @@ export interface FeedbackInput {
 /** Message envoyé par l'utilisateur connecté, avec la réponse de l'administrateur. */
 export interface MyFeedback {
   id: number;
+  liked: string;
+  disliked: string;
   message: string;
   command: string;
   createdAt: string;
@@ -150,6 +157,8 @@ export interface FeedbackEntry {
   email: string | null;
   /** Faux pour un visiteur sans compte : il n'a aucun moyen de lire une réponse. */
   canReply: boolean;
+  liked: string;
+  disliked: string;
   message: string;
   command: string;
   path: string;

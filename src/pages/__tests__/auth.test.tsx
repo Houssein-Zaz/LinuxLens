@@ -195,8 +195,8 @@ describe('Mon compte : messages', () => {
   it('affiche la réponse de l’administrateur sous le message', async () => {
     const backend = await testBackend(true);
     backend.data.getMyFeedback = async () => [
-      { id: 1, message: 'Il manque parted.', command: 'parted -l', createdAt: '2026-09-20T10:00:00Z', reply: 'Ajouté, merci !', repliedAt: '2026-09-21T10:00:00Z' },
-      { id: 2, message: 'Et mkfs ?', command: '', createdAt: '2026-09-22T10:00:00Z', reply: null, repliedAt: null },
+      { id: 1, liked: '', disliked: '', message: 'Il manque parted.', command: 'parted -l', createdAt: '2026-09-20T10:00:00Z', reply: 'Ajouté, merci !', repliedAt: '2026-09-21T10:00:00Z' },
+      { id: 2, liked: '', disliked: '', message: 'Et mkfs ?', command: '', createdAt: '2026-09-22T10:00:00Z', reply: null, repliedAt: null },
     ];
     renderApp('/compte', backend);
     const card = await screen.findByRole('region', { name: 'Mes messages' });

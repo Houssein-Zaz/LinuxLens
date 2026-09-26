@@ -102,6 +102,18 @@ alter table public.feedback
 
 create index if not exists feedback_user on public.feedback (user_id, created_at desc);
 
+-- Formulaire d'avis : ce qui a plu, ce qui n'a pas plu, et le commentaire (colonne message).
+-- Chaque champ peut rester vide, mais pas les trois à la fois.
+alter table public.feedback
+  add column if not exists liked    text not null default '' check (char_length(liked) <= 1000),
+  add column if not exists disliked text not null default '' check (char_length(disliked) <= 1000);
+
+alter table public.feedback drop constraint if exists feedback_message_check;
+alter table public.feedback add constraint feedback_message_check check (char_length(message) <= 1000);
+
+alter table public.feedback drop constraint if exists feedback_not_empty;
+alter table public.feedback add constraint feedback_not_empty check (liked <> '' or disliked <> '' or message <> '');
+
 alter table public.feedback enable row level security;
 
 -- Personne ne peut écrire lui-même une « réponse » : seule admin_reply_feedback() le fait
@@ -285,7 +297,7 @@ begin
 end;
 $$;
 
--- Le type de retour a changé (réponses) : la fonction doit être recréée
+-- Le type de retour a changé (réponses, puis formulaire d'avis) : la fonction doit être recréée
 drop function if exists public.admin_feedback();
 
 create or replace function public.admin_feedback()
@@ -293,6 +305,8 @@ returns table (
   id bigint,
   email text,
   can_reply boolean,
+  liked text,
+  disliked text,
   message text,
   command text,
   path text,
@@ -308,7 +322,7 @@ as $$
 begin
   perform public.require_admin();
   return query
-    select f.id, u.email::text, u.id is not null, f.message, f.command, f.path, f.created_at, f.reply, f.replied_at
+    select f.id, u.email::text, u.id is not null, f.liked, f.disliked, f.message, f.command, f.path, f.created_at, f.reply, f.replied_at
     from public.feedback f left join auth.users u on u.id = f.user_id
     order by f.created_at desc
     limit 200;

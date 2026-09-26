@@ -123,7 +123,7 @@ describe('backend démo', () => {
     expect(await b.data.getMyFeedback()).toEqual([]);
     await b.monitoring.sendFeedback({ message: ' Explication manquante ', command: 'parted -l' });
     expect(await b.data.getMyFeedback()).toEqual([
-      expect.objectContaining({ message: 'Explication manquante', command: 'parted -l', reply: null }),
+      expect.objectContaining({ liked: '', disliked: '', message: 'Explication manquante', command: 'parted -l', reply: null }),
     ]);
   });
 });

@@ -139,7 +139,10 @@ describe('backend Supabase', () => {
     expect(await b.monitoring.sendFeedback({ message: '  Explication manquante  ', command: ' parted -l ' })).toEqual({});
     expect(calls).toContainEqual(['feedback.insert', expect.objectContaining({ message: 'Explication manquante', command: 'parted -l' })]);
 
-    expect(await b.monitoring.sendFeedback({ message: '   ' })).toEqual({ error: 'Écrivez votre message.' });
+    expect(await b.monitoring.sendFeedback({ liked: ' Les exemples ', disliked: '', message: '' })).toEqual({});
+    expect(calls).toContainEqual(['feedback.insert', expect.objectContaining({ liked: 'Les exemples', disliked: '', message: '' })]);
+
+    expect(await b.monitoring.sendFeedback({ liked: ' ', disliked: '  ', message: '   ' })).toEqual({ error: 'Remplissez au moins un champ.' });
     responses.feedback = { data: null, error: { message: 'new row violates row-level security policy' } };
     expect(await b.monitoring.sendFeedback({ message: 'x' })).toEqual({ error: expect.stringMatching(/Une erreur est survenue/) });
   });
@@ -147,11 +150,11 @@ describe('backend Supabase', () => {
   it('mes messages : seulement les siens, réponses converties', async () => {
     const { client, calls, responses } = fakeClient({ session });
     responses.feedback = {
-      data: [{ id: 3, message: 'm', command: 'ls', created_at: 't', reply: 'r', replied_at: 't2' }],
+      data: [{ id: 3, liked: 'l', disliked: 'd', message: 'm', command: 'ls', created_at: 't', reply: 'r', replied_at: 't2' }],
       error: null,
     };
     expect(await createSupabaseBackend(client).data.getMyFeedback()).toEqual([
-      { id: 3, message: 'm', command: 'ls', createdAt: 't', reply: 'r', repliedAt: 't2' },
+      { id: 3, liked: 'l', disliked: 'd', message: 'm', command: 'ls', createdAt: 't', reply: 'r', repliedAt: 't2' },
     ]);
     expect(calls).toContainEqual(['feedback.eq', 'user_id', 'u1']);
   });
@@ -166,7 +169,7 @@ describe('backend Supabase', () => {
       ],
       admin_errors: [{ id: 1, email: null, source: 'page', message: 'm', detail: 'd', path: '/', user_agent: 'ua', created_at: 't' }],
       admin_feedback: [
-        { id: 2, email: 'a@b.fr', can_reply: true, message: 'm', command: 'ls', path: '/', created_at: 't', reply: 'r', replied_at: 't2' },
+        { id: 2, email: 'a@b.fr', can_reply: true, liked: 'l', disliked: 'd', message: 'm', command: 'ls', path: '/', created_at: 't', reply: 'r', replied_at: 't2' },
       ],
     };
     rpc.mockImplementation(async (...args: unknown[]) => ({ data: responses[args[0] as string] ?? null, error: null }));
@@ -179,7 +182,7 @@ describe('backend Supabase', () => {
     ]);
     expect((await admin.errors())[0]).toMatchObject({ userAgent: 'ua', createdAt: 't' });
     expect(await admin.feedback()).toEqual([
-      { id: 2, email: 'a@b.fr', canReply: true, message: 'm', command: 'ls', path: '/', createdAt: 't', reply: 'r', repliedAt: 't2' },
+      { id: 2, email: 'a@b.fr', canReply: true, liked: 'l', disliked: 'd', message: 'm', command: 'ls', path: '/', createdAt: 't', reply: 'r', repliedAt: 't2' },
     ]);
     await admin.replyFeedback(2, '  Merci !  ');
     expect(rpc).toHaveBeenCalledWith('admin_reply_feedback', { feedback_id: 2, reply_text: 'Merci !' });
