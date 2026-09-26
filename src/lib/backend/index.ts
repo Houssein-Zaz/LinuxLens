@@ -11,10 +11,22 @@ export function createBackend(env: { VITE_SUPABASE_URL?: string; VITE_SUPABASE_A
   if (url && key) {
     return lazyBackend('supabase', async () => {
       const [{ createClient }, { createSupabaseBackend }] = await Promise.all([import('@supabase/supabase-js'), import('./supabase')]);
-      return createSupabaseBackend(createClient(url, key));
+      return createSupabaseBackend(createClient(projectUrl(url), key));
     });
   }
   return createDemoBackend();
+}
+
+/**
+ * Adresse de base du projet. Le tableau de bord affiche aussi `…supabase.co/rest/v1/` :
+ * collée telle quelle, elle ferait échouer toutes les requêtes d'authentification.
+ */
+export function projectUrl(url: string): string {
+  try {
+    return new URL(url.trim()).origin;
+  } catch {
+    return url;
+  }
 }
 
 /**

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { PermCard } from '../components/practice/PermCard';
 import { QuizCard } from '../components/practice/QuizCard';
 import { WriteCard } from '../components/practice/WriteCard';
@@ -18,25 +18,62 @@ const KINDS: Array<{ id: KindFilter; label: string }> = [
   { id: 'perm', label: 'Permissions' },
 ];
 
+const filterExercises = (kind: KindFilter, category: CategoryId | 'all') =>
+  ALL_EXERCISES.filter((e) => (kind === 'all' || e.kind === kind) && (category === 'all' || e.category === category)).sort(
+    (a, b) => a.level - b.level,
+  );
+
+/** Exercice en cours et filtres, pour reprendre au même endroit en revenant sur la page. */
+interface Position {
+  kind: KindFilter;
+  category: CategoryId | 'all';
+  hideSolved: boolean;
+  exerciseId: string | null;
+}
+
+const POSITION_KEY = 'linuxlens-practice-position';
+
+function loadPosition(): Position {
+  const fallback: Position = { kind: 'all', category: 'all', hideSolved: false, exerciseId: null };
+  try {
+    const saved = JSON.parse(localStorage.getItem(POSITION_KEY) ?? 'null') as Partial<Position> | null;
+    if (!saved) return fallback;
+    return {
+      kind: KINDS.some((k) => k.id === saved.kind) ? saved.kind! : 'all',
+      category: saved.category && (saved.category === 'all' || saved.category in CATEGORY_BY_ID) ? saved.category : 'all',
+      hideSolved: saved.hideSolved === true,
+      exerciseId: typeof saved.exerciseId === 'string' ? saved.exerciseId : null,
+    };
+  } catch {
+    return fallback;
+  }
+}
+
 export function PracticePage() {
   const { solved, recordAttempt, reset } = useProgress();
-  const [kind, setKind] = useState<KindFilter>('all');
-  const [category, setCategory] = useState<CategoryId | 'all'>('all');
-  const [hideSolved, setHideSolved] = useState(false);
+  const [saved] = useState(loadPosition);
+  const [kind, setKind] = useState<KindFilter>(saved.kind);
+  const [category, setCategory] = useState<CategoryId | 'all'>(saved.category);
+  const [hideSolved, setHideSolved] = useState(saved.hideSolved);
   const [index, setIndex] = useState(0);
 
-  const list = useMemo(
-    () =>
-      ALL_EXERCISES.filter(
-        (e) => (kind === 'all' || e.kind === kind) && (category === 'all' || e.category === category),
-      ).sort((a, b) => a.level - b.level),
-    [kind, category],
-  );
+  const list = useMemo(() => filterExercises(kind, category), [kind, category]);
   // « Masquer les réussis » ne retire pas l'exercice en cours, pour pouvoir lire la correction
-  const [current, setCurrent] = useState<string | null>(null);
+  const [current, setCurrent] = useState<string | null>(saved.exerciseId);
   const visible = hideSolved ? list.filter((e) => !solved.has(e.id) || e.id === current) : list;
-  const safeIndex = Math.min(index, Math.max(0, visible.length - 1));
+  // L'exercice en cours est retrouvé par son identifiant (retour sur la page, liste filtrée) ; sinon par sa position
+  const currentIndex = current ? visible.findIndex((e) => e.id === current) : -1;
+  const safeIndex = currentIndex >= 0 ? currentIndex : Math.min(index, Math.max(0, visible.length - 1));
   const exercise = visible[safeIndex];
+
+  const exerciseId = exercise?.id ?? null;
+  useEffect(() => {
+    try {
+      localStorage.setItem(POSITION_KEY, JSON.stringify({ kind, category, hideSolved, exerciseId } satisfies Position));
+    } catch {
+      // stockage indisponible : on repartira du début
+    }
+  }, [kind, category, hideSolved, exerciseId]);
 
   const solvedInList = list.filter((e) => solved.has(e.id)).length;
   const go = (i: number) => {

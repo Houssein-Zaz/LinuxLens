@@ -1,6 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { createSupabaseBackend, translateAuthError } from '../supabase';
-import { createBackend, lazyBackend } from '..';
+import { createBackend, lazyBackend, projectUrl } from '..';
 import { createDemoBackend } from '../demo';
 import { memoryStore } from '../../../test-utils';
 
@@ -156,6 +156,14 @@ describe('createBackend', () => {
   it('mode démo sans configuration, Supabase avec', () => {
     expect(createBackend({}).mode).toBe('demo');
     expect(createBackend({ VITE_SUPABASE_URL: 'https://x.supabase.co', VITE_SUPABASE_ANON_KEY: 'cle' }).mode).toBe('supabase');
+  });
+});
+
+describe('projectUrl', () => {
+  it('ne garde que l’adresse de base du projet', () => {
+    expect(projectUrl('https://abc.supabase.co/rest/v1/')).toBe('https://abc.supabase.co');
+    expect(projectUrl(' https://abc.supabase.co/ ')).toBe('https://abc.supabase.co');
+    expect(projectUrl('https://abc.supabase.co')).toBe('https://abc.supabase.co');
   });
 });
 

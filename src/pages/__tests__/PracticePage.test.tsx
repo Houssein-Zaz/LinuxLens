@@ -89,6 +89,44 @@ describe('PracticePage', () => {
     expect(screen.getByText('Bravo, c’est correct !')).toBeInTheDocument();
   });
 
+  it('en revenant sur la page, reprend au même exercice avec les mêmes filtres', async () => {
+    const user = userEvent.setup();
+    const first = renderPage();
+    await user.selectOptions(screen.getByLabelText('Catégorie'), 'files');
+    await user.click(screen.getByRole('button', { name: 'Suivant →' }));
+    await user.click(screen.getByRole('button', { name: 'Suivant →' }));
+    const position = within(exercise()).getByText(/^\d+ \/ \d+$/).textContent;
+    const prompt = within(exercise()).getByRole('paragraph', { name: '' }).textContent;
+    first.unmount();
+
+    renderPage();
+    expect(screen.getByLabelText('Catégorie')).toHaveValue('files');
+    expect(within(exercise()).getByText(position!)).toBeInTheDocument();
+    expect(within(exercise()).getByRole('paragraph', { name: '' })).toHaveTextContent(prompt!);
+  });
+
+  it('reprend au même exercice même quand les réussis sont masqués', async () => {
+    const user = userEvent.setup();
+    const first = renderPage();
+    await user.click(screen.getByLabelText('Masquer les réussis'));
+    await user.type(screen.getByLabelText('Votre commande'), 'pwd{Enter}'); // réussi, reste affiché
+    await user.click(screen.getByRole('button', { name: 'Suivant →' }));
+    await user.click(screen.getByRole('button', { name: 'Suivant →' }));
+    expect(within(exercise()).getByText(/^2 \/ \d+$/)).toBeInTheDocument();
+    const position = within(exercise()).getByText(/^\d+ \/ \d+$/).textContent;
+    first.unmount();
+
+    renderPage();
+    expect(screen.getByLabelText('Masquer les réussis')).toBeChecked();
+    expect(within(exercise()).getByText(position!)).toBeInTheDocument();
+  });
+
+  it('position enregistrée illisible : repart du début', () => {
+    localStorage.setItem('linuxlens-practice-position', '{pas du json');
+    renderPage();
+    expect(within(exercise()).getByText(/^1 \/ \d+$/)).toBeInTheDocument();
+  });
+
   it('progression mémorisée entre deux visites', () => {
     localStorage.setItem('linuxlens-progress', JSON.stringify(['w-pwd']));
     renderPage();
