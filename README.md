@@ -2,7 +2,7 @@
 
 **Comprendre visuellement les commandes shell Linux, en français.**
 
-LinuxLens découpe une ligne de commande en éléments colorés (commande, options, arguments, pipes, redirections) et explique chacun d’eux. L’application propose aussi un analyseur de sortie `ls -l`, un calculateur de permissions `chmod` et des exercices corrigés automatiquement. L’explication, l’analyseur et le calculateur s’utilisent sans compte ; les exercices demandent un compte (Supabase).
+LinuxLens découpe une ligne de commande en éléments colorés (commande, options, arguments, pipes, redirections) et explique chacun d’eux. L’application propose aussi un analyseur de sortie `ls -l`, un calculateur de permissions `chmod` et des exercices corrigés automatiquement. L’explication, l’analyseur et le calculateur s’utilisent sans compte ; pour les exercices, un visiteur peut en faire trois, puis un compte est demandé (Supabase).
 
 ![Explication d’une commande avec pipe et redirections](docs/screenshots/explain.png)
 

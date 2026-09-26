@@ -139,20 +139,16 @@ describe('PracticePage', () => {
     expect(within(exercise()).getByText('✓ Réussi')).toBeInTheDocument();
   });
 
-  it('sans compte : fenêtre d’invitation devant un aperçu inerte, puis inscription', async () => {
+  it('sans compte : trois exercices d’essai, puis fenêtre d’invitation et inscription', async () => {
     const user = userEvent.setup();
-    render(
-      <AuthProvider backend={await testBackend()}>
-        <MemoryRouter initialEntries={['/exercices']}>
-          <Routes>
-            <Route path="/" element={<p>Accueil</p>} />
-            <Route path="/exercices" element={<PracticePage />} />
-            <Route path="/inscription" element={<p>Page d’inscription</p>} />
-          </Routes>
-        </MemoryRouter>
-      </AuthProvider>,
-    );
-    const dialog = await screen.findByRole('dialog', { name: 'Créez un compte pour faire les exercices' });
+    await renderGuest();
+    await screen.findByRole('region', { name: 'Exercice' });
+    for (let i = 0; i < 3; i++) {
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+      await user.type(screen.getByLabelText('Votre commande'), 'faux{Enter}');
+      await user.click(screen.getByRole('button', { name: 'Suivant →' }));
+    }
+    const dialog = await screen.findByRole('dialog', { name: 'Créez un compte pour continuer' });
     expect(screen.queryByRole('region', { name: 'Exercice' })).not.toBeInTheDocument(); // aperçu caché aux lecteurs d’écran
     expect(within(dialog).getByRole('link', { name: 'Créer un compte' })).toHaveFocus();
     expect(within(dialog).getByRole('link', { name: 'J’ai déjà un compte' })).toHaveAttribute('href', '/connexion?next=%2Fexercices');
@@ -166,20 +162,42 @@ describe('PracticePage', () => {
     expect(screen.getByText('Page d’inscription')).toBeInTheDocument();
   });
 
-  it('sans compte : « Plus tard » ou Échap ramène à l’accueil', async () => {
+  it('sans compte : essais épuisés à une visite précédente : fenêtre dès l’arrivée, Échap ramène à l’accueil', async () => {
     const user = userEvent.setup();
+    localStorage.setItem('linuxlens-guest-tried', JSON.stringify(['a', 'b', 'c']));
+    await renderGuest();
+    await screen.findByRole('dialog');
+    expect(screen.queryByRole('region', { name: 'Exercice' })).not.toBeInTheDocument();
+    await user.keyboard('{Escape}');
+    expect(screen.getByText('Accueil')).toBeInTheDocument();
+  });
+
+  it('sans compte : le 3ᵉ exercice reste affiché avec sa correction', async () => {
+    const user = userEvent.setup();
+    localStorage.setItem('linuxlens-guest-tried', JSON.stringify(['a', 'b']));
+    await renderGuest();
+    await user.type(await screen.findByLabelText('Votre commande'), 'pwd{Enter}');
+    expect(screen.getByText('Bravo, c’est correct !')).toBeInTheDocument();
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Suivant →' }));
+    expect(await screen.findByRole('dialog')).toBeInTheDocument();
+    await user.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Plus tard' }));
+    expect(screen.getByText('Accueil')).toBeInTheDocument();
+  });
+});
+
+async function renderGuest() {
+  return testBackend().then((backend) =>
     render(
-      <AuthProvider backend={await testBackend()}>
+      <AuthProvider backend={backend}>
         <MemoryRouter initialEntries={['/exercices']}>
           <Routes>
             <Route path="/" element={<p>Accueil</p>} />
             <Route path="/exercices" element={<PracticePage />} />
+            <Route path="/inscription" element={<p>Page d’inscription</p>} />
           </Routes>
         </MemoryRouter>
       </AuthProvider>,
-    );
-    await screen.findByRole('dialog');
-    await user.keyboard('{Escape}');
-    expect(screen.getByText('Accueil')).toBeInTheDocument();
-  });
-});
+    ),
+  );
+}

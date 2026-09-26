@@ -53,20 +53,35 @@ function loadPosition(): Position {
 
 const NEXT = `?next=${encodeURIComponent('/exercices')}`;
 
-/** Les exercices sont réservés aux comptes : la progression et les résultats y sont enregistrés. */
+/** Nombre d'exercices qu'un visiteur peut faire avant qu'on lui demande de créer un compte. */
+export const GUEST_FREE_EXERCISES = 3;
+const GUEST_TRIED_KEY = 'linuxlens-guest-tried';
+
+function loadTried(): Set<string> {
+  try {
+    const ids: unknown = JSON.parse(localStorage.getItem(GUEST_TRIED_KEY) ?? '[]');
+    return new Set(Array.isArray(ids) ? ids.filter((x): x is string => typeof x === 'string') : []);
+  } catch {
+    return new Set();
+  }
+}
+
+function saveTried(ids: Set<string>) {
+  try {
+    localStorage.setItem(GUEST_TRIED_KEY, JSON.stringify([...ids]));
+  } catch {
+    // stockage indisponible : le compte repart de zéro au prochain chargement
+  }
+}
+
+/**
+ * Sans compte, on peut faire quelques exercices ; au-delà, une fenêtre invite à créer un compte,
+ * où la progression et les résultats sont enregistrés.
+ */
 export function PracticePage() {
   const { user, loading } = useAuth();
   if (loading) return <p className="text-zinc-500">Chargement…</p>;
-  if (user) return <Practice />;
-  return (
-    <>
-      {/* Aperçu flou et inerte des exercices, derrière la fenêtre */}
-      <div inert aria-hidden="true" className="pointer-events-none blur-sm select-none">
-        <Practice />
-      </div>
-      <SignUpPopup />
-    </>
-  );
+  return <Practice guest={!user} />;
 }
 
 function SignUpPopup() {
@@ -106,11 +121,12 @@ function SignUpPopup() {
         className="w-full max-w-md rounded-2xl border border-zinc-200 bg-white p-6 shadow-xl dark:border-zinc-800 dark:bg-zinc-900"
       >
         <h2 id={`${id}-title`} className="text-lg font-semibold tracking-tight">
-          Créez un compte pour faire les exercices
+          Créez un compte pour continuer
         </h2>
         <p id={`${id}-message`} className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-          C’est gratuit. Vos exercices réussis sont enregistrés dans votre compte : vous retrouvez votre progression sur
-          n’importe quel appareil, et « Mon compte » vous montre ce qu’il reste à revoir.
+          Vous avez fait vos {GUEST_FREE_EXERCISES} exercices d’essai. Le compte est gratuit : les exercices déjà réussis
+          y sont repris, vous retrouvez votre progression sur n’importe quel appareil, et « Mon compte » vous montre ce
+          qu’il reste à revoir.
         </p>
         <div className="mt-5 flex flex-wrap gap-2">
           <Link to={`/inscription${NEXT}`} className={buttonClass.primary}>
@@ -128,8 +144,9 @@ function SignUpPopup() {
   );
 }
 
-function Practice() {
+function Practice({ guest }: { guest: boolean }) {
   const { solved, recordAttempt, reset, ready } = useProgress();
+  const [tried, setTried] = useState(loadTried);
   const [saved] = useState(loadPosition);
   const [kind, setKind] = useState<KindFilter>(saved.kind);
   const [category, setCategory] = useState<CategoryId | 'all'>(saved.category);
@@ -162,6 +179,11 @@ function Practice() {
   };
   const answer = (ex: Exercise) => (correct: boolean, given: string, usedHelp: boolean) => {
     if (correct) setCurrent(ex.id);
+    if (guest && given.trim() && !tried.has(ex.id)) {
+      const next = new Set(tried).add(ex.id);
+      setTried(next);
+      saveTried(next);
+    }
     recordAttempt({ exerciseId: ex.id, kind: ex.kind, correct, answer: given, usedHelp });
   };
   const changeFilter = (fn: () => void) => {
@@ -170,126 +192,133 @@ function Practice() {
     setCurrent(null);
   };
 
+  // Essais épuisés : les exercices déjà faits restent consultables, un nouveau demande un compte
+  const locked = guest && tried.size >= GUEST_FREE_EXERCISES && exercise !== undefined && !tried.has(exercise.id);
+
   if (!ready) return <p className="text-zinc-500">Chargement…</p>;
 
   return (
     <>
-      <PageHeader title="S’exercer">
-        Entraînez-vous à écrire des commandes, à les comprendre et à convertir des permissions. La correction accepte
-        toutes les écritures équivalentes (<code className="font-mono text-sm">ls -la</code> ={' '}
-        <code className="font-mono text-sm">ls -al</code>).
-      </PageHeader>
+      {/* Derrière la fenêtre, la page reste visible, floue et inerte */}
+      <div inert={locked} aria-hidden={locked || undefined} className={locked ? 'pointer-events-none blur-sm select-none' : undefined}>
+        <PageHeader title="S’exercer">
+          Entraînez-vous à écrire des commandes, à les comprendre et à convertir des permissions. La correction accepte
+          toutes les écritures équivalentes (<code className="font-mono text-sm">ls -la</code> ={' '}
+          <code className="font-mono text-sm">ls -al</code>).
+        </PageHeader>
 
-      <div className="mb-6 flex flex-wrap items-center gap-x-6 gap-y-4">
-        <div role="tablist" aria-label="Type d’exercice" className="flex flex-wrap gap-1 rounded-xl bg-zinc-100 p-1 dark:bg-zinc-900">
-          {KINDS.map((k) => (
-            <button
-              key={k.id}
-              type="button"
-              role="tab"
-              aria-selected={kind === k.id}
-              onClick={() => changeFilter(() => setKind(k.id))}
-              className={`rounded-lg px-3 py-1.5 text-sm transition-colors ${
-                kind === k.id
-                  ? 'bg-white text-zinc-900 shadow-sm dark:bg-zinc-800 dark:text-zinc-100'
-                  : 'text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100'
-              }`}
-            >
-              {k.label}
-            </button>
-          ))}
-        </div>
-        <label className="flex items-center gap-2 text-sm">
-          <span className="text-zinc-600 dark:text-zinc-400">Catégorie</span>
-          <select
-            value={category}
-            onChange={(e) => changeFilter(() => setCategory(e.target.value as CategoryId | 'all'))}
-            className="h-9 rounded-lg border border-zinc-200 bg-white px-2 text-sm dark:border-zinc-700 dark:bg-zinc-900"
-          >
-            <option value="all">Toutes</option>
-            {CATEGORIES.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.label}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="flex cursor-pointer items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400">
-          <input type="checkbox" checked={hideSolved} onChange={(e) => changeFilter(() => setHideSolved(e.target.checked))} className="accent-indigo-600" />
-          Masquer les réussis
-        </label>
-      </div>
-
-      <div className="mb-6">
-        <div className="mb-1.5 flex items-baseline justify-between text-sm">
-          <span>
-            <strong className="font-semibold">{solvedInList}</strong>
-            <span className="text-zinc-500 dark:text-zinc-400"> / {list.length} réussis</span>
-          </span>
-          {solved.size > 0 && (
-            <button type="button" onClick={reset} className="text-xs text-zinc-500 underline-offset-2 hover:underline dark:text-zinc-400">
-              Réinitialiser la progression
-            </button>
-          )}
-        </div>
-        <div
-          role="progressbar"
-          aria-label="Progression"
-          aria-valuemin={0}
-          aria-valuemax={list.length}
-          aria-valuenow={solvedInList}
-          className="h-1.5 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800"
-        >
-          <div className="h-full rounded-full bg-indigo-500 transition-[width] duration-300" style={{ width: `${list.length ? (solvedInList / list.length) * 100 : 0}%` }} />
-        </div>
-      </div>
-
-      {exercise ? (
-        <section aria-label="Exercice" className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm sm:p-8 dark:border-zinc-800 dark:bg-zinc-900">
-          <div className="mb-5 flex flex-wrap items-center gap-2 text-xs">
-            <span className="rounded-md bg-indigo-50 px-2 py-0.5 font-medium text-indigo-700 dark:bg-indigo-400/15 dark:text-indigo-300">{EXERCISE_KIND_LABEL[exercise.kind]}</span>
-            <span className="rounded-md bg-zinc-100 px-2 py-0.5 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">{CATEGORY_BY_ID[exercise.category].label}</span>
-            <span className="rounded-md bg-zinc-100 px-2 py-0.5 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">{LEVEL_LABEL[exercise.level]}</span>
-            {solved.has(exercise.id) && (
-              <span className="rounded-md bg-emerald-50 px-2 py-0.5 font-medium text-emerald-700 dark:bg-emerald-400/15 dark:text-emerald-300">✓ Réussi</span>
-            )}
-            <span className="ml-auto text-zinc-500 dark:text-zinc-400">
-              {safeIndex + 1} / {visible.length}
-            </span>
-          </div>
-
-          {exercise.kind === 'write' && <WriteCard key={exercise.id} exercise={exercise} onAnswer={answer(exercise)} />}
-          {exercise.kind === 'quiz' && <QuizCard key={exercise.id} exercise={exercise} onAnswer={answer(exercise)} />}
-          {exercise.kind === 'perm' && <PermCard key={exercise.id} exercise={exercise} onAnswer={answer(exercise)} />}
-
-          <div className="mt-8 flex flex-wrap justify-between gap-2 border-t border-zinc-100 pt-5 dark:border-zinc-800">
-            <button type="button" className={buttonClass.secondary} onClick={() => go(safeIndex - 1)} disabled={visible.length < 2}>
-              ← Précédent
-            </button>
-            <div className="flex gap-2">
+        <div className="mb-6 flex flex-wrap items-center gap-x-6 gap-y-4">
+          <div role="tablist" aria-label="Type d’exercice" className="flex flex-wrap gap-1 rounded-xl bg-zinc-100 p-1 dark:bg-zinc-900">
+            {KINDS.map((k) => (
               <button
+                key={k.id}
                 type="button"
-                className={buttonClass.secondary}
-                disabled={visible.length < 2}
-                onClick={() => {
-                  let next = safeIndex;
-                  while (next === safeIndex) next = Math.floor(Math.random() * visible.length);
-                  go(next);
-                }}
+                role="tab"
+                aria-selected={kind === k.id}
+                onClick={() => changeFilter(() => setKind(k.id))}
+                className={`rounded-lg px-3 py-1.5 text-sm transition-colors ${
+                  kind === k.id
+                    ? 'bg-white text-zinc-900 shadow-sm dark:bg-zinc-800 dark:text-zinc-100'
+                    : 'text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100'
+                }`}
               >
-                Au hasard
+                {k.label}
               </button>
-              <button type="button" className={buttonClass.primary} onClick={() => go(safeIndex + 1)} disabled={visible.length < 2}>
-                Suivant →
-              </button>
-            </div>
+            ))}
           </div>
-        </section>
-      ) : (
-        <p className="rounded-2xl border border-dashed border-zinc-300 px-6 py-10 text-center text-zinc-600 dark:border-zinc-700 dark:text-zinc-400">
-          {list.length ? 'Tous les exercices de cette sélection sont réussis. Bravo !' : 'Aucun exercice pour cette sélection.'}
-        </p>
-      )}
+          <label className="flex items-center gap-2 text-sm">
+            <span className="text-zinc-600 dark:text-zinc-400">Catégorie</span>
+            <select
+              value={category}
+              onChange={(e) => changeFilter(() => setCategory(e.target.value as CategoryId | 'all'))}
+              className="h-9 rounded-lg border border-zinc-200 bg-white px-2 text-sm dark:border-zinc-700 dark:bg-zinc-900"
+            >
+              <option value="all">Toutes</option>
+              {CATEGORIES.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.label}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="flex cursor-pointer items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400">
+            <input type="checkbox" checked={hideSolved} onChange={(e) => changeFilter(() => setHideSolved(e.target.checked))} className="accent-indigo-600" />
+            Masquer les réussis
+          </label>
+        </div>
+
+        <div className="mb-6">
+          <div className="mb-1.5 flex items-baseline justify-between text-sm">
+            <span>
+              <strong className="font-semibold">{solvedInList}</strong>
+              <span className="text-zinc-500 dark:text-zinc-400"> / {list.length} réussis</span>
+            </span>
+            {solved.size > 0 && (
+              <button type="button" onClick={reset} className="text-xs text-zinc-500 underline-offset-2 hover:underline dark:text-zinc-400">
+                Réinitialiser la progression
+              </button>
+            )}
+          </div>
+          <div
+            role="progressbar"
+            aria-label="Progression"
+            aria-valuemin={0}
+            aria-valuemax={list.length}
+            aria-valuenow={solvedInList}
+            className="h-1.5 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800"
+          >
+            <div className="h-full rounded-full bg-indigo-500 transition-[width] duration-300" style={{ width: `${list.length ? (solvedInList / list.length) * 100 : 0}%` }} />
+          </div>
+        </div>
+
+        {exercise ? (
+          <section aria-label="Exercice" className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm sm:p-8 dark:border-zinc-800 dark:bg-zinc-900">
+            <div className="mb-5 flex flex-wrap items-center gap-2 text-xs">
+              <span className="rounded-md bg-indigo-50 px-2 py-0.5 font-medium text-indigo-700 dark:bg-indigo-400/15 dark:text-indigo-300">{EXERCISE_KIND_LABEL[exercise.kind]}</span>
+              <span className="rounded-md bg-zinc-100 px-2 py-0.5 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">{CATEGORY_BY_ID[exercise.category].label}</span>
+              <span className="rounded-md bg-zinc-100 px-2 py-0.5 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">{LEVEL_LABEL[exercise.level]}</span>
+              {solved.has(exercise.id) && (
+                <span className="rounded-md bg-emerald-50 px-2 py-0.5 font-medium text-emerald-700 dark:bg-emerald-400/15 dark:text-emerald-300">✓ Réussi</span>
+              )}
+              <span className="ml-auto text-zinc-500 dark:text-zinc-400">
+                {safeIndex + 1} / {visible.length}
+              </span>
+            </div>
+
+            {exercise.kind === 'write' && <WriteCard key={exercise.id} exercise={exercise} onAnswer={answer(exercise)} />}
+            {exercise.kind === 'quiz' && <QuizCard key={exercise.id} exercise={exercise} onAnswer={answer(exercise)} />}
+            {exercise.kind === 'perm' && <PermCard key={exercise.id} exercise={exercise} onAnswer={answer(exercise)} />}
+
+            <div className="mt-8 flex flex-wrap justify-between gap-2 border-t border-zinc-100 pt-5 dark:border-zinc-800">
+              <button type="button" className={buttonClass.secondary} onClick={() => go(safeIndex - 1)} disabled={visible.length < 2}>
+                ← Précédent
+              </button>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  className={buttonClass.secondary}
+                  disabled={visible.length < 2}
+                  onClick={() => {
+                    let next = safeIndex;
+                    while (next === safeIndex) next = Math.floor(Math.random() * visible.length);
+                    go(next);
+                  }}
+                >
+                  Au hasard
+                </button>
+                <button type="button" className={buttonClass.primary} onClick={() => go(safeIndex + 1)} disabled={visible.length < 2}>
+                  Suivant →
+                </button>
+              </div>
+            </div>
+          </section>
+        ) : (
+          <p className="rounded-2xl border border-dashed border-zinc-300 px-6 py-10 text-center text-zinc-600 dark:border-zinc-700 dark:text-zinc-400">
+            {list.length ? 'Tous les exercices de cette sélection sont réussis. Bravo !' : 'Aucun exercice pour cette sélection.'}
+          </p>
+        )}
+      </div>
+      {locked && <SignUpPopup />}
     </>
   );
 }
