@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router';
 import { DemoBanner } from '../../components/auth/DemoBanner';
 import { FormError, FormSuccess, PasswordField, TextField } from '../../components/auth/FormFields';
 import { buttonClass } from '../../components/practice/Feedback';
+import { useConfirm } from '../../components/ui/ConfirmDialog';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { ALL_EXERCISES, EXERCISE_BY_ID, EXERCISE_KIND_LABEL, exerciseTitle } from '../../data/exercises';
 import { useAuth } from '../../hooks/useAuth';
@@ -39,6 +40,7 @@ export function AccountPage() {
   const { favorites, toggle } = useFavorites();
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [confirm, confirmDialog] = useConfirm();
 
   useEffect(() => {
     let alive = true;
@@ -118,7 +120,15 @@ export function AccountPage() {
                   </Link>
                   <button
                     type="button"
-                    onClick={() => toggle(c)}
+                    onClick={async () => {
+                      const ok = await confirm({
+                        title: 'Retirer ce favori ?',
+                        message: <>La commande <code className="font-mono">{c}</code> ne sera plus dans vos favoris.</>,
+                        confirmLabel: 'Retirer',
+                        danger: true,
+                      });
+                      if (ok) toggle(c);
+                    }}
                     aria-label={`Retirer ${c} des favoris`}
                     className="px-2 py-1 text-zinc-400 hover:bg-zinc-200 hover:text-zinc-900 dark:hover:bg-zinc-700 dark:hover:text-zinc-100"
                   >
@@ -150,6 +160,13 @@ export function AccountPage() {
               <button
                 type="button"
                 onClick={async () => {
+                  const ok = await confirm({
+                    title: 'Effacer l’historique ?',
+                    message: `Les ${history.length} commande${history.length > 1 ? 's' : ''} de votre historique seront effacée${history.length > 1 ? 's' : ''} définitivement.`,
+                    confirmLabel: 'Effacer',
+                    danger: true,
+                  });
+                  if (!ok) return;
                   await backend.data.clearHistory();
                   setHistory([]);
                 }}
@@ -172,6 +189,7 @@ export function AccountPage() {
           <DeleteAccount />
         </Card>
       </div>
+      {confirmDialog}
     </>
   );
 }
@@ -356,9 +374,17 @@ function ProfileCard() {
   const { backend, user } = useAuth();
   const [name, setName] = useState(user?.displayName ?? '');
   const [message, setMessage] = useState<{ ok: boolean; text: string }>();
+  const [confirm, confirmDialog] = useConfirm();
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
+    const next = name.trim();
+    const ok = await confirm({
+      title: 'Modifier votre profil ?',
+      message: next ? `Votre nom affiché deviendra « ${next} ».` : 'Votre nom affiché sera retiré : votre adresse e-mail sera utilisée à la place.',
+      confirmLabel: 'Enregistrer',
+    });
+    if (!ok) return;
     const r = await backend.auth.updateProfile(name);
     setMessage(r.error ? { ok: false, text: r.error } : { ok: true, text: 'Profil enregistré.' });
   };
@@ -372,6 +398,7 @@ function ProfileCard() {
           Enregistrer
         </button>
       </form>
+      {confirmDialog}
     </Card>
   );
 }
@@ -380,9 +407,16 @@ function PasswordCard() {
   const { backend } = useAuth();
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState<{ ok: boolean; text: string }>();
+  const [confirm, confirmDialog] = useConfirm();
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
+    const ok = await confirm({
+      title: 'Changer votre mot de passe ?',
+      message: 'L’ancien mot de passe ne fonctionnera plus : utilisez le nouveau à votre prochaine connexion.',
+      confirmLabel: 'Changer le mot de passe',
+    });
+    if (!ok) return;
     const r = await backend.auth.updatePassword(password);
     setMessage(r.error ? { ok: false, text: r.error } : { ok: true, text: 'Mot de passe modifié.' });
     if (!r.error) setPassword('');
@@ -403,6 +437,7 @@ function PasswordCard() {
           Changer le mot de passe
         </button>
       </form>
+      {confirmDialog}
     </Card>
   );
 }

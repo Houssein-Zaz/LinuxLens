@@ -151,6 +151,8 @@ describe('données du compte', () => {
 
     renderApp('/compte', backend);
     await userEvent.click(await screen.findByRole('button', { name: 'Retirer tar des favoris' }));
+    const dialog = screen.getByRole('alertdialog', { name: 'Retirer ce favori ?' });
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Retirer' }));
     expect(await backend.data.getFavorites()).toEqual([]);
   });
 
@@ -202,5 +204,60 @@ describe('Mon compte : messages', () => {
     expect(within(card).getByText('Réponse de LinuxLens')).toBeInTheDocument();
     expect(within(card).getByText('En attente de réponse')).toBeInTheDocument();
     expect(within(card).getByRole('link', { name: 'parted -l' })).toHaveAttribute('href', '/?c=parted%20-l');
+  });
+});
+
+describe('Mon compte : confirmation avant de modifier ou supprimer', () => {
+  it('historique : Annuler ne touche à rien, Effacer efface', async () => {
+    const user = userEvent.setup();
+    const backend = await testBackend(true);
+    await backend.data.addHistory('ls -la');
+    renderApp('/compte', backend);
+    const clear = await screen.findByRole('button', { name: 'Effacer l’historique' });
+
+    await user.click(clear);
+    const dialog = screen.getByRole('alertdialog', { name: 'Effacer l’historique ?' });
+    expect(dialog).toHaveTextContent('1 commande');
+    expect(within(dialog).getByRole('button', { name: 'Annuler' })).toHaveFocus();
+    await user.click(within(dialog).getByRole('button', { name: 'Annuler' }));
+    expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument();
+    expect(clear).toHaveFocus();
+    expect(await backend.data.getHistory()).toHaveLength(1);
+
+    await user.click(clear);
+    await user.keyboard('{Escape}');
+    expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument();
+    expect(await backend.data.getHistory()).toHaveLength(1);
+
+    await user.click(clear);
+    await user.click(within(screen.getByRole('alertdialog')).getByRole('button', { name: 'Effacer' }));
+    await waitFor(async () => expect(await backend.data.getHistory()).toEqual([]));
+  });
+
+  it('profil et mot de passe : rien n’est modifié sans confirmation', async () => {
+    const user = userEvent.setup();
+    const backend = await testBackend(true);
+    const updateProfile = vi.spyOn(backend.auth, 'updateProfile');
+    const updatePassword = vi.spyOn(backend.auth, 'updatePassword');
+    renderApp('/compte', backend);
+
+    const name = await screen.findByLabelText('Nom affiché');
+    await user.clear(name);
+    await user.type(name, 'Sara B.');
+    await user.click(screen.getByRole('button', { name: 'Enregistrer' }));
+    let dialog = screen.getByRole('alertdialog', { name: 'Modifier votre profil ?' });
+    expect(dialog).toHaveTextContent('« Sara B. »');
+    await user.click(within(dialog).getByRole('button', { name: 'Annuler' }));
+    expect(updateProfile).not.toHaveBeenCalled();
+    await user.click(screen.getByRole('button', { name: 'Enregistrer' }));
+    await user.click(within(screen.getByRole('alertdialog')).getByRole('button', { name: 'Enregistrer' }));
+    expect(updateProfile).toHaveBeenCalledWith('Sara B.');
+    expect(await screen.findByText('Profil enregistré.')).toBeInTheDocument();
+
+    await user.type(screen.getByLabelText('Nouveau mot de passe'), 'nouveaumdp9');
+    await user.click(screen.getByRole('button', { name: 'Changer le mot de passe' }));
+    dialog = screen.getByRole('alertdialog', { name: 'Changer votre mot de passe ?' });
+    await user.click(within(dialog).getByRole('button', { name: 'Annuler' }));
+    expect(updatePassword).not.toHaveBeenCalled();
   });
 });
