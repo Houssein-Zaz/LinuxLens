@@ -113,3 +113,35 @@ describe('explainRedirect', () => {
     );
   });
 });
+
+describe('sous-commandes enchaînées (parted)', () => {
+  const input = 'sudo parted /dev/sdX -s mklabel gpt mkpart "boot" 0% 500MiB mkpart "system" 500MiB 100%';
+
+  it('chaque mot a une explication documentée', () => {
+    const all = explainAll(input);
+    expect(all.map((e) => `${e.token.kind}:${e.token.value}`)).toEqual([
+      'command:sudo',
+      'command:parted',
+      'argument:/dev/sdX',
+      'option:-s',
+      'subcommand:mklabel',
+      'argument:gpt',
+      'subcommand:mkpart',
+      'argument:boot',
+      'argument:0%',
+      'argument:500MiB',
+      'subcommand:mkpart',
+      'argument:system',
+      'argument:500MiB',
+      'argument:100%',
+    ]);
+    expect(all.filter((e) => !e.ex.known).map((e) => e.token.value)).toEqual([]);
+  });
+
+  it('les arguments suivent les paramètres de leur sous-commande', () => {
+    const labels = explainAll(input)
+      .filter((e) => e.token.kind === 'argument')
+      .map((e) => e.ex.kindLabel.replace('Argument · ', ''));
+    expect(labels).toEqual(['DISQUE', 'TYPE-TABLE', 'NOM', 'DÉBUT', 'FIN', 'NOM', 'DÉBUT', 'FIN']);
+  });
+});

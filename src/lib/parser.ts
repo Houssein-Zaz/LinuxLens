@@ -204,6 +204,9 @@ const DEFAULT_VALUE_OPTIONS: Record<string, string[]> = {
 /** Commandes dont les options à un tiret sont des mots entiers (`find -name`, `ip -br`). */
 const SINGLE_DASH_LONG = new Set(['find', 'ip', 'java', 'gcc', 'g++', 'clang', 'ffmpeg', 'xrandr']);
 
+/** Commandes qui enchaînent plusieurs sous-commandes n'importe où (`parted /dev/sda mklabel gpt mkpart …`). */
+const SUBCOMMANDS_ANYWHERE = new Set(['parted']);
+
 const ASSIGNMENT_RE = /^[A-Za-z_][A-Za-z0-9_]*=/;
 const NUMERIC_OPTION_RE = /^-\d+$/;
 const SIGNAL_OPTION_RE = /^-(SIG)?[A-Z]{2,}\d*$/;
@@ -369,7 +372,7 @@ export function parseCommandLine(input: string, spec: ParserSpec = {}): ParsedLi
       continue;
     }
 
-    if (state.positional === 0 && spec.isSubcommand?.(owner, lx.value)) {
+    if ((state.positional === 0 || SUBCOMMANDS_ANYWHERE.has(owner)) && spec.isSubcommand?.(owner, lx.value)) {
       seg.tokens.push({ kind: 'subcommand', ...base, command: owner });
     } else {
       seg.tokens.push({ kind: 'argument', ...base, command: owner });

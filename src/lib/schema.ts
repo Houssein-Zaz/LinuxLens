@@ -95,6 +95,14 @@ export function validateCommandDoc(doc: unknown): string[] {
       if (!isObj(item)) return errors.push(`${key}[${i}] : objet attendu`);
       requireString(item, 'name', `${key}[${i}].`);
       requireString(item, 'description', `${key}[${i}].`);
+      if (key !== 'subcommands' || item.arguments === undefined) return;
+      if (!Array.isArray(item.arguments)) return errors.push(`${key}[${i}].arguments : tableau attendu`);
+      item.arguments.forEach((arg, j) => {
+        const path = `${key}[${i}].arguments[${j}].`;
+        if (!isObj(arg)) return errors.push(`${path} objet attendu`);
+        requireString(arg, 'name', path);
+        requireString(arg, 'description', path);
+      });
     });
   }
 

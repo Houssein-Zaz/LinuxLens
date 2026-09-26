@@ -47,6 +47,8 @@ export interface CommandArgument {
 export interface Subcommand {
   name: string;
   description: string;
+  /** Arguments propres à la sous-commande (`mkpart NOM DÉBUT FIN`). */
+  arguments?: CommandArgument[];
 }
 
 export interface CommandExample {

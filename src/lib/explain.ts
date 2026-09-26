@@ -1,5 +1,5 @@
 import type { ControlOperator, Redirect, Segment, Token, TokenKind } from '../types/parser';
-import type { CommandArgument, CommandDoc } from '../types/command';
+import type { CommandArgument } from '../types/command';
 import { findOption, getCommand } from './registry';
 import { describePermissions, describeSymbolicMode, fromOctal, toSymbolic } from './permissions';
 import { exampleFor, type ConcreteExample } from './examples';
@@ -76,8 +76,7 @@ export const CONTROL_TEXT: Record<ControlOperator, string> = {
 };
 
 /** Associe chaque argument positionnel à sa description dans la fiche (`cp SOURCE... DESTINATION`). */
-function argumentSpecFor(doc: CommandDoc, index: number, total: number): CommandArgument | undefined {
-  const specs = doc.arguments ?? [];
+function argumentSpecFor(specs: CommandArgument[], index: number, total: number): CommandArgument | undefined {
   if (specs.length === 0) return undefined;
   const variadicAt = specs.findIndex((a) => a.variadic);
   if (variadicAt === -1) return specs[Math.min(index, specs.length - 1)];
@@ -223,7 +222,18 @@ function describeToken(token: Token, segment: Segment, ctx: ExplainContext): Exp
       const positional = segment.tokens.filter(
         (t) => t.command === token.command && (t.kind === 'argument' || t.kind === 'subcommand' || t.kind === 'chmod-mode'),
       );
-      const spec = doc && argumentSpecFor(doc, positional.indexOf(token), positional.length);
+      const index = positional.indexOf(token);
+      // Argument d'une sous-commande qui décrit les siens : `mkpart NOM DÉBUT FIN`
+      const subAt = positional.slice(0, index).findLastIndex((t) => t.kind === 'subcommand');
+      const sub = subAt === -1 ? undefined : doc?.subcommands?.find((s) => s.name === positional[subAt]!.value);
+      let spec: CommandArgument | undefined;
+      if (sub?.arguments) {
+        const nextSub = positional.findIndex((t, i) => i > subAt && t.kind === 'subcommand');
+        const own = positional.slice(subAt + 1, nextSub === -1 ? undefined : nextSub);
+        spec = argumentSpecFor(sub.arguments, own.indexOf(token), own.length);
+      } else if (doc) {
+        spec = argumentSpecFor(doc.arguments ?? [], index, positional.length);
+      }
       const word = describeWord(token);
       if (spec) {
         return { kindLabel: `${kindLabel} · ${spec.name}`, text: spec.description, known: true, ...(word && { detail: word }) };

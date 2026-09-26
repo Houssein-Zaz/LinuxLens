@@ -1,0 +1,97 @@
+{
+  "name": "parted",
+  "category": "system",
+  "summary": "Crée, supprime et modifie les partitions d'un disque.",
+  "description": "GNU Parted manipule la table de partitions d'un disque : il peut créer une table neuve (GPT ou msdos), ajouter, supprimer, redimensionner ou renommer des partitions. Lancé avec seulement un disque, il ouvre un mode interactif (invite « (parted) »). Avec des commandes après le disque, il les exécute l'une après l'autre puis quitte ; l'option -s (--script) supprime alors toutes les questions de confirmation. Les positions s'écrivent avec une unité (MiB, GiB, MB…) ou en pourcentage du disque (0% = début, 100% = fin). Attention : parted écrit les changements immédiatement, sans étape « enregistrer ». Il ne formate pas les partitions : il faut ensuite utiliser mkfs.",
+  "synopsis": "parted [OPTION]... [DISQUE [COMMANDE [PARAMÈTRE]...]...]",
+  "options": [
+    { "short": "-l", "long": "--list", "description": "Affiche la table de partitions de tous les disques, puis quitte.", "example": { "command": "sudo parted -l", "output": "Modèle : ATA Samsung SSD 870 (scsi)\nDisque /dev/sda : 500GB\nTable de partitions : gpt\n\nNuméro  Début   Fin    Taille  Système de fichiers  Nom   Fanions\n 1      1049kB  538MB  537MB   fat32                boot  démarrage, esp\n 2      538MB   500GB  500GB   ext4                 root" } },
+    { "short": "-s", "long": "--script", "description": "Mode script : n'affiche aucune question de confirmation (« Oui/Non ? »). Indispensable pour enchaîner les commandes sans intervention, mais parted ne vous demandera pas si vous êtes sûr d'effacer le disque." },
+    { "short": "-a", "long": "--align", "description": "Règle d'alignement des nouvelles partitions sur les blocs physiques du disque (optimal par défaut, recommandé pour les performances).", "takesValue": true, "valueName": "TYPE", "values": ["none", "cylinder", "minimal", "optimal"], "example": { "command": "sudo parted -a optimal /dev/sdb mkpart data 1MiB 100%" } },
+    { "short": "-m", "long": "--machine", "description": "Sortie lisible par un programme : champs séparés par des « : ».", "example": { "command": "sudo parted -m /dev/sda print", "output": "BYT;\n/dev/sda:500GB:scsi:512:4096:gpt:ATA Samsung SSD 870:;\n1:1049kB:538MB:537MB:fat32:boot:boot, esp;" } },
+    { "short": "-f", "long": "--fix", "description": "En mode script, répond automatiquement « Corriger » aux problèmes détectés (table GPT de secours mal placée, par exemple)." },
+    { "short": "-h", "long": "--help", "description": "Affiche l'aide et la liste des commandes.", "example": { "command": "parted -h" } },
+    { "short": "-v", "long": "--version", "description": "Affiche la version de parted.", "example": { "command": "parted -v", "output": "parted (GNU parted) 3.6" } }
+  ],
+  "arguments": [
+    { "name": "DISQUE", "description": "Le disque entier à modifier : /dev/sda, /dev/sdb, /dev/nvme0n1… (pas une partition comme /dev/sda1). « sdX » est un exemple à remplacer par la vraie lettre du disque, visible avec lsblk ou parted -l." }
+  ],
+  "subcommands": [
+    {
+      "name": "mklabel",
+      "description": "Crée une nouvelle table de partitions vide sur le disque. Toutes les partitions existantes disparaissent : leurs données deviennent inaccessibles.",
+      "arguments": [
+        { "name": "TYPE-TABLE", "description": "Type de table : gpt (moderne, disques de plus de 2 To, jusqu'à 128 partitions, obligatoire pour le démarrage UEFI) ou msdos (ancien format MBR : 4 partitions principales, 2 To maximum)." }
+      ]
+    },
+    {
+      "name": "mkpart",
+      "description": "Crée une partition dans l'espace libre, entre une position de début et une position de fin. Elle n'est pas formatée : il faudra ensuite créer un système de fichiers (mkfs.ext4, mkfs.fat…).",
+      "arguments": [
+        { "name": "NOM", "description": "Sur une table GPT : nom (étiquette) de la partition, libre, par exemple « boot » ou « system ». Sur une table msdos, on donne à la place son type (primary, logical ou extended), éventuellement suivi d'un système de fichiers (ext4, fat32…) qui sert seulement d'indication.", "variadic": true },
+        { "name": "DÉBUT", "description": "Où commence la partition. En pourcentage du disque (0% = tout au début, parted laisse alors l'espace d'alignement nécessaire) ou avec une unité : 500MiB = 500 mébioctets (1 MiB = 1 048 576 octets), 1GiB, 20GB… Sans unité, parted compte en mégaoctets (MB)." },
+        { "name": "FIN", "description": "Où s'arrête la partition, même format que le début. 100% = jusqu'à la fin du disque. Pour enchaîner deux partitions sans trou, la fin de l'une sert de début à la suivante (500MiB puis 500MiB)." }
+      ]
+    },
+    {
+      "name": "print",
+      "description": "Affiche la table de partitions du disque : numéros, début, fin, taille, système de fichiers, nom et drapeaux."
+    },
+    {
+      "name": "rm",
+      "description": "Supprime une partition (et rend ses données inaccessibles).",
+      "arguments": [{ "name": "NUMÉRO", "description": "Numéro de la partition, tel qu'affiché par print (1, 2…)." }]
+    },
+    {
+      "name": "set",
+      "description": "Active ou désactive un drapeau (flag) sur une partition.",
+      "arguments": [
+        { "name": "NUMÉRO", "description": "Numéro de la partition, tel qu'affiché par print." },
+        { "name": "DRAPEAU", "description": "Drapeau à modifier : boot (partition de démarrage), esp (partition système EFI), lvm, raid, swap, bios_grub, hidden…" },
+        { "name": "ÉTAT", "description": "on pour activer le drapeau, off pour le retirer." }
+      ]
+    },
+    {
+      "name": "name",
+      "description": "Change le nom d'une partition (tables GPT uniquement).",
+      "arguments": [
+        { "name": "NUMÉRO", "description": "Numéro de la partition à renommer." },
+        { "name": "NOM", "description": "Nouveau nom de la partition." }
+      ]
+    },
+    {
+      "name": "resizepart",
+      "description": "Déplace la fin d'une partition pour l'agrandir ou la réduire. Le système de fichiers qu'elle contient n'est pas redimensionné (resize2fs pour ext4).",
+      "arguments": [
+        { "name": "NUMÉRO", "description": "Numéro de la partition à redimensionner." },
+        { "name": "FIN", "description": "Nouvelle position de fin : 100%, 50GiB…" }
+      ]
+    },
+    {
+      "name": "unit",
+      "description": "Choisit l'unité utilisée pour afficher et saisir les positions.",
+      "arguments": [{ "name": "UNITÉ", "description": "s (secteurs), B, kB, MB, GB, MiB, GiB, % ou compact." }]
+    },
+    {
+      "name": "align-check",
+      "description": "Vérifie qu'une partition est bien alignée sur les blocs physiques du disque.",
+      "arguments": [
+        { "name": "TYPE", "description": "opt (optimal, recommandé) ou min (minimal)." },
+        { "name": "NUMÉRO", "description": "Numéro de la partition à vérifier." }
+      ]
+    }
+  ],
+  "examples": [
+    { "command": "sudo parted /dev/sda print", "explanation": "Affiche les partitions du disque, sans rien modifier.", "output": "Disque /dev/sda : 500GB\nTable de partitions : gpt\n\nNuméro  Début   Fin    Taille  Système de fichiers  Nom   Fanions\n 1      1049kB  538MB  537MB   fat32                boot  démarrage, esp\n 2      538MB   500GB  500GB   ext4                 root" },
+    { "command": "sudo parted /dev/sdX -s mklabel gpt mkpart \"boot_partition_name\" 0% 500MiB mkpart \"system_partition_name\" 500MiB 100%", "explanation": "Sans aucune question : efface la table du disque sdX, crée une table GPT, une partition de démarrage de 500 MiB au début, puis une partition système qui occupe tout le reste." },
+    { "command": "sudo parted -s /dev/sdb mklabel msdos", "explanation": "Remplace la table de partitions de sdb par une table msdos (MBR) vide." },
+    { "command": "sudo parted /dev/sdX set 1 boot on", "explanation": "Active le drapeau de démarrage sur la partition 1." },
+    { "command": "sudo parted /dev/sdb rm 2", "explanation": "Supprime la partition 2 du disque sdb." },
+    { "command": "sudo parted /dev/sdb resizepart 2 100%", "explanation": "Agrandit la partition 2 jusqu'à la fin du disque." },
+    { "command": "sudo parted -f -s /dev/sdb print", "explanation": "Affiche la table en corrigeant automatiquement une table GPT de secours mal placée (après avoir cloné un disque sur un plus grand, par exemple)." },
+    { "command": "sudo parted /dev/sdb", "explanation": "Mode interactif : tapez print, mkpart… à l'invite (parted), puis quit." }
+  ],
+  "seeAlso": ["df", "du", "sudo"],
+  "dangerLevel": "danger",
+  "dangerNote": "parted applique chaque changement immédiatement. mklabel et rm rendent les données du disque inaccessibles, et avec -s aucune confirmation n'est demandée. Vérifiez le nom du disque avec lsblk ou parted -l : se tromper de lettre (sda au lieu de sdb) peut effacer votre système."
+}
