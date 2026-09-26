@@ -1,6 +1,6 @@
 import { installErrorReporting, reportError, resetErrorReporting } from '../errorReporting';
 
-const monitor = () => ({ report: vi.fn(async () => {}) });
+const monitor = () => ({ report: vi.fn(async () => {}), sendFeedback: vi.fn(async () => ({})) });
 
 beforeEach(() => resetErrorReporting());
 

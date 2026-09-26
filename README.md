@@ -84,7 +84,7 @@ La clé « anon » est publique par conception : la sécurité repose sur les r�
 
 #### Tableau de bord administrateur
 
-La page `/admin` (code dans `src/admin/`) montre les inscrits avec, pour chacun, son score aux exercices, sa réussite par catégorie, son point faible et les exercices à revoir, ainsi que les **problèmes** : plantages de page, erreurs JavaScript et erreurs de connexion inexpliquées, enregistrés automatiquement.
+La page `/admin` (code dans `src/admin/`) montre les inscrits avec, pour chacun, son score aux exercices, sa réussite par catégorie, son point faible et les exercices à revoir, ainsi que les **problèmes** : plantages de page, erreurs JavaScript et erreurs de connexion inexpliquées, enregistrés automatiquement. On y lit aussi les **messages des visiteurs**, envoyés depuis la page d’explication (« Un problème, ou une explication manquante ? ») avec la commande affichée, même sans compte.
 
 1. Dans **SQL Editor**, exécuter [`supabase/admin.sql`](supabase/admin.sql) (après `schema.sql`).
 2. Se déclarer administrateur, une fois son compte créé sur le site :

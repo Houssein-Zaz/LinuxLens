@@ -7,6 +7,9 @@ import type { AdminApi, Backend } from '../../types/backend';
 const now = new Date().toISOString();
 
 function fakeAdmin(isAdmin = true): AdminApi {
+  let feedback = [
+    { id: 1, email: null, message: 'L’option -s de parted n’est pas expliquée.', command: 'parted -s /dev/sda print', path: '/', createdAt: now },
+  ];
   let errors = [
     { id: 1, email: null, source: 'page', message: 'TypeError: x is undefined', detail: 'at LsPage', path: '/ls', userAgent: 'Mozilla/5.0 (Windows NT 10.0) Chrome/130.0', createdAt: now },
   ];
@@ -50,6 +53,10 @@ function fakeAdmin(isAdmin = true): AdminApi {
     errors: vi.fn(async () => errors),
     clearErrors: vi.fn(async () => {
       errors = [];
+    }),
+    feedback: vi.fn(async () => feedback),
+    clearFeedback: vi.fn(async () => {
+      feedback = [];
     }),
   };
 }
@@ -123,11 +130,30 @@ describe('AdminPage', () => {
     const user = userEvent.setup();
     const admin = fakeAdmin();
     await renderAdmin(admin);
-    await user.click(await screen.findByRole('button', { name: 'Tout effacer' }));
+    const problems = await screen.findByRole('region', { name: 'Problèmes (1)' });
+    await user.click(within(problems).getByRole('button', { name: 'Tout effacer' }));
     expect(admin.clearErrors).not.toHaveBeenCalled();
-    await user.click(screen.getByRole('button', { name: 'Oui, effacer' }));
+    await user.click(within(problems).getByRole('button', { name: 'Oui, effacer' }));
     expect(admin.clearErrors).toHaveBeenCalled();
+    expect(admin.clearFeedback).not.toHaveBeenCalled();
     expect(await screen.findByText(/Aucune erreur enregistrée/)).toBeInTheDocument();
+  });
+
+  it('messages des visiteurs : texte, commande cliquable, effacement', async () => {
+    const user = userEvent.setup();
+    const admin = fakeAdmin();
+    await renderAdmin(admin);
+    const messages = await screen.findByRole('region', { name: 'Messages des visiteurs (1)' });
+    expect(within(messages).getByText('L’option -s de parted n’est pas expliquée.')).toBeInTheDocument();
+    expect(within(messages).getByText('Visiteur sans compte')).toBeInTheDocument();
+    expect(within(messages).getByRole('link', { name: 'parted -s /dev/sda print' })).toHaveAttribute(
+      'href',
+      '/?c=' + encodeURIComponent('parted -s /dev/sda print'),
+    );
+    await user.click(within(messages).getByRole('button', { name: 'Tout effacer' }));
+    await user.click(within(messages).getByRole('button', { name: 'Oui, effacer' }));
+    expect(admin.clearFeedback).toHaveBeenCalled();
+    expect(await screen.findByText(/Aucun message/)).toBeInTheDocument();
   });
 
   it('base mal configurée : message clair au lieu d’une page vide', async () => {

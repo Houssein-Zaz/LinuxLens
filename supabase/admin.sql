@@ -79,6 +79,50 @@ create trigger error_logs_trim after insert on public.error_logs
   for each statement execute function public.trim_error_logs();
 
 -- ---------------------------------------------------------------------
+-- Messages des visiteurs
+-- Envoyés depuis la page d'explication (« Un problème ? »), même sans compte.
+-- Seul un administrateur peut les lire.
+-- ---------------------------------------------------------------------
+
+create table if not exists public.feedback (
+  id         bigint      generated always as identity primary key,
+  user_id    uuid        default auth.uid() references auth.users (id) on delete set null,
+  message    text        not null check (char_length(message) between 1 and 1000),
+  command    text        not null default '' check (char_length(command) <= 500),
+  path       text        not null default '' check (char_length(path) <= 300),
+  created_at timestamptz not null default now()
+);
+
+create index if not exists feedback_recent on public.feedback (created_at desc);
+
+alter table public.feedback enable row level security;
+
+drop policy if exists "envoyer un message" on public.feedback;
+create policy "envoyer un message" on public.feedback
+  for insert to anon, authenticated
+  with check (user_id is null or user_id = (select auth.uid()));
+
+-- Au plus 1000 messages conservés : un robot qui en envoie en boucle ne remplit pas la base
+create or replace function public.trim_feedback()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  delete from public.feedback
+  where id not in (select id from public.feedback order by created_at desc limit 1000);
+  return null;
+end;
+$$;
+
+revoke all on function public.trim_feedback() from public, anon, authenticated;
+
+drop trigger if exists feedback_trim on public.feedback;
+create trigger feedback_trim after insert on public.feedback
+  for each statement execute function public.trim_feedback();
+
+-- ---------------------------------------------------------------------
 -- Fonctions du tableau de bord
 -- Chacune vérifie d'abord que l'appelant est administrateur : c'est la vraie
 -- protection. La page /admin du site n'est qu'un affichage.
@@ -228,10 +272,42 @@ begin
 end;
 $$;
 
+create or replace function public.admin_feedback()
+returns table (id bigint, email text, message text, command text, path text, created_at timestamptz)
+language plpgsql
+stable
+security definer
+set search_path = ''
+as $$
+begin
+  perform public.require_admin();
+  return query
+    select f.id, u.email::text, f.message, f.command, f.path, f.created_at
+    from public.feedback f left join auth.users u on u.id = f.user_id
+    order by f.created_at desc
+    limit 200;
+end;
+$$;
+
+create or replace function public.admin_clear_feedback()
+returns void
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  perform public.require_admin();
+  delete from public.feedback where true;
+end;
+$$;
+
 do $$
 declare f text;
 begin
-  foreach f in array array['admin_overview()', 'admin_users()', 'admin_attempts(int)', 'admin_errors()', 'admin_clear_errors()'] loop
+  foreach f in array array[
+    'admin_overview()', 'admin_users()', 'admin_attempts(int)', 'admin_errors()', 'admin_clear_errors()',
+    'admin_feedback()', 'admin_clear_feedback()'
+  ] loop
     execute format('revoke all on function public.%s from public, anon', f);
     execute format('grant execute on function public.%s to authenticated', f);
   end loop;

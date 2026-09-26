@@ -3,8 +3,8 @@ import { buttonClass } from '../components/practice/Feedback';
 import { PageHeader } from '../components/ui/PageHeader';
 import { useAuth } from '../hooks/useAuth';
 import { NotFoundPage } from '../pages/NotFoundPage';
-import type { AdminApi, AdminOverview, AdminUser, ErrorLog } from '../types/backend';
-import { ErrorsPanel, OverviewTiles, UsersPanel } from './Panels';
+import type { AdminApi, AdminOverview, AdminUser, ErrorLog, FeedbackEntry } from '../types/backend';
+import { ErrorsPanel, FeedbackPanel, OverviewTiles, UsersPanel } from './Panels';
 import { resultsByUser, type UserResults } from './userResults';
 
 /*
@@ -16,13 +16,20 @@ import { resultsByUser, type UserResults } from './userResults';
 interface Dashboard {
   overview: AdminOverview;
   errors: ErrorLog[];
+  feedback: FeedbackEntry[];
   users: AdminUser[];
   results: Map<string, UserResults>;
 }
 
 async function loadDashboard(admin: AdminApi): Promise<Dashboard> {
-  const [overview, errors, users, attempts] = await Promise.all([admin.overview(), admin.errors(), admin.users(), admin.attempts()]);
-  return { overview, errors, users, results: resultsByUser(attempts) };
+  const [overview, errors, feedback, users, attempts] = await Promise.all([
+    admin.overview(),
+    admin.errors(),
+    admin.feedback(),
+    admin.users(),
+    admin.attempts(),
+  ]);
+  return { overview, errors, feedback, users, results: resultsByUser(attempts) };
 }
 
 export function AdminPage() {
@@ -83,7 +90,7 @@ function Dashboard({ admin }: { admin: AdminApi }) {
     <>
       <div className="flex flex-wrap items-start justify-between gap-4">
         <PageHeader title="Tableau de bord">
-          Inscrits, résultats aux exercices et problèmes du site.
+          Inscrits, résultats aux exercices, messages des visiteurs et problèmes du site.
           {updatedAt && <> Mis à jour à {updatedAt.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}.</>}
         </PageHeader>
         <button type="button" className={buttonClass.secondary} onClick={() => void refresh()} disabled={refreshing}>
@@ -103,6 +110,13 @@ function Dashboard({ admin }: { admin: AdminApi }) {
         <div className="space-y-6">
           <OverviewTiles o={data.overview} />
           <UsersPanel users={data.users} results={data.results} />
+          <FeedbackPanel
+            feedback={data.feedback}
+            onClear={async () => {
+              await admin.clearFeedback();
+              await refresh();
+            }}
+          />
           <ErrorsPanel
             errors={data.errors}
             onClear={async () => {

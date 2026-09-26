@@ -5,6 +5,8 @@ export const HISTORY_LIMIT = 50;
 /** Essais conservés par utilisateur (les plus anciens sont effacés, aussi côté base). */
 export const ATTEMPTS_LIMIT = 1000;
 export const ANSWER_MAX_LENGTH = 200;
+export const FEEDBACK_MAX_LENGTH = 1000;
+export const FEEDBACK_COMMAND_MAX_LENGTH = 500;
 
 export function validateEmail(email: string): string | undefined {
   if (!email.trim()) return 'Indiquez votre adresse e-mail.';

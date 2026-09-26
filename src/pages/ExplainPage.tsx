@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router';
 import { CommandInput, type Suggestion } from '../components/explain/CommandInput';
+import { FeedbackBox } from '../components/explain/FeedbackBox';
 import { SegmentCard } from '../components/explain/SegmentCard';
 import { DocumentTitle } from '../components/ui/DocumentTitle';
 import { TokenLine, type ExplainedToken } from '../components/explain/TokenLine';
@@ -129,6 +130,10 @@ export function ExplainPage() {
           </div>
         </>
       )}
+
+      <div className="mx-auto max-w-3xl pt-2">
+        <FeedbackBox command={input} />
+      </div>
     </div>
   );
 }

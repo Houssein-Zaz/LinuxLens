@@ -2,7 +2,7 @@ import { Fragment, useState, type ReactNode } from 'react';
 import { buttonClass } from '../components/practice/Feedback';
 import { CATEGORY_BY_ID } from '../data/categories';
 import { ALL_EXERCISES, EXERCISE_BY_ID, exerciseTitle } from '../data/exercises';
-import type { AdminOverview, AdminUser, ErrorLog } from '../types/backend';
+import type { AdminOverview, AdminUser, ErrorLog, FeedbackEntry } from '../types/backend';
 import { fullDate, percent, shortAgent, timeAgo } from './format';
 import type { UserResults } from './userResults';
 
@@ -68,32 +68,35 @@ const SOURCE_LABEL: Record<string, string> = {
   auth: 'Compte / connexion',
 };
 
-export function ErrorsPanel({ errors, onClear }: { errors: ErrorLog[]; onClear(): Promise<void> }) {
+/** « Tout effacer », avec une confirmation sur place. */
+function ClearAll({ question, onClear }: { question: string; onClear(): Promise<void> }) {
   const [confirming, setConfirming] = useState(false);
-
-  const action =
-    errors.length === 0 ? null : confirming ? (
-      <span className="flex items-center gap-2 text-sm">
-        Effacer les {errors.length} erreurs ?
-        <button
-          type="button"
-          className="rounded-lg bg-red-600 px-3 py-1 font-medium text-white hover:bg-red-700"
-          onClick={async () => {
-            await onClear();
-            setConfirming(false);
-          }}
-        >
-          Oui, effacer
-        </button>
-        <button type="button" className={`underline-offset-2 hover:underline ${muted}`} onClick={() => setConfirming(false)}>
-          Annuler
-        </button>
-      </span>
-    ) : (
-      <button type="button" className={buttonClass.secondary} onClick={() => setConfirming(true)}>
-        Tout effacer
+  return confirming ? (
+    <span className="flex items-center gap-2 text-sm">
+      {question}
+      <button
+        type="button"
+        className="rounded-lg bg-red-600 px-3 py-1 font-medium text-white hover:bg-red-700"
+        onClick={async () => {
+          await onClear();
+          setConfirming(false);
+        }}
+      >
+        Oui, effacer
       </button>
-    );
+      <button type="button" className={`underline-offset-2 hover:underline ${muted}`} onClick={() => setConfirming(false)}>
+        Annuler
+      </button>
+    </span>
+  ) : (
+    <button type="button" className={buttonClass.secondary} onClick={() => setConfirming(true)}>
+      Tout effacer
+    </button>
+  );
+}
+
+export function ErrorsPanel({ errors, onClear }: { errors: ErrorLog[]; onClear(): Promise<void> }) {
+  const action = errors.length === 0 ? null : <ClearAll question={`Effacer les ${errors.length} erreurs ?`} onClear={onClear} />;
 
   return (
     <Panel title={`Problèmes${errors.length ? ` (${errors.length})` : ''}`} id="admin-problemes" action={action}>
@@ -129,6 +132,46 @@ export function ErrorsPanel({ errors, onClear }: { errors: ErrorLog[]; onClear()
   );
 }
 
+/* ------------------------------------------------------------------ */
+/* Messages des visiteurs                                              */
+/* ------------------------------------------------------------------ */
+
+export function FeedbackPanel({ feedback, onClear }: { feedback: FeedbackEntry[]; onClear(): Promise<void> }) {
+  const action = feedback.length === 0 ? null : <ClearAll question={`Effacer les ${feedback.length} messages ?`} onClear={onClear} />;
+
+  return (
+    <Panel title={`Messages des visiteurs${feedback.length ? ` (${feedback.length})` : ''}`} id="admin-messages" action={action}>
+      {feedback.length === 0 ? (
+        <p className={`text-sm ${muted}`}>Aucun message. Ceux envoyés depuis la page d’explication (« Dites-le-nous ») apparaîtront ici.</p>
+      ) : (
+        <ul className="divide-y divide-zinc-100 dark:divide-zinc-800">
+          {feedback.map((f) => (
+            <li key={f.id} className="py-3">
+              <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+                <span className="text-sm font-medium">{f.email ?? 'Visiteur sans compte'}</span>
+                <time dateTime={f.createdAt} title={fullDate(f.createdAt)} className={`text-xs ${muted}`}>
+                  {timeAgo(f.createdAt)}
+                </time>
+              </div>
+              <p className="mt-1.5 text-sm whitespace-pre-line [overflow-wrap:anywhere]">{f.message}</p>
+              {f.command && (
+                <p className="mt-1.5 text-xs">
+                  <span className={muted}>Commande : </span>
+                  <a
+                    href={`/?c=${encodeURIComponent(f.command)}`}
+                    className="font-mono text-indigo-700 underline-offset-2 [overflow-wrap:anywhere] hover:underline dark:text-indigo-300"
+                  >
+                    {f.command}
+                  </a>
+                </p>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+    </Panel>
+  );
+}
 
 /* ------------------------------------------------------------------ */
 /* Utilisateurs et résultats                                           */

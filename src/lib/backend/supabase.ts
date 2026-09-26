@@ -1,6 +1,26 @@
 import type { AuthError, SupabaseClient, User as SupabaseUser } from '@supabase/supabase-js';
-import type { AdminAttempt, AdminUser, Attempt, Backend, ErrorLog, ErrorReport, HistoryEntry, User } from '../../types/backend';
-import { ANSWER_MAX_LENGTH, ATTEMPTS_LIMIT, HISTORY_LIMIT, normalizeEmail, validateEmail, validatePassword } from './validation';
+import type {
+  AdminAttempt,
+  AdminUser,
+  Attempt,
+  Backend,
+  ErrorLog,
+  ErrorReport,
+  FeedbackEntry,
+  FeedbackInput,
+  HistoryEntry,
+  User,
+} from '../../types/backend';
+import {
+  ANSWER_MAX_LENGTH,
+  ATTEMPTS_LIMIT,
+  FEEDBACK_COMMAND_MAX_LENGTH,
+  FEEDBACK_MAX_LENGTH,
+  HISTORY_LIMIT,
+  normalizeEmail,
+  validateEmail,
+  validatePassword,
+} from './validation';
 
 /*
  * Backend Supabase : authentification Supabase Auth, données dans PostgreSQL.
@@ -78,6 +98,15 @@ interface ErrorLogRow {
   created_at: string;
 }
 
+interface FeedbackRow {
+  id: number;
+  email: string | null;
+  message: string;
+  command: string;
+  path: string;
+  created_at: string;
+}
+
 /** Adresse de retour des liens envoyés par e-mail. */
 const siteUrl = (path: string) => (typeof window === 'undefined' ? path : `${window.location.origin}${path}`);
 
@@ -104,6 +133,22 @@ export function createSupabaseBackend(client: SupabaseClient): Backend {
       });
     } catch {
       // le journal ne doit jamais provoquer d'erreur à son tour
+    }
+  };
+
+  const sendFeedback = async ({ message, command = '' }: FeedbackInput) => {
+    const text = message.trim();
+    if (!text) return { error: 'Écrivez votre message.' };
+    try {
+      // user_id est rempli par la base, comme pour le journal des erreurs
+      const { error } = await client.from('feedback').insert({
+        message: text.slice(0, FEEDBACK_MAX_LENGTH),
+        command: command.trim().slice(0, FEEDBACK_COMMAND_MAX_LENGTH),
+        path: typeof window === 'undefined' ? '' : window.location.pathname.slice(0, 300),
+      });
+      return error ? { error: UNKNOWN_ERROR } : {};
+    } catch {
+      return { error: 'Impossible de joindre le serveur. Vérifiez votre connexion.' };
     }
   };
 
@@ -277,7 +322,7 @@ export function createSupabaseBackend(client: SupabaseClient): Backend {
         check(await client.from('history').delete().eq('user_id', await userId()));
       },
     },
-    monitoring: { report },
+    monitoring: { report, sendFeedback },
     admin: {
       async isAdmin() {
         const { data, error } = await client.rpc('is_admin');
@@ -341,6 +386,15 @@ export function createSupabaseBackend(client: SupabaseClient): Backend {
       },
       async clearErrors() {
         await rpc('admin_clear_errors');
+      },
+      async feedback() {
+        const rows = await rpc<FeedbackRow[] | null>('admin_feedback');
+        return (rows ?? []).map(
+          (r): FeedbackEntry => ({ id: r.id, email: r.email, message: r.message, command: r.command, path: r.path, createdAt: r.created_at }),
+        );
+      },
+      async clearFeedback() {
+        await rpc('admin_clear_feedback');
       },
     },
   };

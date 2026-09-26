@@ -231,6 +231,11 @@ export function createDemoBackend(store: KeyValueStore = safeLocalStorage): Back
       },
     },
     // Pas de journal ni de tableau de bord en mode démo : tout reste dans ce navigateur
-    monitoring: { async report() {} },
+    monitoring: {
+      async report() {},
+      async sendFeedback({ message }) {
+        return message.trim() ? {} : { error: 'Écrivez votre message.' };
+      },
+    },
   };
 }

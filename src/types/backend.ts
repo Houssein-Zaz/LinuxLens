@@ -76,9 +76,18 @@ export interface ErrorReport {
   detail?: string;
 }
 
+/** Message laissé par un visiteur : problème rencontré, explication manquante ou fausse. */
+export interface FeedbackInput {
+  message: string;
+  /** Commande affichée au moment de l'envoi, s'il y en a une. */
+  command?: string;
+}
+
 export interface MonitoringApi {
   /** Ne lève jamais d'erreur : un signalement raté est simplement perdu. */
   report(error: ErrorReport): Promise<void>;
+  /** Contrairement à `report`, l'échec est renvoyé : le visiteur doit savoir si son message est parti. */
+  sendFeedback(feedback: FeedbackInput): Promise<ActionResult>;
 }
 
 export interface AdminOverview {
@@ -124,6 +133,15 @@ export interface ErrorLog {
   createdAt: string;
 }
 
+export interface FeedbackEntry {
+  id: number;
+  email: string | null;
+  message: string;
+  command: string;
+  path: string;
+  createdAt: string;
+}
+
 /** Réservé aux administrateurs : chaque appel est vérifié par la base. */
 export interface AdminApi {
   isAdmin(): Promise<boolean>;
@@ -133,6 +151,9 @@ export interface AdminApi {
   attempts(limit?: number): Promise<AdminAttempt[]>;
   errors(): Promise<ErrorLog[]>;
   clearErrors(): Promise<void>;
+  /** Messages des visiteurs, les plus récents d'abord. */
+  feedback(): Promise<FeedbackEntry[]>;
+  clearFeedback(): Promise<void>;
 }
 
 export interface Backend {
