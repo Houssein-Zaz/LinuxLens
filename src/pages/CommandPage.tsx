@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { Link, useParams } from 'react-router';
 import { DangerNote } from '../components/ui/DangerNote';
+import { FavoriteButton } from '../components/auth/FavoriteButton';
 import { ExampleBlock } from '../components/ui/ExampleBlock';
 import { PageHeader } from '../components/ui/PageHeader';
 import { CATEGORY_BY_ID } from '../data/categories';
@@ -78,7 +79,10 @@ function DetailedDoc({ doc }: { doc: CommandDoc }) {
       >
         ← {category.label}
       </Link>
-      <h1 className="font-mono text-3xl font-semibold tracking-tight">{doc.name}</h1>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h1 className="font-mono text-3xl font-semibold tracking-tight">{doc.name}</h1>
+        <FavoriteButton command={doc.name} />
+      </div>
       <p className="mt-2 text-lg text-zinc-700 dark:text-zinc-300">{doc.summary}</p>
       <p className="mt-4 max-w-3xl leading-relaxed text-zinc-600 dark:text-zinc-400">{doc.description}</p>
       {doc.dangerLevel && doc.dangerNote && <DangerNote level={doc.dangerLevel} note={doc.dangerNote} className="mt-6 max-w-3xl" />}
@@ -158,7 +162,10 @@ function TldrView({ doc }: { doc: TldrDoc }) {
       <Link to="/explorer" className="mb-4 inline-block text-sm text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100">
         ← Explorer
       </Link>
-      <h1 className="font-mono text-3xl font-semibold tracking-tight">{doc.name}</h1>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h1 className="font-mono text-3xl font-semibold tracking-tight">{doc.name}</h1>
+        <FavoriteButton command={doc.name} />
+      </div>
       <p className="mt-2 text-lg text-zinc-700 dark:text-zinc-300">{doc.summary}</p>
       <p className="mt-4 rounded-lg bg-zinc-100 px-4 py-3 text-sm text-zinc-600 dark:bg-zinc-800/60 dark:text-zinc-300">
         Fiche courte. Source :{' '}

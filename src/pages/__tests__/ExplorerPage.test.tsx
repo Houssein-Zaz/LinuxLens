@@ -3,17 +3,22 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import { ExplorerPage } from '../ExplorerPage';
 import { CommandPage } from '../CommandPage';
+import { AuthProvider } from '../../hooks/useAuth';
+import { createDemoBackend } from '../../lib/backend/demo';
+import { memoryStore } from '../../test-utils';
 
 vi.stubGlobal('fetch', vi.fn(() => Promise.resolve(new Response('', { status: 404 }))));
 
 const renderAt = (url: string) =>
   render(
-    <MemoryRouter initialEntries={[url]}>
-      <Routes>
-        <Route path="/explorer" element={<ExplorerPage />} />
-        <Route path="/commande/:name" element={<CommandPage />} />
-      </Routes>
-    </MemoryRouter>,
+    <AuthProvider backend={createDemoBackend(memoryStore())}>
+      <MemoryRouter initialEntries={[url]}>
+        <Routes>
+          <Route path="/explorer" element={<ExplorerPage />} />
+          <Route path="/commande/:name" element={<CommandPage />} />
+        </Routes>
+      </MemoryRouter>
+    </AuthProvider>,
   );
 
 describe('ExplorerPage', () => {

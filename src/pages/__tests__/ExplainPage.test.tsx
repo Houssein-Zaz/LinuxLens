@@ -2,14 +2,19 @@ import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router';
 import { ExplainPage } from '../ExplainPage';
+import { AuthProvider } from '../../hooks/useAuth';
+import { createDemoBackend } from '../../lib/backend/demo';
+import { memoryStore } from '../../test-utils';
 
 vi.stubGlobal('fetch', vi.fn(() => Promise.resolve(new Response('[]', { status: 404 }))));
 
 const renderAt = (url = '/') =>
   render(
-    <MemoryRouter initialEntries={[url]}>
-      <ExplainPage />
-    </MemoryRouter>,
+    <AuthProvider backend={createDemoBackend(memoryStore())}>
+      <MemoryRouter initialEntries={[url]}>
+        <ExplainPage />
+      </MemoryRouter>
+    </AuthProvider>,
   );
 
 describe('ExplainPage', () => {

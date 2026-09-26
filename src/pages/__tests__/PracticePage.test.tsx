@@ -2,12 +2,17 @@ import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router';
 import { PracticePage } from '../PracticePage';
+import { AuthProvider } from '../../hooks/useAuth';
+import { createDemoBackend } from '../../lib/backend/demo';
+import { memoryStore } from '../../test-utils';
 
 const renderPage = () =>
   render(
-    <MemoryRouter>
-      <PracticePage />
-    </MemoryRouter>,
+    <AuthProvider backend={createDemoBackend(memoryStore())}>
+      <MemoryRouter>
+        <PracticePage />
+      </MemoryRouter>
+    </AuthProvider>,
   );
 
 const exercise = () => screen.getByRole('region', { name: 'Exercice' });

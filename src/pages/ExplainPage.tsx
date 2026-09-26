@@ -5,6 +5,7 @@ import { SegmentCard } from '../components/explain/SegmentCard';
 import { TokenLine, type ExplainedToken } from '../components/explain/TokenLine';
 import { LEGEND, TOKEN_STYLE } from '../components/explain/tokenStyles';
 import { useTldrIndex } from '../hooks/useTldr';
+import { useHistoryRecorder } from '../hooks/useHistoryRecorder';
 import { CONTROL_TEXT, explainSegment } from '../lib/explain';
 import { parseCommandLine } from '../lib/parser';
 import { getCommand, registrySpec, suggestCommands } from '../lib/registry';
@@ -54,6 +55,7 @@ export function ExplainPage() {
     [parsed, summaryFor],
   );
   const allItems = perSegment.flat();
+  useHistoryRecorder(input, allItems.length > 0 && parsed.errors.length === 0);
 
   return (
     <div className="space-y-8">

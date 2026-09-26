@@ -3,6 +3,9 @@ import { MemoryRouter, Route, Routes } from 'react-router';
 import { CommandPage } from '../CommandPage';
 import { ExplainPage } from '../ExplainPage';
 import type { TldrDoc, TldrIndexEntry } from '../../types/command';
+import { AuthProvider } from '../../hooks/useAuth';
+import { createDemoBackend } from '../../lib/backend/demo';
+import { memoryStore } from '../../test-utils';
 
 const INDEX: TldrIndexEntry[] = [{ name: 'rsync', summary: 'Transférer des fichiers vers ou depuis un hôte distant.', lang: 'fr' }];
 const RSYNC: TldrDoc = {
@@ -26,12 +29,14 @@ vi.stubGlobal(
 
 const renderAt = (url: string) =>
   render(
-    <MemoryRouter initialEntries={[url]}>
-      <Routes>
-        <Route path="/" element={<ExplainPage />} />
-        <Route path="/commande/:name" element={<CommandPage />} />
-      </Routes>
-    </MemoryRouter>,
+    <AuthProvider backend={createDemoBackend(memoryStore())}>
+      <MemoryRouter initialEntries={[url]}>
+        <Routes>
+          <Route path="/" element={<ExplainPage />} />
+          <Route path="/commande/:name" element={<CommandPage />} />
+        </Routes>
+      </MemoryRouter>
+    </AuthProvider>,
   );
 
 describe('repli sur tldr-pages', () => {

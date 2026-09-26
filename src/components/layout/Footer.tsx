@@ -1,3 +1,5 @@
+import { Link } from 'react-router';
+
 const linkClass = 'underline underline-offset-2 hover:text-zinc-900 dark:hover:text-zinc-100';
 
 export function Footer() {
@@ -11,7 +13,10 @@ export function Footer() {
       <a className={linkClass} href="https://github.com/tldr-pages/tldr/blob/main/LICENSE.md">
         CC BY 4.0
       </a>
-      ).
+      ).{' '}
+      <Link className={linkClass} to="/confidentialite">
+        Confidentialité
+      </Link>
     </footer>
   );
 }

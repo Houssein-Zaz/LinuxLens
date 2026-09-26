@@ -2,7 +2,7 @@
 
 **Comprendre visuellement les commandes shell Linux, en français.**
 
-LinuxLens découpe une ligne de commande en éléments colorés (commande, options, arguments, pipes, redirections) et explique chacun d’eux. L’application propose aussi un analyseur de sortie `ls -l`, un calculateur de permissions `chmod` et des exercices corrigés automatiquement. Tout tourne dans le navigateur, sans backend.
+LinuxLens découpe une ligne de commande en éléments colorés (commande, options, arguments, pipes, redirections) et explique chacun d’eux. L’application propose aussi un analyseur de sortie `ls -l`, un calculateur de permissions `chmod` et des exercices corrigés automatiquement. Sans compte, tout tourne dans le navigateur ; les comptes, facultatifs, s’appuient sur Supabase.
 
 ![Explication d’une commande avec pipe et redirections](docs/screenshots/explain.png)
 
@@ -36,7 +36,7 @@ Grille lecture/écriture/exécution × propriétaire/groupe/autres, synchronisé
 ![Calculateur de permissions](docs/screenshots/chmod.png)
 
 ### S’exercer
-Plus de 75 exercices corrigés automatiquement, avec progression mémorisée dans le navigateur :
+Plus de 75 exercices corrigés automatiquement, avec progression mémorisée dans le navigateur, ou dans le compte si l’on est connecté :
 - **Écrire la commande** : une consigne en français, avec indice et solution. La correction compare des formes canoniques, donc toutes les écritures équivalentes sont acceptées : `ls -la` = `ls -al` = `ls -l --all`, `head -n5` = `head -n 5`, `chmod 755` = `chmod u=rwx,go=rx`. En cas d’erreur, un message ciblé guide sans donner la réponse (« Il manque une option », « L’option -R n’est pas nécessaire ici »…).
 - **Comprendre** : QCM sur ce que fait une commande (opérateurs, redirections, signaux…).
 - **Permissions** : conversions octal ↔ rwx, bits spéciaux compris.
@@ -68,6 +68,19 @@ npm run dev      # http://localhost:5173
 | `npm run tldr` | Génère les données tldr (`--refresh` pour ignorer le cache) |
 | `npm run build` | Génère tldr (`prebuild`), vérifie les types puis construit `dist/` |
 
+### Comptes et base de données (Supabase)
+
+Les comptes sont facultatifs : ils synchronisent la progression des exercices, les commandes favorites et l’historique des commandes expliquées.
+
+Sans configuration, l’application tourne en **mode démo** : inscription, connexion et données fonctionnent, mais tout reste dans le navigateur (un bandeau le signale). Pour brancher une vraie base :
+
+1. Créer un projet sur [supabase.com](https://supabase.com).
+2. Dans **SQL Editor**, exécuter [`supabase/schema.sql`](supabase/schema.sql) : il crée les tables `exercise_progress`, `favorites` et `history`, active la Row Level Security (chacun ne voit que ses lignes) et ajoute la fonction `delete_user()` pour la suppression de compte.
+3. Dans **Authentication → URL Configuration**, déclarer l’URL du site (et `http://localhost:5173` en développement) : les liens de confirmation et de réinitialisation y renvoient (`/connexion`, `/nouveau-mot-de-passe`).
+4. Copier `.env.example` en `.env.local` et renseigner `VITE_SUPABASE_URL` et `VITE_SUPABASE_ANON_KEY` (**Project Settings → API**). Sur Vercel, ajouter les mêmes variables dans les réglages du projet.
+
+La clé « anon » est publique par conception : la sécurité repose sur les règles RLS. La clé `service_role` ne doit jamais être utilisée côté navigateur.
+
 ### Déploiement sur Vercel
 Importer le dépôt : Vercel détecte Vite (build `npm run build`, sortie `dist`). Le script `prebuild` télécharge tldr-pages à chaque déploiement. `vercel.json` redirige les routes de l’application vers `index.html`, sauf les fichiers de `tldr/` et `assets/`.
 
@@ -75,13 +88,16 @@ Importer le dépôt : Vercel détecte Vite (build `npm run build`, sortie `dist`
 
 ```
 scripts/             build-tldr.ts (téléchargement) + tldr-convert.ts (conversion testée)
+supabase/            schema.sql : tables, règles RLS, suppression de compte
 src/
   types/             command.ts (schéma des fiches), parser.ts, lsl.ts
   lib/               parser.ts, explain.ts, exercise.ts, permissions.ts, chmod.ts, lsl.ts, registry.ts, schema.ts, search.ts
   data/              commands/*.json (fiches détaillées), exercises.ts, categories.ts, index.ts
-  components/        explain/, permissions/, practice/, layout/, ui/
-  hooks/             useTheme, useTldr (chargement à la demande), useProgress
-  pages/             Expliquer, Explorer, fiche, ls -l, chmod, exercices
+  components/        explain/, permissions/, practice/, auth/, layout/, ui/
+  hooks/             useTheme, useTldr (chargement à la demande), useAuth, useProgress, useFavorites
+  lib/backend/       interface commune : demo.ts (navigateur) et supabase.ts (base réelle)
+  pages/             Expliquer, Explorer, fiche, ls -l, chmod, exercices, confidentialité
+  pages/auth/        connexion, inscription, mot de passe oublié / nouveau, mon compte
 ```
 
 ## Choix techniques
@@ -90,6 +106,7 @@ src/
 - **Une fiche = un fichier JSON**, validée par un schéma TypeScript (`CommandDoc`) et par un validateur exécuté en test. Les tests vérifient aussi que chaque exemple se parse sans erreur et contient bien la commande.
 - **tldr-pages chargé à la demande** : un index léger (nom + résumé) sert à la recherche et à l’autocomplétion ; la fiche complète n’est téléchargée qu’à l’ouverture. Les fichiers générés ne sont pas versionnés.
 - **Logique séparée de l’interface** : l’explication (`explain.ts`), les permissions et l’analyse `ls -l` sont des fonctions pures, testées sans DOM.
+- **Backend interchangeable** : les pages dépendent d’une interface (`Backend`) et non de Supabase. Une implémentation locale permet de développer et de tester sans base de données ; Supabase prend le relais dès que les variables d’environnement sont présentes.
 - **État dans l’URL** (`?c=`, `?l=`, `?mode=`) : pages partageables, sans gestionnaire d’état.
 - **Stack** : React 19, TypeScript strict (`noUncheckedIndexedAccess`), Vite, Tailwind CSS 4, React Router, Vitest + Testing Library. Polices Inter et JetBrains Mono auto-hébergées (`@fontsource`).
 
