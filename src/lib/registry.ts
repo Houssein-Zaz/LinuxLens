@@ -1,13 +1,15 @@
-import { COMMANDS } from '../data';
+import { COMMANDS, englishCommands } from '../data';
+import { getLang } from '../i18n';
 import type { CommandDoc, CommandOption } from '../types/command';
 import type { ParserSpec } from '../types/parser';
 
+/** Fiche dans la langue courante (la version française sert de secours, par exemple pendant le chargement). */
 export function getCommand(name: string): CommandDoc | undefined {
-  return COMMANDS.get(name);
+  return (getLang() === 'en' ? englishCommands()?.get(name) : undefined) ?? COMMANDS.get(name);
 }
 
 export function allCommands(): CommandDoc[] {
-  return [...COMMANDS.values()];
+  return [...COMMANDS.keys()].map((name) => getCommand(name)!);
 }
 
 /** Trouve l'option d'une fiche : `-l`, `--all`, ou `--color` pour `--color=auto`. */

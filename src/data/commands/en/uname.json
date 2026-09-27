@@ -1,0 +1,22 @@
+{
+  "name": "uname",
+  "category": "system",
+  "summary": "Prints information about the kernel and the machine.",
+  "description": "Gives the kernel name (Linux), its version, the machine name and the processor architecture. To find out the distribution (Ubuntu, Debian…), look at /etc/os-release or lsb_release -a instead.",
+  "synopsis": "uname [OPTION]...",
+  "options": [
+    { "short": "-a", "long": "--all", "description": "All the information." },
+    { "short": "-s", "long": "--kernel-name", "description": "Kernel name (the default).", "example": { "command": "uname -s", "output": "Linux" } },
+    { "short": "-r", "long": "--kernel-release", "description": "Kernel version." },
+    { "short": "-n", "long": "--nodename", "description": "Machine name on the network (hostname).", "example": { "command": "uname -n", "output": "laptop" } },
+    { "short": "-m", "long": "--machine", "description": "Hardware architecture: x86_64, aarch64 (64-bit ARM)…" },
+    { "short": "-o", "long": "--operating-system", "description": "Operating system (GNU/Linux).", "example": { "command": "uname -o", "output": "GNU/Linux" } }
+  ],
+  "examples": [
+    { "command": "uname -a", "explanation": "All the information on one line.", "output": "Linux laptop 6.8.0-45-generic #45-Ubuntu SMP PREEMPT_DYNAMIC x86_64 x86_64 x86_64 GNU/Linux" },
+    { "command": "uname -r", "explanation": "The kernel version.", "output": "6.8.0-45-generic" },
+    { "command": "uname -m", "explanation": "The architecture, useful for choosing which binary to download.", "output": "x86_64" }
+  ],
+  "seeAlso": ["hostname", "uptime"],
+  "dangerLevel": "safe"
+}

@@ -1,0 +1,30 @@
+{
+  "name": "diff",
+  "category": "reading",
+  "summary": "Compares two files line by line.",
+  "description": "Shows the differences between two files, or between two directories with -r. The unified format (-u) is the most readable: lines prefixed with - come from the first file, those prefixed with + from the second, and @@ shows the position. It is the format of patches and of git diff. The exit code is 0 if the files are identical and 1 if they differ.",
+  "synopsis": "diff [OPTION]... FILE1 FILE2",
+  "options": [
+    { "short": "-u", "long": "--unified", "description": "Unified format, with 3 lines of context around each difference." },
+    { "short": "-y", "long": "--side-by-side", "description": "Shows the two files side by side." },
+    { "short": "-r", "long": "--recursive", "description": "Compares two directories recursively." },
+    { "short": "-q", "long": "--brief", "description": "Only reports whether the files differ, without details." },
+    { "short": "-i", "long": "--ignore-case", "description": "Ignores differences in case.", "example": { "command": "diff -i names_v1.txt names_v2.txt" } },
+    { "short": "-w", "long": "--ignore-all-space", "description": "Ignores all whitespace differences.", "example": { "command": "diff -w old.py new.py" } },
+    { "short": "-B", "long": "--ignore-blank-lines", "description": "Ignores blank lines that were added or removed.", "example": { "command": "diff -B draft.txt final.txt" } },
+    { "short": "-N", "long": "--new-file", "description": "With -r, treats a file missing on one side as an empty file.", "example": { "command": "diff -rN project-v1/ project-v2/", "output": "diff -rN project-v1/NEW.md project-v2/NEW.md\n0a1\n> # New file" } },
+    { "long": "--color", "description": "Colors the differences.", "takesValue": true, "valueName": "WHEN", "values": ["auto", "always", "never"] }
+  ],
+  "arguments": [
+    { "name": "FILE1", "description": "Reference file (or directory), the “old” one." },
+    { "name": "FILE2", "description": "File (or directory) to compare, the “new” one." }
+  ],
+  "examples": [
+    { "command": "diff -u old.conf new.conf", "explanation": "Differences in unified format.", "output": "--- old.conf\n+++ new.conf\n@@ -1,3 +1,3 @@\n port=8080\n-debug=true\n+debug=false\n host=localhost" },
+    { "command": "diff -y --color=auto a.txt b.txt", "explanation": "Side-by-side comparison, in color." },
+    { "command": "diff -rq project-v1/ project-v2/", "explanation": "Lists the files that differ between two versions of a project." },
+    { "command": "diff -u old.py new.py > fix.patch", "explanation": "Saves the differences to a patch file, which can be applied with patch." }
+  ],
+  "seeAlso": ["cmp", "patch", "git"],
+  "dangerLevel": "safe"
+}

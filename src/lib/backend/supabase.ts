@@ -23,6 +23,7 @@ import {
   validateEmail,
   validatePassword,
 } from './validation';
+import { labels, tr } from '../../i18n';
 
 /*
  * Backend Supabase : authentification Supabase Auth, données dans PostgreSQL.
@@ -30,19 +31,22 @@ import {
  * ne peut lire et modifier que ses propres lignes.
  */
 
-const ERRORS: Record<string, string> = {
-  invalid_credentials: 'E-mail ou mot de passe incorrect.',
-  user_already_exists: 'Un compte existe déjà avec cette adresse e-mail.',
-  email_exists: 'Un compte existe déjà avec cette adresse e-mail.',
-  email_not_confirmed: 'Confirmez d’abord votre adresse : un lien vous a été envoyé par e-mail.',
-  weak_password: 'Ce mot de passe est trop faible.',
-  same_password: 'Le nouveau mot de passe doit être différent de l’ancien.',
-  over_email_send_rate_limit: 'Trop d’e-mails envoyés. Réessayez dans quelques minutes.',
-  over_request_rate_limit: 'Trop de tentatives. Réessayez dans quelques minutes.',
-  captcha_failed: 'La vérification anti-robot a échoué. Réessayez.',
-};
+const ERRORS: Record<string, string> = labels({
+  invalid_credentials: ['E-mail ou mot de passe incorrect.', 'Incorrect email or password.'],
+  user_already_exists: ['Un compte existe déjà avec cette adresse e-mail.', 'An account already exists with this email address.'],
+  email_exists: ['Un compte existe déjà avec cette adresse e-mail.', 'An account already exists with this email address.'],
+  email_not_confirmed: ['Confirmez d’abord votre adresse : un lien vous a été envoyé par e-mail.', 'Confirm your address first: a link has been sent to you by email.'],
+  weak_password: ['Ce mot de passe est trop faible.', 'This password is too weak.'],
+  same_password: ['Le nouveau mot de passe doit être différent de l’ancien.', 'The new password must be different from the old one.'],
+  over_email_send_rate_limit: ['Trop d’e-mails envoyés. Réessayez dans quelques minutes.', 'Too many emails sent. Try again in a few minutes.'],
+  over_request_rate_limit: ['Trop de tentatives. Réessayez dans quelques minutes.', 'Too many attempts. Try again in a few minutes.'],
+  captcha_failed: ['La vérification anti-robot a échoué. Réessayez.', 'The anti-bot check failed. Try again.'],
+});
 
-/** Message d'erreur Supabase → français. */
+const networkError = () => tr('Impossible de joindre le serveur. Vérifiez votre connexion.', 'Cannot reach the server. Check your connection.');
+const unknownError = () => tr('Une erreur est survenue. Réessayez dans un instant.', 'Something went wrong. Try again in a moment.');
+
+/** Message d'erreur Supabase → message lisible, dans la langue courante. */
 export function translateAuthError(error: Pick<AuthError, 'message'> & { code?: string | undefined; status?: number | undefined }): string {
   if (error.code && ERRORS[error.code]) return ERRORS[error.code]!;
   const m = error.message.toLowerCase();
@@ -51,11 +55,9 @@ export function translateAuthError(error: Pick<AuthError, 'message'> & { code?: 
   if (m.includes('email not confirmed')) return ERRORS.email_not_confirmed!;
   if (error.status === 429 || m.includes('rate limit')) return ERRORS.over_request_rate_limit!;
   if (m.includes('captcha')) return ERRORS.captcha_failed!;
-  if (m.includes('failed to fetch') || m.includes('network')) return 'Impossible de joindre le serveur. Vérifiez votre connexion.';
-  return UNKNOWN_ERROR;
+  if (m.includes('failed to fetch') || m.includes('network')) return networkError();
+  return unknownError();
 }
-
-const UNKNOWN_ERROR = 'Une erreur est survenue. Réessayez dans un instant.';
 
 const toUser = (u: SupabaseUser | null | undefined): User | null =>
   u ? { id: u.id, email: u.email ?? '', displayName: (u.user_metadata?.display_name as string | undefined) ?? null } : null;
@@ -155,16 +157,16 @@ export function createSupabaseBackend(client: SupabaseClient): Backend {
         ...fields,
         path: typeof window === 'undefined' ? '' : window.location.pathname.slice(0, 300),
       });
-      return error ? { error: UNKNOWN_ERROR } : {};
+      return error ? { error: unknownError() } : {};
     } catch {
-      return { error: 'Impossible de joindre le serveur. Vérifiez votre connexion.' };
+      return { error: networkError() };
     }
   };
 
   /** Traduit l'erreur ; une erreur que l'on ne sait pas expliquer est signalée à l'administrateur. */
   const fail = (action: string, error: Parameters<typeof translateAuthError>[0]) => {
     const message = translateAuthError(error);
-    if (message === UNKNOWN_ERROR) {
+    if (message === unknownError()) {
       void report({ source: 'auth', message: `${action} : ${error.message}`, detail: JSON.stringify({ code: error.code, status: error.status }) });
     }
     return { error: message };
@@ -239,7 +241,7 @@ export function createSupabaseBackend(client: SupabaseClient): Backend {
         const { error } = await client.rpc('delete_user');
         if (error) {
           void report({ source: 'auth', message: `Suppression du compte : ${error.message}` });
-          return { error: 'La suppression du compte a échoué. Réessayez plus tard.' };
+          return { error: tr('La suppression du compte a échoué. Réessayez plus tard.', 'Deleting the account failed. Try again later.') };
         }
         await client.auth.signOut();
         return {};

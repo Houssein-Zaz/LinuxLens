@@ -4,13 +4,29 @@ import { useAuth } from '../../hooks/useAuth';
 import { FEEDBACK_MAX_LENGTH } from '../../lib/backend/validation';
 import type { FeedbackInput } from '../../types/backend';
 import { buttonClass } from '../practice/Feedback';
+import { useTr } from '../../i18n';
 
 type Field = 'liked' | 'disliked' | 'message';
 
-const FIELDS: Array<{ name: Field; label: string; placeholder: string; rows: number }> = [
-  { name: 'liked', label: 'Ce que vous avez aimé', placeholder: 'Les explications option par option, les exercices…', rows: 2 },
-  { name: 'disliked', label: 'Ce qui ne vous a pas plu', placeholder: 'Une commande mal découpée, une explication fausse ou peu claire…', rows: 2 },
-  { name: 'message', label: 'Commentaire', placeholder: 'Une suggestion, une commande qui manque…', rows: 3 },
+const fields = (tr: (fr: string, en: string) => string): Array<{ name: Field; label: string; placeholder: string; rows: number }> => [
+  {
+    name: 'liked',
+    label: tr('Ce que vous avez aimé', 'What you liked'),
+    placeholder: tr('Les explications option par option, les exercices…', 'The option-by-option explanations, the exercises…'),
+    rows: 2,
+  },
+  {
+    name: 'disliked',
+    label: tr('Ce qui ne vous a pas plu', 'What you did not like'),
+    placeholder: tr('Une commande mal découpée, une explication fausse ou peu claire…', 'A command broken down wrongly, a wrong or unclear explanation…'),
+    rows: 2,
+  },
+  {
+    name: 'message',
+    label: tr('Commentaire', 'Comment'),
+    placeholder: tr('Une suggestion, une commande qui manque…', 'A suggestion, a missing command…'),
+    rows: 3,
+  },
 ];
 
 const EMPTY: Record<Field, string> = { liked: '', disliked: '', message: '' };
@@ -22,6 +38,7 @@ const EMPTY: Record<Field, string> = { liked: '', disliked: '', message: '' };
 export function FeedbackBox({ command }: { command: string }) {
   const { backend, user } = useAuth();
   const id = useId();
+  const tr = useTr();
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState(EMPTY);
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent'>('idle');
@@ -48,12 +65,12 @@ export function FeedbackBox({ command }: { command: string }) {
   if (status === 'sent') {
     return (
       <div role="status" className={box}>
-        <p className="font-medium text-emerald-700 dark:text-emerald-300">✓ Merci ! Votre avis a bien été envoyé.</p>
+        <p className="font-medium text-emerald-700 dark:text-emerald-300">✓ {tr('Merci ! Votre avis a bien été envoyé.', 'Thank you! Your feedback has been sent.')}</p>
         {user && (
           <p className="mt-1 text-zinc-600 dark:text-zinc-400">
-            La réponse apparaîtra dans{' '}
+            {tr('La réponse apparaîtra dans', 'The reply will appear in')}{' '}
             <Link to="/compte" className="font-medium text-indigo-700 underline-offset-2 hover:underline dark:text-indigo-300">
-              Mon compte
+              {tr('Mon compte', 'My account')}
             </Link>
             .
           </p>
@@ -66,7 +83,7 @@ export function FeedbackBox({ command }: { command: string }) {
           }}
           className="mt-1 text-zinc-500 underline-offset-2 hover:underline dark:text-zinc-400"
         >
-          Donner un autre avis
+          {tr('Donner un autre avis', 'Give more feedback')}
         </button>
       </div>
     );
@@ -75,13 +92,13 @@ export function FeedbackBox({ command }: { command: string }) {
   if (!open) {
     return (
       <p className="text-center text-sm text-zinc-500 dark:text-zinc-400">
-        Un avis, un problème, ou une explication manquante ?{' '}
+        {tr('Un avis, un problème, ou une explication manquante ?', 'Feedback, a problem, or a missing explanation?')}{' '}
         <button
           type="button"
           onClick={() => setOpen(true)}
           className="font-medium text-indigo-700 underline-offset-2 hover:underline dark:text-indigo-300"
         >
-          Dites-le-nous
+          {tr('Dites-le-nous', 'Tell us')}
         </button>
       </p>
     );
@@ -90,12 +107,12 @@ export function FeedbackBox({ command }: { command: string }) {
   return (
     <form onSubmit={submit} className={box}>
       <fieldset>
-        <legend className="mb-3 font-medium">Votre avis</legend>
+        <legend className="mb-3 font-medium">{tr('Votre avis', 'Your feedback')}</legend>
         <div className="space-y-3">
-          {FIELDS.map((f, i) => (
+          {fields(tr).map((f, i) => (
             <div key={f.name}>
               <label htmlFor={`${id}-${f.name}`} className="mb-1.5 block font-medium">
-                {f.label} <span className="font-normal text-zinc-500 dark:text-zinc-400">(facultatif)</span>
+                {f.label} <span className="font-normal text-zinc-500 dark:text-zinc-400">({tr('facultatif', 'optional')})</span>
               </label>
               <textarea
                 id={`${id}-${f.name}`}
@@ -116,23 +133,24 @@ export function FeedbackBox({ command }: { command: string }) {
         {error ??
           (command.trim() ? (
             <>
-              La commande <code className="font-mono">{command.trim()}</code> sera jointe à votre avis.
+              {tr('La commande', 'The command')} <code className="font-mono">{command.trim()}</code>{' '}
+              {tr('sera jointe à votre avis.', 'will be attached to your feedback.')}
             </>
           ) : (
-            'Remplissez au moins un champ.'
+            tr('Remplissez au moins un champ.', 'Fill in at least one field.')
           ))}
       </p>
       {!user && (
         <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
           <Link to="/connexion" className="underline underline-offset-2">
-            Connectez-vous
+            {tr('Connectez-vous', 'Sign in')}
           </Link>{' '}
-          avant d’envoyer si vous voulez recevoir une réponse.
+          {tr('avant d’envoyer si vous voulez recevoir une réponse.', 'before sending if you would like a reply.')}
         </p>
       )}
       <div className="mt-3 flex flex-wrap items-center gap-2">
         <button type="submit" className={buttonClass.primary} disabled={status === 'sending' || empty}>
-          {status === 'sending' ? 'Envoi…' : 'Envoyer'}
+          {status === 'sending' ? tr('Envoi…', 'Sending…') : tr('Envoyer', 'Send')}
         </button>
         <button
           type="button"
@@ -142,7 +160,7 @@ export function FeedbackBox({ command }: { command: string }) {
             setError(undefined);
           }}
         >
-          Annuler
+          {tr('Annuler', 'Cancel')}
         </button>
       </div>
     </form>

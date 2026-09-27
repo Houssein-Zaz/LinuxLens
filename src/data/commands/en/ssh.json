@@ -1,0 +1,33 @@
+{
+  "name": "ssh",
+  "category": "network",
+  "summary": "Connects securely to a remote machine.",
+  "description": "Opens an encrypted shell on a remote server, or runs a command there. Authentication uses a password or, preferably, a key (ssh-keygen then ssh-copy-id). Host aliases are configured in ~/.ssh/config.",
+  "synopsis": "ssh [OPTIONS] [USER@]HOST [COMMAND]",
+  "options": [
+    { "short": "-p", "description": "SSH server port (22 by default).", "takesValue": true, "valueName": "PORT" },
+    { "short": "-i", "description": "Private key to use for authentication.", "takesValue": true, "valueName": "FILE" },
+    { "short": "-l", "description": "Remote user name (same as user@).", "takesValue": true, "valueName": "USER", "example": { "command": "ssh -l admin server.com" } },
+    { "short": "-L", "description": "Local port forwarding: -L 8080:localhost:80 makes the remote port 80 available on local port 8080.", "takesValue": true, "valueName": "LOCAL:HOST:REMOTE" },
+    { "short": "-R", "description": "Remote port forwarding: exposes a local port on the server.", "takesValue": true, "valueName": "REMOTE:HOST:LOCAL", "example": { "command": "ssh -R 9000:localhost:3000 server.com" } },
+    { "short": "-J", "description": "Goes through a jump host (bastion) before reaching the host.", "takesValue": true, "valueName": "HOST", "example": { "command": "ssh -J bastion.com esprit@10.0.0.12" } },
+    { "short": "-o", "description": "One-off configuration option, for example -o StrictHostKeyChecking=no.", "takesValue": true, "valueName": "OPTION", "example": { "command": "ssh -o ConnectTimeout=5 server.com" } },
+    { "short": "-v", "description": "Verbose mode, to troubleshoot a connection problem (-vvv for more detail).", "example": { "command": "ssh -v server.com", "output": "debug1: Connecting to server.com [51.15.0.12] port 22.\ndebug1: Authenticating with public key \"/home/esprit/.ssh/id_ed25519\"" } },
+    { "short": "-N", "description": "Runs no remote command (useful for plain port forwarding)." },
+    { "short": "-X", "description": "Enables X11 forwarding to run remote graphical applications.", "example": { "command": "ssh -X server.com gedit" } },
+    { "short": "-C", "description": "Compresses the data exchanged.", "example": { "command": "ssh -C server.com" } }
+  ],
+  "arguments": [
+    { "name": "USER@HOST", "description": "Account and address (domain name, IP or alias from ~/.ssh/config)." },
+    { "name": "COMMAND", "description": "Command to run remotely instead of opening a shell.", "optional": true }
+  ],
+  "examples": [
+    { "command": "ssh esprit@192.168.1.20", "explanation": "Opens a shell on the machine 192.168.1.20 with the esprit account." },
+    { "command": "ssh -p 2222 admin@server.com", "explanation": "Connects on a non-standard port." },
+    { "command": "ssh -i ~/.ssh/project_key ubuntu@server.com", "explanation": "Connects with a specific private key." },
+    { "command": "ssh server 'df -h'", "explanation": "Runs df -h remotely and shows the result locally." },
+    { "command": "ssh -N -L 5432:localhost:5432 server", "explanation": "Reaches the server’s PostgreSQL database locally through a tunnel." }
+  ],
+  "seeAlso": ["scp", "ssh-keygen", "rsync"],
+  "dangerLevel": "safe"
+}

@@ -1,0 +1,23 @@
+{
+  "name": "export",
+  "category": "misc",
+  "summary": "Makes a variable visible to programs started from the shell.",
+  "description": "Shell builtin. A plain variable (NAME=value) only exists in the current shell; export turns it into an environment variable, passed on to every program started afterwards. This is how you change the PATH or give configuration (an API key, a port) to an application. As with alias, the effect disappears when the terminal closes, unless the line is added to ~/.bashrc.",
+  "synopsis": "export [-n] [-p] [NAME[=VALUE]]...",
+  "options": [
+    { "short": "-p", "description": "Lists every exported variable." },
+    { "short": "-n", "description": "Removes the export attribute: the variable becomes local to the shell again.", "example": { "command": "export -n API_KEY" } },
+    { "short": "-f", "description": "Exports a shell function instead of a variable.", "example": { "command": "export -f greet" } }
+  ],
+  "arguments": [
+    { "name": "NAME=VALUE", "description": "Variable to export, with or without a new value. No spaces around the =.", "optional": true, "variadic": true }
+  ],
+  "examples": [
+    { "command": "export EDITOR=nano", "explanation": "Programs that open an editor (git, crontab…) will use nano." },
+    { "command": "export PATH=\"$HOME/.local/bin:$PATH\"", "explanation": "Adds a directory at the start of the PATH, so commands in it can be found." },
+    { "command": "export NODE_ENV=production && node server.js", "explanation": "Gives a configuration variable to an application." },
+    { "command": "export -p | grep PATH", "explanation": "Checks the exported value of PATH." }
+  ],
+  "seeAlso": ["env", "source", "echo"],
+  "dangerLevel": "safe"
+}

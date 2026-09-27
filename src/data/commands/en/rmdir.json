@@ -1,0 +1,22 @@
+{
+  "name": "rmdir",
+  "category": "files",
+  "summary": "Removes empty directories.",
+  "description": "Removes a directory only if it is empty. This is a safety net: if the directory still contains something, rmdir refuses and prints an error. To delete a directory and its contents, you need rm -r.",
+  "synopsis": "rmdir [OPTION]... DIRECTORY...",
+  "options": [
+    { "short": "-p", "long": "--parents", "description": "Also removes parents that become empty: rmdir -p a/b/c removes c, then b, then a." },
+    { "short": "-v", "long": "--verbose", "description": "Prints a message for each directory removed." },
+    { "long": "--ignore-fail-on-non-empty", "description": "Prints no error for non-empty directories (they are simply left in place).", "example": { "command": "rmdir --ignore-fail-on-non-empty */" } }
+  ],
+  "arguments": [
+    { "name": "DIRECTORY", "description": "Empty directory (or directories) to remove.", "variadic": true }
+  ],
+  "examples": [
+    { "command": "rmdir old_folder", "explanation": "Removes the directory if it is empty." },
+    { "command": "rmdir project", "explanation": "If the directory is not empty, rmdir refuses.", "output": "rmdir: failed to remove 'project': Directory not empty" },
+    { "command": "rmdir -pv a/b/c", "explanation": "Removes c, then b, then a, as long as they are empty." }
+  ],
+  "seeAlso": ["rm", "mkdir"],
+  "dangerLevel": "safe"
+}

@@ -1,0 +1,26 @@
+{
+  "name": "touch",
+  "category": "files",
+  "summary": "Creates an empty file or updates its timestamps.",
+  "description": "Its main job is to set a file’s access and modification times to now. If the file does not exist, touch creates it empty: that is the most common use. The contents of an existing file are never changed.",
+  "synopsis": "touch [OPTION]... FILE...",
+  "options": [
+    { "short": "-c", "long": "--no-create", "description": "Does not create the file if it does not exist.", "example": { "command": "touch -c missing.txt" } },
+    { "short": "-a", "description": "Changes only the last access time.", "example": { "command": "touch -a notes.txt" } },
+    { "short": "-m", "description": "Changes only the last modification time.", "example": { "command": "touch -m notes.txt" } },
+    { "short": "-d", "long": "--date", "description": "Uses the given date instead of now: \"2024-01-15 08:30\", \"yesterday\"…", "takesValue": true, "valueName": "DATE" },
+    { "short": "-t", "description": "Date in [[CC]YY]MMDDhhmm[.ss] format, for example 202401150830.", "takesValue": true, "valueName": "TIMESTAMP", "example": { "command": "touch -t 202401150830 report.pdf" } },
+    { "short": "-r", "long": "--reference", "description": "Copies the timestamps of another file.", "takesValue": true, "valueName": "FILE", "example": { "command": "touch -r original.jpg copy.jpg" } }
+  ],
+  "arguments": [
+    { "name": "FILE", "description": "File(s) to create or update.", "variadic": true }
+  ],
+  "examples": [
+    { "command": "touch notes.txt", "explanation": "Creates an empty notes.txt if it does not exist, otherwise updates its timestamp." },
+    { "command": "touch index.html style.css app.js", "explanation": "Creates several files in one go." },
+    { "command": "touch file{1..5}.txt", "explanation": "The shell’s brace expansion creates file1.txt to file5.txt." },
+    { "command": "touch -d \"2024-01-15 08:30\" report.pdf", "explanation": "Changes the file’s modification date." }
+  ],
+  "seeAlso": ["mkdir", "stat", "ls"],
+  "dangerLevel": "safe"
+}

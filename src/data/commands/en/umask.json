@@ -1,0 +1,21 @@
+{
+  "name": "umask",
+  "category": "permissions",
+  "summary": "Sets the permissions removed by default from new files.",
+  "description": "Shell builtin. The mask says which permissions to remove when a file is created: a file starts from 666 and a directory from 777, then the bits of the mask are removed. With the common mask 022, files are created as 644 (rw-r--r--) and directories as 755. The change only lasts for the current session; to make it permanent, add it to ~/.bashrc.",
+  "synopsis": "umask [-p] [-S] [MASK]",
+  "options": [
+    { "short": "-S", "description": "Prints or accepts the mask in symbolic form: the permissions that are kept (u=rwx,g=rx,o=rx)." },
+    { "short": "-p", "description": "Prints the mask in a form that can be reused as a command.", "example": { "command": "umask -p", "output": "umask 0022" } }
+  ],
+  "arguments": [
+    { "name": "MASK", "description": "New mask in octal (022, 077) or symbolic form (u=rwx,g=,o=). Without an argument, prints the current mask.", "optional": true }
+  ],
+  "examples": [
+    { "command": "umask", "explanation": "Prints the current mask.", "output": "0022" },
+    { "command": "umask -S", "explanation": "The same mask, expressed as the permissions that are kept.", "output": "u=rwx,g=rx,o=rx" },
+    { "command": "umask 077", "explanation": "Files created afterwards will only be accessible to you (600 for a file, 700 for a directory)." }
+  ],
+  "seeAlso": ["chmod", "touch", "mkdir"],
+  "dangerLevel": "safe"
+}

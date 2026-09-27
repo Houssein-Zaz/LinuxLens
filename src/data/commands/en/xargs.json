@@ -1,0 +1,29 @@
+{
+  "name": "xargs",
+  "category": "misc",
+  "summary": "Turns standard input into arguments for a command.",
+  "description": "Some commands, such as rm, do not read standard input: they expect arguments. xargs bridges the gap: it reads words (one per line or separated by spaces) and adds them as arguments to the command that follows it, grouping as many as it can. With -I, each item is inserted where you say. For file names containing spaces, combine find -print0 and xargs -0.",
+  "synopsis": "xargs [OPTION]... [COMMAND [ARGUMENT]...]",
+  "options": [
+    { "short": "-I", "description": "Replaces this string with each item and runs one command per item (often -I {}).", "takesValue": true, "valueName": "STRING" },
+    { "short": "-n", "long": "--max-args", "description": "At most N arguments per run of the command.", "takesValue": true, "valueName": "N" },
+    { "short": "-0", "long": "--null", "description": "Items are separated by a null byte (with find -print0): handles spaces in names." },
+    { "short": "-P", "long": "--max-procs", "description": "Runs up to N commands in parallel.", "takesValue": true, "valueName": "N" },
+    { "short": "-d", "long": "--delimiter", "description": "Character separating the items (for example '\\n').", "takesValue": true, "valueName": "CHAR", "example": { "command": "printf 'my file.txt\\nother.txt\\n' | xargs -d '\\n' rm" } },
+    { "short": "-p", "long": "--interactive", "description": "Asks for confirmation before each run.", "example": { "command": "ls *.bak | xargs -p rm", "output": "rm old.bak config.bak ?..." } },
+    { "short": "-t", "long": "--verbose", "description": "Prints each command before running it." },
+    { "short": "-r", "long": "--no-run-if-empty", "description": "Does not run the command if the input is empty.", "example": { "command": "find . -name \"*.tmp\" | xargs -r rm" } }
+  ],
+  "arguments": [
+    { "name": "COMMAND", "description": "Command to run with the items read (echo by default), followed by its own options.", "optional": true }
+  ],
+  "examples": [
+    { "command": "find . -name \"*.tmp\" | xargs rm", "explanation": "Deletes every .tmp file found by find." },
+    { "command": "find . -name \"*.jpg\" -print0 | xargs -0 -P 4 -I {} convert {} -resize 50% {}", "explanation": "Resizes the images, names with spaces included, 4 at a time." },
+    { "command": "cat urls.txt | xargs -n 1 curl -O", "explanation": "Downloads each URL in the file, one command per URL." },
+    { "command": "echo \"a b c\" | xargs -t -n 1 echo", "explanation": "Shows the generated commands.", "output": "echo a\na\necho b\nb\necho c\nc" }
+  ],
+  "seeAlso": ["find", "tee", "parallel"],
+  "dangerLevel": "caution",
+  "dangerNote": "Combined with rm, xargs acts on everything it receives. Check the list first (replace rm with echo), and use -0 for names containing spaces."
+}

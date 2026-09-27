@@ -1,14 +1,16 @@
 import { useTheme } from '../../hooks/useTheme';
+import { useTr } from '../../i18n';
 
 export function ThemeToggle() {
   const { theme, toggle } = useTheme();
   const dark = theme === 'dark';
+  const tr = useTr();
   return (
     <button
       type="button"
       onClick={toggle}
-      aria-label={dark ? 'Activer le mode clair' : 'Activer le mode sombre'}
-      title={dark ? 'Mode clair' : 'Mode sombre'}
+      aria-label={dark ? tr('Activer le mode clair', 'Switch to light mode') : tr('Activer le mode sombre', 'Switch to dark mode')}
+      title={dark ? tr('Mode clair', 'Light mode') : tr('Mode sombre', 'Dark mode')}
       className="grid size-9 shrink-0 place-items-center rounded-lg text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
     >
       {dark ? (

@@ -16,20 +16,22 @@ import {
   type Right,
   type Who,
 } from '../lib/permissions';
+import { tr as trNow, useTr } from '../i18n';
 
-const PRESETS = [
-  { mode: '644', label: 'Fichier classique' },
-  { mode: '755', label: 'Script, répertoire' },
-  { mode: '600', label: 'Fichier privé' },
-  { mode: '700', label: 'Répertoire privé' },
-  { mode: '750', label: 'Partagé avec le groupe' },
-  { mode: '777', label: 'Tout pour tous (à éviter)' },
+const PRESETS = () => [
+  { mode: '644', label: trNow('Fichier classique', 'Regular file') },
+  { mode: '755', label: trNow('Script, répertoire', 'Script, directory') },
+  { mode: '600', label: trNow('Fichier privé', 'Private file') },
+  { mode: '700', label: trNow('Répertoire privé', 'Private directory') },
+  { mode: '750', label: trNow('Partagé avec le groupe', 'Shared with the group') },
+  { mode: '777', label: trNow('Tout pour tous (à éviter)', 'Everything for everyone (avoid)') },
 ];
 
 export function ChmodPage() {
   const [params, setParams] = useSearchParams();
   const perms = fromOctal(params.get('mode') ?? '') ?? fromOctal('644')!;
-  const [target, setTarget] = useState('fichier');
+  const tr = useTr();
+  const [target, setTarget] = useState(() => trNow('fichier', 'file'));
   const [change, setChange] = useState('');
 
   const set = useCallback((p: Permissions) => setParams({ mode: toOctal(p) }, { replace: true }), [setParams]);
@@ -43,29 +45,33 @@ export function ChmodPage() {
 
   const octal = toOctal(perms);
   const symbolic = toSymbolic(perms);
-  const quotedTarget = /\s/.test(target) ? `"${target}"` : target || 'fichier';
+  const quotedTarget = /\s/.test(target) ? `"${target}"` : target || tr('fichier', 'file');
   const changeResult = change.trim() ? applyChmod(perms, change.trim()) : null;
 
   return (
     <>
-      <PageHeader title="Calculateur de permissions">
-        Cochez les cases ou modifiez l’une des notations : tout reste synchronisé.
+      <PageHeader title={tr('Calculateur de permissions', 'Permissions calculator')}>
+        {tr('Cochez les cases ou modifiez l’une des notations : tout reste synchronisé.', 'Tick the boxes or edit either notation: everything stays in sync.')}
       </PageHeader>
 
       <div className="grid gap-6 lg:grid-cols-[1.1fr_1fr]">
-        <section aria-label="Grille des permissions" className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm sm:p-6 dark:border-zinc-800 dark:bg-zinc-900">
+        <section aria-label={tr('Grille des permissions', 'Permissions grid')} className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm sm:p-6 dark:border-zinc-800 dark:bg-zinc-900">
           <PermissionGrid value={perms} onToggle={toggle} />
 
           <details className="mt-4 text-sm">
             <summary className="cursor-pointer text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100">
-              Bits spéciaux (setuid, setgid, sticky)
+              {tr('Bits spéciaux (setuid, setgid, sticky)', 'Special bits (setuid, setgid, sticky)')}
             </summary>
             <div className="mt-3 space-y-2">
               {(
                 [
-                  ['setuid', 'setuid (4000)', 'le programme s’exécute avec les droits de son propriétaire'],
-                  ['setgid', 'setgid (2000)', 'droits du groupe ; sur un répertoire, les fichiers créés héritent du groupe'],
-                  ['sticky', 'sticky (1000)', 'dans un répertoire, seul le propriétaire d’un fichier peut le supprimer'],
+                  ['setuid', 'setuid (4000)', tr('le programme s’exécute avec les droits de son propriétaire', 'the program runs with the permissions of its owner')],
+                  [
+                    'setgid',
+                    'setgid (2000)',
+                    tr('droits du groupe ; sur un répertoire, les fichiers créés héritent du groupe', 'group permissions; on a directory, new files inherit the group'),
+                  ],
+                  ['sticky', 'sticky (1000)', tr('dans un répertoire, seul le propriétaire d’un fichier peut le supprimer', 'in a directory, only the owner of a file can delete it')],
                 ] as const
               ).map(([key, label, text]) => (
                 <label key={key} className="flex cursor-pointer items-start gap-2">
@@ -80,11 +86,11 @@ export function ChmodPage() {
           </details>
         </section>
 
-        <section aria-label="Notations" className="space-y-5">
+        <section aria-label={tr('Notations', 'Notations')} className="space-y-5">
           <SyncedField
-            label="Notation symbolique"
+            label={tr('Notation symbolique', 'Symbolic notation')}
             value={symbolic}
-            hint="9 caractères comme dans ls -l : rwxr-x---"
+            hint={tr('9 caractères comme dans ls -l : rwxr-x---', '9 characters as in ls -l: rwxr-x---')}
             onCommit={(t) => {
               const p = fromSymbolic(t);
               if (p) set(p);
@@ -92,9 +98,9 @@ export function ChmodPage() {
             }}
           />
           <SyncedField
-            label="Notation octale"
+            label={tr('Notation octale', 'Octal notation')}
             value={octal}
-            hint="3 chiffres de 0 à 7 (4 avec un bit spécial) : 750"
+            hint={tr('3 chiffres de 0 à 7 (4 avec un bit spécial) : 750', '3 digits from 0 to 7 (4 with a special bit): 750')}
             onCommit={(t) => {
               const p = fromOctal(t);
               if (p) set(p);
@@ -104,9 +110,9 @@ export function ChmodPage() {
 
           <div>
             <div className="mb-1.5 flex items-baseline justify-between gap-3">
-              <span className="text-sm font-medium">Commande chmod</span>
+              <span className="text-sm font-medium">{tr('Commande chmod', 'chmod command')}</span>
               <label className="flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400">
-                Fichier
+                {tr('Fichier', 'File')}
                 <input
                   value={target}
                   onChange={(e) => setTarget(e.target.value)}
@@ -132,10 +138,10 @@ export function ChmodPage() {
 
       <section aria-labelledby="presets" className="mt-10">
         <h2 id="presets" className="mb-3 text-lg font-semibold tracking-tight">
-          Modes courants
+          {tr('Modes courants', 'Common modes')}
         </h2>
         <div className="flex flex-wrap gap-2">
-          {PRESETS.map((p) => (
+          {PRESETS().map((p) => (
             <button
               key={p.mode}
               type="button"
@@ -158,17 +164,20 @@ export function ChmodPage() {
 
       <section aria-labelledby="apply" className="mt-10 max-w-2xl">
         <h2 id="apply" className="mb-1 text-lg font-semibold tracking-tight">
-          Tester un changement
+          {tr('Tester un changement', 'Try a change')}
         </h2>
         <p className="mb-3 text-sm text-zinc-600 dark:text-zinc-400">
-          Tapez un mode symbolique (u+x, go-w, a=r…) pour voir son effet sur les permissions actuelles.
+          {tr(
+            'Tapez un mode symbolique (u+x, go-w, a=r…) pour voir son effet sur les permissions actuelles.',
+            'Type a symbolic mode (u+x, go-w, a=r…) to see its effect on the current permissions.',
+          )}
         </p>
         <div className="flex gap-2">
           <input
             value={change}
             onChange={(e) => setChange(e.target.value)}
             placeholder="u+x"
-            aria-label="Mode chmod à tester"
+            aria-label={tr('Mode chmod à tester', 'chmod mode to try')}
             spellCheck={false}
             className="h-11 min-w-0 flex-1 rounded-xl border border-zinc-200 bg-white px-3 font-mono shadow-sm outline-none focus:border-indigo-400 focus:ring-4 focus:ring-indigo-500/10 dark:border-zinc-800 dark:bg-zinc-900"
           />
@@ -181,7 +190,7 @@ export function ChmodPage() {
             }}
             className="rounded-xl bg-indigo-600 px-4 text-sm font-medium text-white shadow-sm transition-colors hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-40"
           >
-            Appliquer
+            {tr('Appliquer', 'Apply')}
           </button>
         </div>
         {change.trim() && (
@@ -195,7 +204,7 @@ export function ChmodPage() {
                 )}
               </>
             ) : (
-              <span className="text-red-600 dark:text-red-400">Mode invalide.</span>
+              <span className="text-red-600 dark:text-red-400">{tr('Mode invalide.', 'Invalid mode.')}</span>
             )}
           </p>
         )}

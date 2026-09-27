@@ -1,0 +1,27 @@
+{
+  "name": "du",
+  "category": "system",
+  "summary": "Measures the disk space used by files and directories.",
+  "description": "Disk usage: walks through directories and adds up the space actually used on disk. Without options, it prints one line per subdirectory, which can be very long: you almost always use -s (total) and -h (readable units).",
+  "synopsis": "du [OPTION]... [FILE]...",
+  "options": [
+    { "short": "-h", "long": "--human-readable", "description": "Sizes in readable units (K, M, G)." },
+    { "short": "-s", "long": "--summarize", "description": "Shows only the total for each argument." },
+    { "short": "-a", "long": "--all", "description": "Also lists files, not just directories.", "example": { "command": "du -ah project/ | sort -rh | head -3", "output": "12M\tproject/\n9.8M\tproject/assets/video.mp4\n1.1M\tproject/assets" } },
+    { "short": "-c", "long": "--total", "description": "Adds a grand total at the end.", "example": { "command": "du -ch *.log", "output": "4.0K\taccess.log\n20K\terror.log\n24K\ttotal" } },
+    { "short": "-d", "long": "--max-depth", "description": "Only goes into detail down to N levels.", "takesValue": true, "valueName": "N" },
+    { "long": "--exclude", "description": "Skips files matching the pattern.", "takesValue": true, "valueName": "PATTERN" },
+    { "long": "--apparent-size", "description": "Shows the size of the data rather than the space used on disk.", "example": { "command": "du -sh --apparent-size notes.txt", "output": "47\tnotes.txt" } }
+  ],
+  "arguments": [
+    { "name": "FILE", "description": "File(s) or directory(ies) to measure. Default: the current directory.", "optional": true, "variadic": true }
+  ],
+  "examples": [
+    { "command": "du -sh ~/Downloads", "explanation": "Total size of a directory.", "output": "3.2G\t/home/esprit/Downloads" },
+    { "command": "du -sh * | sort -rh | head -5", "explanation": "The 5 largest entries in the current directory." },
+    { "command": "du -h -d 1 /var | sort -rh", "explanation": "Size of each direct subdirectory of /var, from largest to smallest." },
+    { "command": "du -sh --exclude=node_modules project/", "explanation": "Size of a project without its dependencies." }
+  ],
+  "seeAlso": ["df", "ls", "ncdu"],
+  "dangerLevel": "safe"
+}

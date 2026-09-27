@@ -1,0 +1,26 @@
+{
+  "name": "passwd",
+  "category": "permissions",
+  "summary": "Changes a password.",
+  "description": "Without an argument, changes your own password (the old one is asked for first). With sudo and a user name, the administrator can set another account’s password, lock it or make it expire. Typing shows nothing, not even asterisks: that is normal. Passwords are stored as hashes in /etc/shadow.",
+  "synopsis": "passwd [OPTION]... [USER]",
+  "options": [
+    { "short": "-l", "long": "--lock", "description": "Locks the account: logging in with a password becomes impossible.", "example": { "command": "sudo passwd -l alice", "output": "passwd: password changed." } },
+    { "short": "-u", "long": "--unlock", "description": "Unlocks a locked account.", "example": { "command": "sudo passwd -u alice", "output": "passwd: password changed." } },
+    { "short": "-e", "long": "--expire", "description": "Forces the user to change their password at the next login." },
+    { "short": "-d", "long": "--delete", "description": "Deletes the password (an account with no password: avoid).", "example": { "command": "sudo passwd -d guest" } },
+    { "short": "-S", "long": "--status", "description": "Shows the password status (active, locked, dates)." },
+    { "short": "-x", "long": "--maxdays", "description": "Maximum number of days the password stays valid.", "takesValue": true, "valueName": "DAYS", "example": { "command": "sudo passwd -x 90 alice" } }
+  ],
+  "arguments": [
+    { "name": "USER", "description": "Target account (administrator only). Default: you.", "optional": true }
+  ],
+  "examples": [
+    { "command": "passwd", "explanation": "Changes your password." },
+    { "command": "sudo passwd alice", "explanation": "Sets alice’s password (for example after useradd)." },
+    { "command": "sudo passwd -e alice", "explanation": "alice will have to choose a new password next time she logs in." },
+    { "command": "sudo passwd -S alice", "explanation": "Status of alice’s password.", "output": "alice P 2024-07-12 0 99999 7 -1" }
+  ],
+  "seeAlso": ["useradd", "su", "sudo"],
+  "dangerLevel": "safe"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "whoami",
+  "category": "permissions",
+  "summary": "Prints the name of the current user.",
+  "description": "Writes the name of the effective user: the one whose permissions apply to the commands you run. Handy for checking where you stand after su or sudo, or inside a script.",
+  "synopsis": "whoami",
+  "options": [],
+  "examples": [
+    { "command": "whoami", "explanation": "Prints your user name.", "output": "esprit" },
+    { "command": "sudo whoami", "explanation": "With sudo, the command runs as root.", "output": "root" }
+  ],
+  "seeAlso": ["id", "who", "sudo"],
+  "dangerLevel": "safe"
+}

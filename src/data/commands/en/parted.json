@@ -1,0 +1,97 @@
+{
+  "name": "parted",
+  "category": "system",
+  "summary": "Creates, deletes and changes the partitions of a disk.",
+  "description": "GNU Parted edits a disk’s partition table: it can create a new table (GPT or msdos), and add, delete, resize or rename partitions. Run with just a disk, it opens an interactive mode (“(parted)” prompt). With commands after the disk, it runs them one after the other then quits; the -s (--script) option then suppresses every confirmation question. Positions are written with a unit (MiB, GiB, MB…) or as a percentage of the disk (0% = start, 100% = end). Watch out: parted writes changes immediately, with no “save” step. It does not format partitions: use mkfs afterwards.",
+  "synopsis": "parted [OPTION]... [DISK [COMMAND [PARAMETER]...]...]",
+  "options": [
+    { "short": "-l", "long": "--list", "description": "Shows the partition table of every disk, then quits.", "example": { "command": "sudo parted -l", "output": "Model: ATA Samsung SSD 870 (scsi)\nDisk /dev/sda: 500GB\nPartition Table: gpt\n\nNumber  Start   End    Size   File system  Name  Flags\n 1      1049kB  538MB  537MB  fat32        boot  boot, esp\n 2      538MB   500GB  500GB  ext4         root" } },
+    { "short": "-s", "long": "--script", "description": "Script mode: shows no confirmation questions (“Yes/No?”). Essential for chaining commands unattended, but parted will not ask whether you are sure you want to wipe the disk." },
+    { "short": "-a", "long": "--align", "description": "Alignment rule for new partitions on the disk’s physical blocks (optimal by default, recommended for performance).", "takesValue": true, "valueName": "TYPE", "values": ["none", "cylinder", "minimal", "optimal"], "example": { "command": "sudo parted -a optimal /dev/sdb mkpart data 1MiB 100%" } },
+    { "short": "-m", "long": "--machine", "description": "Machine-readable output: fields separated by “:”.", "example": { "command": "sudo parted -m /dev/sda print", "output": "BYT;\n/dev/sda:500GB:scsi:512:4096:gpt:ATA Samsung SSD 870:;\n1:1049kB:538MB:537MB:fat32:boot:boot, esp;" } },
+    { "short": "-f", "long": "--fix", "description": "In script mode, automatically answers “Fix” to problems detected (a misplaced backup GPT table, for example)." },
+    { "short": "-h", "long": "--help", "description": "Shows help and the list of commands.", "example": { "command": "parted -h" } },
+    { "short": "-v", "long": "--version", "description": "Shows the parted version.", "example": { "command": "parted -v", "output": "parted (GNU parted) 3.6" } }
+  ],
+  "arguments": [
+    { "name": "DISK", "description": "The whole disk to change: /dev/sda, /dev/sdb, /dev/nvme0n1… (not a partition like /dev/sda1). “sdX” is an example to replace with the disk’s real letter, shown by lsblk or parted -l." }
+  ],
+  "subcommands": [
+    {
+      "name": "mklabel",
+      "description": "Creates a new, empty partition table on the disk. All existing partitions disappear: their data becomes inaccessible.",
+      "arguments": [
+        { "name": "TABLE-TYPE", "description": "Table type: gpt (modern, disks over 2 TB, up to 128 partitions, required for UEFI boot) or msdos (old MBR format: 4 primary partitions, 2 TB maximum)." }
+      ]
+    },
+    {
+      "name": "mkpart",
+      "description": "Creates a partition in free space, between a start position and an end position. It is not formatted: you will then need to create a file system (mkfs.ext4, mkfs.fat…).",
+      "arguments": [
+        { "name": "NAME", "description": "On a GPT table: the partition’s name (label), free text, for example “boot” or “system”. On an msdos table, you give its type instead (primary, logical or extended), optionally followed by a file system (ext4, fat32…) that is only a hint.", "variadic": true },
+        { "name": "START", "description": "Where the partition starts. As a percentage of the disk (0% = right at the start, parted then leaves the alignment space needed) or with a unit: 500MiB = 500 mebibytes (1 MiB = 1,048,576 bytes), 1GiB, 20GB… Without a unit, parted counts in megabytes (MB)." },
+        { "name": "END", "description": "Where the partition ends, same format as the start. 100% = up to the end of the disk. To chain two partitions with no gap, the end of one is the start of the next (500MiB then 500MiB)." }
+      ]
+    },
+    {
+      "name": "print",
+      "description": "Shows the disk’s partition table: numbers, start, end, size, file system, name and flags."
+    },
+    {
+      "name": "rm",
+      "description": "Deletes a partition (and makes its data inaccessible).",
+      "arguments": [{ "name": "NUMBER", "description": "Partition number, as shown by print (1, 2…)." }]
+    },
+    {
+      "name": "set",
+      "description": "Turns a flag on or off on a partition.",
+      "arguments": [
+        { "name": "NUMBER", "description": "Partition number, as shown by print." },
+        { "name": "FLAG", "description": "Flag to change: boot (boot partition), esp (EFI system partition), lvm, raid, swap, bios_grub, hidden…" },
+        { "name": "STATE", "description": "on to turn the flag on, off to remove it." }
+      ]
+    },
+    {
+      "name": "name",
+      "description": "Changes the name of a partition (GPT tables only).",
+      "arguments": [
+        { "name": "NUMBER", "description": "Number of the partition to rename." },
+        { "name": "NAME", "description": "New name for the partition." }
+      ]
+    },
+    {
+      "name": "resizepart",
+      "description": "Moves the end of a partition to grow or shrink it. The file system inside is not resized (resize2fs for ext4).",
+      "arguments": [
+        { "name": "NUMBER", "description": "Number of the partition to resize." },
+        { "name": "END", "description": "New end position: 100%, 50GiB…" }
+      ]
+    },
+    {
+      "name": "unit",
+      "description": "Chooses the unit used to show and enter positions.",
+      "arguments": [{ "name": "UNIT", "description": "s (sectors), B, kB, MB, GB, MiB, GiB, % or compact." }]
+    },
+    {
+      "name": "align-check",
+      "description": "Checks that a partition is aligned on the disk’s physical blocks.",
+      "arguments": [
+        { "name": "TYPE", "description": "opt (optimal, recommended) or min (minimal)." },
+        { "name": "NUMBER", "description": "Number of the partition to check." }
+      ]
+    }
+  ],
+  "examples": [
+    { "command": "sudo parted /dev/sda print", "explanation": "Shows the disk’s partitions, without changing anything.", "output": "Disk /dev/sda: 500GB\nPartition Table: gpt\n\nNumber  Start   End    Size   File system  Name  Flags\n 1      1049kB  538MB  537MB  fat32        boot  boot, esp\n 2      538MB   500GB  500GB  ext4         root" },
+    { "command": "sudo parted /dev/sdX -s mklabel gpt mkpart \"boot_partition_name\" 0% 500MiB mkpart \"system_partition_name\" 500MiB 100%", "explanation": "With no questions at all: wipes the table of disk sdX, creates a GPT table, a 500 MiB boot partition at the start, then a system partition taking up all the rest." },
+    { "command": "sudo parted -s /dev/sdb mklabel msdos", "explanation": "Replaces sdb’s partition table with an empty msdos (MBR) table." },
+    { "command": "sudo parted /dev/sdX set 1 boot on", "explanation": "Turns on the boot flag on partition 1." },
+    { "command": "sudo parted /dev/sdb rm 2", "explanation": "Deletes partition 2 from disk sdb." },
+    { "command": "sudo parted /dev/sdb resizepart 2 100%", "explanation": "Grows partition 2 up to the end of the disk." },
+    { "command": "sudo parted -f -s /dev/sdb print", "explanation": "Shows the table while automatically fixing a misplaced backup GPT table (after cloning a disk onto a bigger one, for example)." },
+    { "command": "sudo parted /dev/sdb", "explanation": "Interactive mode: type print, mkpart… at the (parted) prompt, then quit." }
+  ],
+  "seeAlso": ["df", "du", "sudo"],
+  "dangerLevel": "danger",
+  "dangerNote": "parted applies each change immediately. mklabel and rm make the disk’s data inaccessible, and with -s no confirmation is asked. Check the disk name with lsblk or parted -l: getting the letter wrong (sda instead of sdb) can wipe your system."
+}

@@ -1,0 +1,30 @@
+{
+  "name": "unzip",
+  "category": "archives",
+  "summary": "Extracts the files from a .zip archive.",
+  "description": "Extracts the contents of a .zip archive into the current directory, or elsewhere with -d. If a file already exists, unzip asks what to do. Tip: list the contents first with -l, because some archives have no top-level folder and scatter their files around.",
+  "synopsis": "unzip [OPTION]... ARCHIVE.zip [FILE]...",
+  "options": [
+    { "short": "-d", "description": "Directory to extract into (created if it does not exist).", "takesValue": true, "valueName": "DIRECTORY" },
+    { "short": "-l", "description": "Lists the contents of the archive without extracting it." },
+    { "short": "-o", "description": "Overwrites existing files without asking.", "example": { "command": "unzip -o update.zip" } },
+    { "short": "-n", "description": "Never overwrites an existing file.", "example": { "command": "unzip -n archive.zip" } },
+    { "short": "-q", "description": "Prints nothing.", "example": { "command": "unzip -q archive.zip" } },
+    { "short": "-t", "description": "Checks the integrity of the archive.", "example": { "command": "unzip -t archive.zip", "output": "testing: project/README.md   OK\nNo errors detected in compressed data of archive.zip." } },
+    { "short": "-j", "description": "Extracts every file at the same level, without recreating directories.", "example": { "command": "unzip -j photos.zip -d all_photos" } },
+    { "short": "-x", "description": "Excludes the files matching the patterns that follow.", "example": { "command": "unzip archive.zip -x \"*.log\"" } }
+  ],
+  "arguments": [
+    { "name": "ARCHIVE.zip", "description": "Archive to extract." },
+    { "name": "FILE", "description": "Specific files to extract. Default: everything.", "optional": true, "variadic": true }
+  ],
+  "examples": [
+    { "command": "unzip project.zip", "explanation": "Extracts the archive into the current directory." },
+    { "command": "unzip -l project.zip", "explanation": "Lists the contents without extracting.", "output": "  Length      Date    Time    Name\n---------  ---------- -----   ----\n        0  2024-07-12 21:10   project/\n     1024  2024-07-12 21:14   project/README.md" },
+    { "command": "unzip photos.zip -d ~/Pictures/holidays", "explanation": "Extracts into a specific directory." },
+    { "command": "unzip archive.zip \"*.pdf\"", "explanation": "Extracts only the PDF files." }
+  ],
+  "seeAlso": ["zip", "tar", "gunzip"],
+  "dangerLevel": "caution",
+  "dangerNote": "With -o, existing files are overwritten without confirmation. When in doubt, list the contents with -l before extracting."
+}

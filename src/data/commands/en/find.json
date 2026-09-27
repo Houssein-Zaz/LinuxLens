@@ -1,0 +1,39 @@
+{
+  "name": "find",
+  "category": "files",
+  "summary": "Searches for files in a directory tree.",
+  "description": "Walks the given directories recursively and applies tests (name, type, size, date…) to each file. Files that pass every test are printed, or have an action applied to them (-delete, -exec). A quirk: its options are written with a single dash but are whole words (-name, -type).",
+  "synopsis": "find [PATH...] [EXPRESSION]",
+  "options": [
+    { "short": "-name", "description": "File name matching the pattern (wildcards * ? [ ] allowed, put it in quotes).", "takesValue": true, "valueName": "PATTERN" },
+    { "short": "-iname", "description": "Like -name, ignoring case.", "takesValue": true, "valueName": "PATTERN", "example": { "command": "find . -iname \"readme*\"", "output": "./README.md\n./docs/Readme.txt" } },
+    { "short": "-type", "description": "File type: f (file), d (directory), l (symbolic link).", "takesValue": true, "valueName": "TYPE", "values": ["f", "d", "l", "b", "c", "p", "s"] },
+    { "short": "-size", "description": "Size: +10M (more than 10 MiB), -1k (less than 1 KiB), 100c (exactly 100 bytes).", "takesValue": true, "valueName": "N" },
+    { "short": "-mtime", "description": "Modified N days ago: -7 (less than 7 days), +30 (more than 30 days).", "takesValue": true, "valueName": "N" },
+    { "short": "-mmin", "description": "Modified N minutes ago.", "takesValue": true, "valueName": "N", "example": { "command": "find . -mmin -30", "output": "./notes.txt\n./src/app.js" } },
+    { "short": "-user", "description": "Owned by the given user.", "takesValue": true, "valueName": "USER", "example": { "command": "find /tmp -user esprit", "output": "/tmp/export.csv" } },
+    { "short": "-perm", "description": "Exact permissions (644) or at least these permissions (-u+x).", "takesValue": true, "valueName": "MODE", "example": { "command": "find . -perm 777", "output": "./risky_script.sh" } },
+    { "short": "-maxdepth", "description": "Goes down at most N levels below the starting paths.", "takesValue": true, "valueName": "N", "example": { "command": "find . -maxdepth 1 -type d", "output": ".\n./src\n./docs" } },
+    { "short": "-mindepth", "description": "Applies the tests only from N levels deep.", "takesValue": true, "valueName": "N", "example": { "command": "find . -mindepth 2 -name \"*.js\"", "output": "./src/app.js" } },
+    { "short": "-empty", "description": "Empty files or directories.", "example": { "command": "find . -type f -empty", "output": "./empty.txt" } },
+    { "short": "-newer", "description": "Modified more recently than the given file.", "takesValue": true, "valueName": "FILE", "example": { "command": "find . -newer last_backup.txt", "output": "./report.docx" } },
+    { "short": "-exec", "description": "Runs a command on each result; {} is replaced by the file, and the command ends with \\; (one call per file) or + (one grouped call)." },
+    { "short": "-delete", "description": "Deletes the files found. Use it last, after checking the results without this option." },
+    { "short": "-print", "description": "Prints the path (the default action).", "example": { "command": "find /etc -maxdepth 1 -name \"*.conf\" -print", "output": "/etc/host.conf\n/etc/resolv.conf" } },
+    { "short": "-not", "description": "Inverts the next test (same as !).", "example": { "command": "find . -type f -not -name \"*.md\"", "output": "./package.json\n./src/app.js" } },
+    { "short": "-o", "description": "Logical OR between two tests (by default, tests are combined with AND).", "example": { "command": "find . -name \"*.jpg\" -o -name \"*.png\"", "output": "./photo.jpg\n./logo.png" } }
+  ],
+  "arguments": [
+    { "name": "PATH", "description": "Starting directory (or directories). Default: the current directory.", "optional": true, "variadic": true }
+  ],
+  "examples": [
+    { "command": "find . -name \"*.log\"", "explanation": "Every .log file under the current directory." },
+    { "command": "find /home -type d -name node_modules", "explanation": "Every node_modules directory under /home." },
+    { "command": "find . -type f -size +100M", "explanation": "Files larger than 100 MiB." },
+    { "command": "find /tmp -type f -mtime +7 -delete", "explanation": "Deletes the files in /tmp not modified for more than 7 days." },
+    { "command": "find . -name \"*.sh\" -exec chmod u+x {} \\;", "explanation": "Makes every .sh script executable." }
+  ],
+  "seeAlso": ["locate", "grep", "xargs", "ls"],
+  "dangerLevel": "caution",
+  "dangerNote": "With -delete or -exec rm, a pattern mistake can delete many files. Run the command without the action first to check the list."
+}

@@ -1,0 +1,36 @@
+{
+  "name": "curl",
+  "category": "network",
+  "summary": "Sends HTTP requests (and much more) from the terminal.",
+  "description": "Transfers data from or to a URL. By default, curl makes a GET request and prints the response to standard output; you need -o or -O to save it. It is the go-to tool for testing an API: method (-X), headers (-H), request body (-d). It also handles HTTPS, FTP, SFTP and other protocols.",
+  "synopsis": "curl [OPTION]... URL...",
+  "options": [
+    { "short": "-o", "long": "--output", "description": "Saves the response to this file.", "takesValue": true, "valueName": "FILE" },
+    { "short": "-O", "long": "--remote-name", "description": "Saves the response under the file name found in the URL." },
+    { "short": "-L", "long": "--location", "description": "Follows redirects (301, 302…)." },
+    { "short": "-I", "long": "--head", "description": "Shows only the response headers (HEAD request)." },
+    { "short": "-i", "long": "--include", "description": "Shows the response headers before the body.", "example": { "command": "curl -i https://example.com/api/status", "output": "HTTP/2 200\ncontent-type: application/json\n\n{\"status\": \"ok\"}" } },
+    { "short": "-X", "long": "--request", "description": "HTTP method: GET, POST, PUT, PATCH, DELETE…", "takesValue": true, "valueName": "METHOD" },
+    { "short": "-H", "long": "--header", "description": "Adds a header, for example \"Authorization: Bearer …\".", "takesValue": true, "valueName": "HEADER" },
+    { "short": "-d", "long": "--data", "description": "Request body; implies POST. @file reads the body from a file.", "takesValue": true, "valueName": "DATA" },
+    { "long": "--json", "description": "Sends JSON: adds the right Content-Type and Accept headers.", "takesValue": true, "valueName": "DATA", "example": { "command": "curl --json '{\"name\": \"Ali\"}' https://api.example.com/users", "output": "{\"id\": 42, \"name\": \"Ali\"}" } },
+    { "short": "-u", "long": "--user", "description": "Credentials for basic authentication.", "takesValue": true, "valueName": "USER:PASSWORD", "example": { "command": "curl -u admin:secret https://example.com/admin" } },
+    { "short": "-s", "long": "--silent", "description": "Hides the progress bar and errors." },
+    { "short": "-S", "long": "--show-error", "description": "With -s, still shows errors." },
+    { "short": "-f", "long": "--fail", "description": "Fails (non-zero exit code) if the server answers with an HTTP error." },
+    { "short": "-v", "long": "--verbose", "description": "Details the whole exchange: connection, TLS, headers sent and received.", "example": { "command": "curl -v https://example.com", "output": "* Connected to example.com (93.184.215.14) port 443\n> GET / HTTP/2\n< HTTP/2 200" } },
+    { "short": "-k", "long": "--insecure", "description": "Accepts an invalid TLS certificate (for testing only).", "example": { "command": "curl -k https://localhost:8443" } }
+  ],
+  "arguments": [
+    { "name": "URL", "description": "Address of the resource.", "variadic": true }
+  ],
+  "examples": [
+    { "command": "curl https://api.github.com/users/torvalds", "explanation": "Prints the JSON response of an API." },
+    { "command": "curl -LO https://example.com/file.zip", "explanation": "Downloads a file, following redirects, and keeps its name." },
+    { "command": "curl -I https://example.com", "explanation": "Headers only: status code, content type, cache…", "output": "HTTP/2 200\ncontent-type: text/html; charset=UTF-8\ncache-control: max-age=600" },
+    { "command": "curl -X POST -H \"Content-Type: application/json\" -d '{\"name\": \"Ali\"}' https://api.example.com/users", "explanation": "Sends a JSON object to an API with POST." },
+    { "command": "curl -fsSL https://example.com/install.sh -o install.sh", "explanation": "A quiet download that fails cleanly on an HTTP error." }
+  ],
+  "seeAlso": ["wget", "ssh", "ping"],
+  "dangerLevel": "safe"
+}

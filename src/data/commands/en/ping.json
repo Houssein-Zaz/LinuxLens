@@ -1,0 +1,26 @@
+{
+  "name": "ping",
+  "category": "network",
+  "summary": "Tests whether a machine answers on the network.",
+  "description": "Sends ICMP “echo request” packets to a host and measures the response time (time=… ms). On Linux, ping keeps going forever: Ctrl+C stops it and prints a summary (packets lost, min/average/max times). No answer does not prove the machine is off: many firewalls block ICMP.",
+  "synopsis": "ping [OPTION]... HOST",
+  "options": [
+    { "short": "-c", "description": "Number of packets to send before stopping.", "takesValue": true, "valueName": "N" },
+    { "short": "-i", "description": "Interval between two packets, in seconds (1 by default).", "takesValue": true, "valueName": "SECONDS", "example": { "command": "ping -i 5 server.local" } },
+    { "short": "-W", "description": "How long to wait for each reply, in seconds.", "takesValue": true, "valueName": "SECONDS" },
+    { "short": "-s", "description": "Size of the data in each packet, in bytes.", "takesValue": true, "valueName": "BYTES", "example": { "command": "ping -s 1400 -c 2 server.local", "output": "1408 bytes from server.local (192.168.1.20): icmp_seq=1 ttl=64 time=1.9 ms" } },
+    { "short": "-4", "description": "Forces IPv4.", "example": { "command": "ping -4 -c 1 google.com", "output": "64 bytes from 142.250.179.110: icmp_seq=1 ttl=117 time=12.4 ms" } },
+    { "short": "-6", "description": "Forces IPv6.", "example": { "command": "ping -6 -c 1 google.com", "output": "64 bytes from 2a00:1450:4007:80c::200e: icmp_seq=1 ttl=117 time=13.1 ms" } },
+    { "short": "-q", "description": "Quiet mode: only the final summary.", "example": { "command": "ping -q -c 10 google.com", "output": "10 packets transmitted, 10 received, 0% packet loss, time 9013ms\nrtt min/avg/max/mdev = 11.8/12.4/13.9/0.6 ms" } }
+  ],
+  "arguments": [
+    { "name": "HOST", "description": "Domain name or IP address to test." }
+  ],
+  "examples": [
+    { "command": "ping -c 4 google.com", "explanation": "Sends 4 packets then prints the summary.", "output": "64 bytes from par21s23-in-f14.1e100.net (142.250.179.110): icmp_seq=1 ttl=117 time=12.4 ms\n...\n4 packets transmitted, 4 received, 0% packet loss, time 3005ms\nrtt min/avg/max/mdev = 11.9/12.3/12.8/0.3 ms" },
+    { "command": "ping 192.168.1.1", "explanation": "Checks that the router answers (Ctrl+C to stop)." },
+    { "command": "ping -c 1 -W 2 server.local && echo \"online\"", "explanation": "A quick test in a script: one packet, waiting 2 seconds at most." }
+  ],
+  "seeAlso": ["traceroute", "ip", "curl"],
+  "dangerLevel": "safe"
+}

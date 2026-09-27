@@ -1,4 +1,6 @@
 import type { TokenKind } from '../../types/parser';
+import { KIND_LABEL } from '../../lib/explain';
+import { tr } from '../../i18n';
 
 /** Couleurs douces par type de token ; contrastes AA vérifiés en clair et en sombre. */
 export const TOKEN_STYLE: Record<TokenKind, string> = {
@@ -17,13 +19,11 @@ export const TOKEN_STYLE: Record<TokenKind, string> = {
 };
 
 /** Types affichés dans la légende, dans l'ordre. */
-export const LEGEND: Array<{ kind: TokenKind; label: string }> = [
-  { kind: 'command', label: 'Commande' },
-  { kind: 'subcommand', label: 'Sous-commande' },
-  { kind: 'option', label: 'Option' },
-  { kind: 'option-value', label: "Valeur d'option" },
-  { kind: 'argument', label: 'Argument' },
-  { kind: 'chmod-mode', label: 'Mode chmod' },
-  { kind: 'pipe', label: 'Opérateur' },
-  { kind: 'redirect', label: 'Redirection' },
-];
+const LEGEND_KINDS: TokenKind[] = ['command', 'subcommand', 'option', 'option-value', 'argument', 'chmod-mode', 'pipe', 'redirect'];
+
+export const LEGEND: ReadonlyArray<{ kind: TokenKind; label: string }> = LEGEND_KINDS.map((kind) => ({
+  kind,
+  get label() {
+    return kind === 'pipe' ? tr('Opérateur', 'Operator') : KIND_LABEL[kind];
+  },
+}));

@@ -1,0 +1,32 @@
+{
+  "name": "snap",
+  "category": "packages",
+  "summary": "Installs applications packaged in the Snap format.",
+  "description": "Canonical’s package system, preinstalled on Ubuntu. A snap bundles all its dependencies and runs in an isolated environment (confinement); snaps update themselves automatically. On the other hand, they take more space and sometimes start more slowly than apt packages. The catalog is on snapcraft.io.",
+  "synopsis": "snap SUBCOMMAND [OPTION]... [SNAP]...",
+  "options": [
+    { "long": "--classic", "description": "Installs without confinement: needed for tools that must access the whole system (code editors, compilers)." },
+    { "long": "--channel", "description": "Release channel: stable, candidate, beta, edge.", "takesValue": true, "valueName": "CHANNEL", "example": { "command": "sudo snap install node --channel=20/stable --classic" } },
+    { "long": "--beta", "description": "Shortcut for the beta channel.", "example": { "command": "sudo snap install firefox --beta" } }
+  ],
+  "subcommands": [
+    { "name": "install", "description": "Installs a snap." },
+    { "name": "remove", "description": "Uninstalls a snap." },
+    { "name": "list", "description": "Lists installed snaps with their version and channel." },
+    { "name": "find", "description": "Searches for a snap in the catalog." },
+    { "name": "info", "description": "Details a snap: description, channels and available versions." },
+    { "name": "refresh", "description": "Updates a snap, or all of them without an argument." },
+    { "name": "revert", "description": "Goes back to a snap’s previous version." }
+  ],
+  "arguments": [
+    { "name": "SNAP", "description": "Name of the target snap(s).", "optional": true, "variadic": true }
+  ],
+  "examples": [
+    { "command": "sudo snap install code --classic", "explanation": "Installs Visual Studio Code (which requires --classic)." },
+    { "command": "snap find postman", "explanation": "Searches for a snap in the catalog." },
+    { "command": "snap list", "explanation": "The installed snaps.", "output": "Name    Version   Rev   Tracking       Publisher\ncode    1.91.1    163   latest/stable  vscode✓\ncore22  20240408  1380  latest/stable  canonical✓" },
+    { "command": "sudo snap refresh", "explanation": "Forces an immediate update of every snap." }
+  ],
+  "seeAlso": ["apt", "dpkg"],
+  "dangerLevel": "safe"
+}

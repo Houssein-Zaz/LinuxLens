@@ -10,7 +10,9 @@ import { buildRobots, buildSitemap, siteUrl } from './seo';
 const ROOT = join(import.meta.dirname, '..');
 const PUBLIC = join(ROOT, 'public');
 
-const detailed = readdirSync(join(ROOT, 'src', 'data', 'commands')).map((f) => f.replace(/\.json$/, ''));
+const detailed = readdirSync(join(ROOT, 'src', 'data', 'commands'))
+  .filter((f) => f.endsWith('.json'))
+  .map((f) => f.replace(/\.json$/, ''));
 const tldrIndex = join(PUBLIC, 'tldr', 'index.json');
 const tldr = existsSync(tldrIndex) ? (JSON.parse(readFileSync(tldrIndex, 'utf8')) as TldrIndexEntry[]).map((e) => e.name) : [];
 

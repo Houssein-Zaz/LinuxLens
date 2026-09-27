@@ -1,0 +1,24 @@
+{
+  "name": "stat",
+  "category": "files",
+  "summary": "Shows all the information about a file.",
+  "description": "Details what ls -l summarizes: size, number of blocks, inode, links, permissions in octal and in letters, owner and group (name and number), and three dates (last access, last content change, last metadata change).",
+  "synopsis": "stat [OPTION]... FILE...",
+  "options": [
+    { "short": "-c", "long": "--format", "description": "Custom output format: %a (permissions in octal), %A (in letters), %s (size), %U (owner), %y (modification date), %n (name)…", "takesValue": true, "valueName": "FORMAT" },
+    { "long": "--printf", "description": "Like -c, but interprets \\n and adds no final newline.", "takesValue": true, "valueName": "FORMAT", "example": { "command": "stat --printf '%n: %s bytes\\n' *.txt", "output": "a.txt: 120 bytes\nb.txt: 47 bytes" } },
+    { "short": "-L", "long": "--dereference", "description": "For a symbolic link, describes the target rather than the link.", "example": { "command": "stat -L config_link" } },
+    { "short": "-f", "long": "--file-system", "description": "Describes the file system that contains the file.", "example": { "command": "stat -f /", "output": "Type: ext2/ext3  Block size: 4096\nBlocks: Total: 61202941  Free: 32504138" } },
+    { "short": "-t", "long": "--terse", "description": "Condensed output on one line.", "example": { "command": "stat -t notes.txt", "output": "notes.txt 47 8 81b4 1000 1000 802 1837465 1 0 0 1720811645 …" } }
+  ],
+  "arguments": [
+    { "name": "FILE", "description": "File(s) to describe.", "variadic": true }
+  ],
+  "examples": [
+    { "command": "stat file1", "explanation": "All the information about the file.", "output": "  File: file1\n  Size: 47        \tBlocks: 8          IO Block: 4096   regular file\nDevice: 8,2\tInode: 1837465     Links: 1\nAccess: (0664/-rw-rw-r--)  Uid: ( 1000/  esprit)   Gid: ( 1000/  esprit)\nModify: 2024-07-12 21:14:05.000000000 +0200" },
+    { "command": "stat -c '%a %U %n' *", "explanation": "Permissions in octal, owner and name of each file.", "output": "664 esprit file1\n755 esprit projects" },
+    { "command": "stat -c %s video.mp4", "explanation": "The exact size in bytes, handy in a script." }
+  ],
+  "seeAlso": ["ls", "file", "du"],
+  "dangerLevel": "safe"
+}

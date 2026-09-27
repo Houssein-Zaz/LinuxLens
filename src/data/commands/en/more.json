@@ -1,0 +1,22 @@
+{
+  "name": "more",
+  "category": "reading",
+  "summary": "Shows a file page by page (simple pager).",
+  "description": "The ancestor of less: shows text one screen at a time. Space moves forward one page, Enter one line, /pattern searches, q quits. It allows little scrolling back; less, which does more, is usually preferred. more is still useful on minimal systems where less is not installed.",
+  "synopsis": "more [OPTION]... FILE...",
+  "options": [
+    { "short": "-d", "long": "--silent", "description": "Shows a help prompt (“Press space to continue, q to quit”) instead of beeping on a wrong key." },
+    { "short": "-s", "long": "--squeeze", "description": "Squeezes runs of blank lines into one.", "example": { "command": "more -s draft.txt" } },
+    { "short": "-n", "long": "--lines", "description": "Number of lines per screen.", "takesValue": true, "valueName": "N", "example": { "command": "more -n 20 log.txt" } }
+  ],
+  "arguments": [
+    { "name": "FILE", "description": "File(s) to read. Without a file: standard input.", "optional": true, "variadic": true }
+  ],
+  "examples": [
+    { "command": "more /etc/services", "explanation": "Reads a long file one screen at a time." },
+    { "command": "ls -la /etc | more", "explanation": "Pages through a long list of files." },
+    { "command": "more -d README", "explanation": "Shows the text with a reminder of the keys at the bottom of the screen." }
+  ],
+  "seeAlso": ["less", "cat", "head"],
+  "dangerLevel": "safe"
+}

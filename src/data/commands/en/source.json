@@ -1,0 +1,20 @@
+{
+  "name": "source",
+  "category": "misc",
+  "summary": "Runs a file of commands in the current shell.",
+  "description": "Shell builtin, also written as a single dot (. file). Unlike ./script.sh, which runs in a new process, source reads the file in the current shell: the variables, aliases and functions it defines stay available afterwards. This is what you do after editing ~/.bashrc, or to activate a Python virtual environment.",
+  "synopsis": "source FILE [ARGUMENT]...",
+  "options": [],
+  "arguments": [
+    { "name": "FILE", "description": "File containing shell commands." },
+    { "name": "ARGUMENT", "description": "Arguments passed to the file ($1, $2…).", "optional": true, "variadic": true }
+  ],
+  "examples": [
+    { "command": "source ~/.bashrc", "explanation": "Applies the changes to ~/.bashrc right away, without opening a new terminal." },
+    { "command": "source .venv/bin/activate", "explanation": "Activates a Python virtual environment in the current terminal." },
+    { "command": "source .env && echo $DATABASE_URL", "explanation": "Loads variables from a configuration file." }
+  ],
+  "seeAlso": ["export", "alias", "bash"],
+  "dangerLevel": "caution",
+  "dangerNote": "source runs everything in the file with your permissions, in your shell. Only use it on files whose contents you know."
+}

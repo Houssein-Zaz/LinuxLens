@@ -1,0 +1,24 @@
+{
+  "name": "top",
+  "category": "processes",
+  "summary": "Monitors processes and system load in real time.",
+  "description": "Shows a dashboard refreshed every 3 seconds: load average, memory, then the list of processes sorted by CPU use. top is interactive: q quits, M sorts by memory, P by CPU, k sends a signal to a process, 1 shows each core, h shows help.",
+  "synopsis": "top [OPTION]...",
+  "options": [
+    { "short": "-d", "description": "Refresh interval, in seconds.", "takesValue": true, "valueName": "SECONDS", "example": { "command": "top -d 1" } },
+    { "short": "-n", "description": "Number of refreshes before quitting.", "takesValue": true, "valueName": "N" },
+    { "short": "-b", "description": "Batch mode: non-interactive text output, useful in a script or with a redirection." },
+    { "short": "-u", "description": "Shows only this user’s processes.", "takesValue": true, "valueName": "USER" },
+    { "short": "-p", "description": "Monitors only the given PIDs (comma-separated).", "takesValue": true, "valueName": "PID", "example": { "command": "top -p 812,905" } },
+    { "short": "-o", "description": "Column to sort by: %MEM, %CPU, TIME+…", "takesValue": true, "valueName": "FIELD" },
+    { "short": "-H", "description": "Shows threads instead of processes.", "example": { "command": "top -H -p 905" } }
+  ],
+  "examples": [
+    { "command": "top", "explanation": "Opens the interactive monitor (q to quit)." },
+    { "command": "top -b -n 1 | head -12", "explanation": "A single snapshot in text mode, limited to the first lines.", "output": "top - 10:42:01 up 3 days,  2:11,  1 user,  load average: 0.52, 0.48, 0.40\nTasks: 213 total,   1 running, 212 sleeping,   0 stopped,   0 zombie\nMiB Mem :   7851.2 total,   2143.5 free,   3120.8 used,   2586.9 buff/cache" },
+    { "command": "top -u esprit", "explanation": "Only the processes of the user esprit." },
+    { "command": "top -o %MEM", "explanation": "Sorts processes by memory use." }
+  ],
+  "seeAlso": ["htop", "ps", "kill", "free", "uptime"],
+  "dangerLevel": "safe"
+}

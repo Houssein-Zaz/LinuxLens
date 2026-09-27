@@ -1,0 +1,24 @@
+{
+  "name": "id",
+  "category": "permissions",
+  "summary": "Prints a user's identity: UID, GID and groups.",
+  "description": "Shows the user's numeric identifier (uid), that of their primary group (gid) and the list of all their groups. This is what the system actually uses to check permissions. After adding a user to a group, they need to log in again for id to show it.",
+  "synopsis": "id [OPTION]... [USER]",
+  "options": [
+    { "short": "-u", "long": "--user", "description": "Prints only the UID." },
+    { "short": "-g", "long": "--group", "description": "Prints only the GID of the primary group.", "example": { "command": "id -g", "output": "1000" } },
+    { "short": "-G", "long": "--groups", "description": "Prints the numbers of all groups." },
+    { "short": "-n", "long": "--name", "description": "With -u, -g or -G, prints names instead of numbers." }
+  ],
+  "arguments": [
+    { "name": "USER", "description": "User to describe. Default: you.", "optional": true }
+  ],
+  "examples": [
+    { "command": "id", "explanation": "Your full identity.", "output": "uid=1000(esprit) gid=1000(esprit) groups=1000(esprit),4(adm),27(sudo),998(docker)" },
+    { "command": "id -nG", "explanation": "The names of your groups.", "output": "esprit adm sudo docker" },
+    { "command": "id -u", "explanation": "Your UID only; 0 means root.", "output": "1000" },
+    { "command": "id www-data", "explanation": "The identity of another account." }
+  ],
+  "seeAlso": ["whoami", "groups", "useradd"],
+  "dangerLevel": "safe"
+}

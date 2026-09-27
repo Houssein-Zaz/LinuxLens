@@ -1,0 +1,31 @@
+{
+  "name": "sort",
+  "category": "text",
+  "summary": "Sorts the lines of a text.",
+  "description": "Sorts the lines of files (or of standard input) and prints the result. The sort is alphabetical by default and depends on the system language; LC_ALL=C sort gives a byte-by-byte sort, faster and predictable.",
+  "synopsis": "sort [OPTION]... [FILE]...",
+  "options": [
+    { "short": "-n", "long": "--numeric-sort", "description": "Numeric sort: 10 comes after 9, not after 1." },
+    { "short": "-h", "long": "--human-numeric-sort", "description": "Numeric sort that understands units (2K, 1G), handy with du -h." },
+    { "short": "-r", "long": "--reverse", "description": "Reverses the sort order." },
+    { "short": "-u", "long": "--unique", "description": "Removes duplicate lines.", "example": { "command": "sort -u cities.txt", "output": "Paris\nSfax\nTunis" } },
+    { "short": "-f", "long": "--ignore-case", "description": "Ignores case.", "example": { "command": "sort -f names.txt", "output": "alice\nBob\ncharlie" } },
+    { "short": "-k", "long": "--key", "description": "Sorts by a field: -k2 for the 2nd column, -k2,2n for a numeric sort limited to that column.", "takesValue": true, "valueName": "KEY" },
+    { "short": "-t", "long": "--field-separator", "description": "Field separator (default: whitespace).", "takesValue": true, "valueName": "SEP" },
+    { "short": "-o", "long": "--output", "description": "Writes the result to a file (can be the input file).", "takesValue": true, "valueName": "FILE", "example": { "command": "sort -o names.txt names.txt" } },
+    { "short": "-V", "long": "--version-sort", "description": "Natural sort of version numbers (1.2 < 1.10).", "example": { "command": "sort -V versions.txt", "output": "1.2\n1.9\n1.10" } },
+    { "short": "-c", "long": "--check", "description": "Only checks whether the input is already sorted.", "example": { "command": "sort -c names.txt", "output": "sort: names.txt:3: disorder: Alice" } }
+  ],
+  "arguments": [
+    { "name": "FILE", "description": "File(s) to sort. Without a file: standard input.", "optional": true, "variadic": true }
+  ],
+  "examples": [
+    { "command": "sort names.txt", "explanation": "Sorts the lines alphabetically." },
+    { "command": "sort -n -r scores.txt", "explanation": "Sorts numbers from largest to smallest." },
+    { "command": "sort -t ',' -k 3 -n data.csv", "explanation": "Sorts a CSV by its 3rd column, numerically." },
+    { "command": "du -sh * | sort -rh | head -5", "explanation": "The 5 largest entries in the current directory." },
+    { "command": "sort file.txt | uniq -c", "explanation": "Counts the occurrences of each line (uniq needs sorted input)." }
+  ],
+  "seeAlso": ["uniq", "cut", "awk"],
+  "dangerLevel": "safe"
+}

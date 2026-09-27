@@ -1,5 +1,6 @@
 import { Link, useLocation } from 'react-router';
 import { useFavorites } from '../../hooks/useFavorites';
+import { useTr } from '../../i18n';
 
 const base =
   'inline-flex h-9 items-center gap-1.5 rounded-lg border px-3 text-sm transition-colors';
@@ -8,15 +9,16 @@ const base =
 export function FavoriteButton({ command }: { command: string }) {
   const { isFavorite, toggle, enabled } = useFavorites();
   const location = useLocation();
+  const tr = useTr();
 
   if (!enabled) {
     return (
       <Link
         to={`/connexion?next=${encodeURIComponent(location.pathname)}`}
         className={`${base} border-zinc-200 text-zinc-600 hover:border-indigo-300 hover:text-indigo-700 dark:border-zinc-700 dark:text-zinc-300 dark:hover:border-indigo-500 dark:hover:text-indigo-300`}
-        title="Connectez-vous pour enregistrer vos favoris"
+        title={tr('Connectez-vous pour enregistrer vos favoris', 'Sign in to save your favorites')}
       >
-        <span aria-hidden="true">☆</span> Ajouter aux favoris
+        <span aria-hidden="true">☆</span> {tr('Ajouter aux favoris', 'Add to favorites')}
       </Link>
     );
   }
@@ -33,7 +35,7 @@ export function FavoriteButton({ command }: { command: string }) {
           : 'border-zinc-200 text-zinc-600 hover:border-indigo-300 hover:text-indigo-700 dark:border-zinc-700 dark:text-zinc-300 dark:hover:border-indigo-500 dark:hover:text-indigo-300'
       }`}
     >
-      <span aria-hidden="true">{on ? '★' : '☆'}</span> {on ? 'Dans vos favoris' : 'Ajouter aux favoris'}
+      <span aria-hidden="true">{on ? '★' : '☆'}</span> {on ? tr('Dans vos favoris', 'In your favorites') : tr('Ajouter aux favoris', 'Add to favorites')}
     </button>
   );
 }

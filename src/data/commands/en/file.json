@@ -1,0 +1,24 @@
+{
+  "name": "file",
+  "category": "files",
+  "summary": "Works out the real type of a file.",
+  "description": "On Linux, a file extension is only a convention. file examines the contents (the first bytes, called the “magic number”) to tell what a file really is: text and its encoding, image, archive, executable, script…",
+  "synopsis": "file [OPTION]... FILE...",
+  "options": [
+    { "short": "-b", "long": "--brief", "description": "Does not print the file name before the result.", "example": { "command": "file -b photo.jpg", "output": "JPEG image data, JFIF standard 1.01" } },
+    { "short": "-i", "long": "--mime", "description": "Prints the MIME type (image/png, text/plain; charset=utf-8…)." },
+    { "short": "-L", "long": "--dereference", "description": "Follows symbolic links and describes the target.", "example": { "command": "file -L /usr/bin/python3", "output": "/usr/bin/python3: ELF 64-bit LSB executable, x86-64" } },
+    { "short": "-z", "long": "--uncompress", "description": "Also looks inside compressed files.", "example": { "command": "file -z log.gz", "output": "log.gz: ASCII text (gzip compressed data)" } }
+  ],
+  "arguments": [
+    { "name": "FILE", "description": "File(s) to analyze.", "variadic": true }
+  ],
+  "examples": [
+    { "command": "file photo.jpg script.sh", "explanation": "Type of each file.", "output": "photo.jpg: JPEG image data, JFIF standard 1.01, 1920x1080\nscript.sh: Bourne-Again shell script, ASCII text executable" },
+    { "command": "file document.pdf", "explanation": "Checks that a file really is what its extension claims.", "output": "document.pdf: Zip archive data, at least v2.0 to extract" },
+    { "command": "file -i notes.txt", "explanation": "MIME type and encoding of a text file.", "output": "notes.txt: text/plain; charset=utf-8" },
+    { "command": "file /bin/ls", "explanation": "Describes a compiled program.", "output": "/bin/ls: ELF 64-bit LSB pie executable, x86-64, dynamically linked" }
+  ],
+  "seeAlso": ["stat", "ls"],
+  "dangerLevel": "safe"
+}

@@ -1,0 +1,26 @@
+{
+  "name": "chown",
+  "category": "permissions",
+  "summary": "Changes the owner and group of files.",
+  "description": "Gives files a new owner and/or a new group. The OWNER:GROUP form changes both at once; :GROUP changes only the group. Changing the owner usually requires root privileges (sudo).",
+  "synopsis": "chown [OPTION]... [OWNER][:[GROUP]] FILE...",
+  "options": [
+    { "short": "-R", "long": "--recursive", "description": "Applies the change to directories and everything in them." },
+    { "short": "-v", "long": "--verbose", "description": "Prints a message for each file processed.", "example": { "command": "sudo chown -v esprit report.pdf", "output": "changed ownership of 'report.pdf' from root to esprit" } },
+    { "short": "-c", "long": "--changes", "description": "Prints only the files actually changed.", "example": { "command": "sudo chown -R -c esprit project/", "output": "changed ownership of 'project/build.log' from root to esprit" } },
+    { "short": "-h", "long": "--no-dereference", "description": "Changes the symbolic link itself rather than its target.", "example": { "command": "sudo chown -h esprit config_link" } },
+    { "long": "--reference", "description": "Copies the owner and group of another file.", "takesValue": true, "valueName": "FILE", "example": { "command": "sudo chown --reference=index.html new_page.html" } }
+  ],
+  "arguments": [
+    { "name": "OWNER:GROUP", "description": "New user, optionally followed by “:” and the new group." },
+    { "name": "FILE", "description": "File(s) or directory(ies) to change.", "variadic": true }
+  ],
+  "examples": [
+    { "command": "sudo chown esprit file.txt", "explanation": "esprit becomes the owner of file.txt." },
+    { "command": "sudo chown esprit:www-data site/", "explanation": "Changes the owner and group of the directory." },
+    { "command": "sudo chown -R www-data:www-data /var/www", "explanation": "Gives the whole site to the web server, recursively." }
+  ],
+  "seeAlso": ["chmod", "chgrp", "id"],
+  "dangerLevel": "caution",
+  "dangerNote": "Used with -R on the wrong path (for example /), chown can make the system unusable."
+}

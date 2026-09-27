@@ -1,4 +1,5 @@
 import { RIGHT_LABEL, RIGHTS, WHO, WHO_LABEL, type Permissions, type Right, type Who } from '../../lib/permissions';
+import { useTr } from '../../i18n';
 
 const RIGHT_VALUE: Record<Right, number> = { read: 4, write: 2, execute: 1 };
 const RIGHT_LETTER: Record<Right, string> = { read: 'r', write: 'w', execute: 'x' };
@@ -9,9 +10,10 @@ interface Props {
 }
 
 export function PermissionGrid({ value, onToggle }: Props) {
+  const tr = useTr();
   return (
     <table className="w-full border-separate border-spacing-0 text-sm">
-      <caption className="sr-only">Grille des permissions : cochez les droits de chaque catégorie</caption>
+      <caption className="sr-only">{tr('Grille des permissions : cochez les droits de chaque catégorie', 'Permissions grid: tick the permissions for each category')}</caption>
       <thead>
         <tr>
           <td />
@@ -45,7 +47,7 @@ export function PermissionGrid({ value, onToggle }: Props) {
                         type="checkbox"
                         checked={checked}
                         onChange={() => onToggle(w, r)}
-                        aria-label={`${RIGHT_LABEL[r]} pour ${WHO_LABEL[w]}`}
+                        aria-label={tr(`${RIGHT_LABEL[r]} pour ${WHO_LABEL[w]}`, `${RIGHT_LABEL[r]} for ${WHO_LABEL[w]}`)}
                         className="peer sr-only"
                       />
                       <span

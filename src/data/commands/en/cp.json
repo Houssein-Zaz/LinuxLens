@@ -1,0 +1,33 @@
+{
+  "name": "cp",
+  "category": "files",
+  "summary": "Copies files and directories.",
+  "description": "Copies a SOURCE to a DESTINATION, or several sources into a directory. If the destination already exists, it is overwritten without confirmation, unless -i or -n is used.",
+  "synopsis": "cp [OPTION]... SOURCE... DESTINATION",
+  "options": [
+    { "short": "-r", "long": "--recursive", "description": "Copies directories and everything in them. Required to copy a folder. -R is the same." },
+    { "short": "-R", "description": "Same as -r.", "example": { "command": "cp -R config/ config.bak" } },
+    { "short": "-i", "long": "--interactive", "description": "Asks for confirmation before overwriting an existing file." },
+    { "short": "-n", "long": "--no-clobber", "description": "Never overwrites an existing file.", "example": { "command": "cp -n template.txt notes.txt" } },
+    { "short": "-v", "long": "--verbose", "description": "Prints each file copied." },
+    { "short": "-p", "description": "Preserves the files’ mode, owner and timestamps.", "example": { "command": "cp -p photo.jpg backup/" } },
+    { "short": "-a", "long": "--archive", "description": "Archive mode: a recursive copy that preserves everything (links, permissions, timestamps). Same as -dR --preserve=all." },
+    { "short": "-u", "long": "--update", "description": "Copies only if the source is newer than the destination, or if the destination does not exist.", "example": { "command": "cp -u *.md ~/backup/" } },
+    { "short": "-l", "long": "--link", "description": "Creates hard links instead of copying.", "example": { "command": "cp -l big_file.iso copy.iso" } },
+    { "short": "-s", "long": "--symbolic-link", "description": "Creates symbolic links instead of copying.", "example": { "command": "cp -s /opt/app/config.yml config.yml" } },
+    { "short": "-t", "long": "--target-directory", "description": "Copies every source into this directory.", "takesValue": true, "valueName": "DIRECTORY", "example": { "command": "cp -t backup/ a.txt b.txt c.txt" } }
+  ],
+  "arguments": [
+    { "name": "SOURCE", "description": "File(s) or directory(ies) to copy.", "variadic": true },
+    { "name": "DESTINATION", "description": "New file name, or directory to put the copies in." }
+  ],
+  "examples": [
+    { "command": "cp report.txt report.bak", "explanation": "Makes a copy of report.txt named report.bak." },
+    { "command": "cp -r project/ backup/", "explanation": "Copies the project directory and everything in it." },
+    { "command": "cp -iv *.jpg ~/Pictures/", "explanation": "Copies the JPEG images to ~/Pictures, asking before overwriting and printing each copy." },
+    { "command": "cp -a /etc/nginx ~/nginx-backup", "explanation": "An exact backup of a configuration (permissions and timestamps kept)." }
+  ],
+  "seeAlso": ["mv", "rsync", "scp", "ln"],
+  "dangerLevel": "caution",
+  "dangerNote": "cp overwrites the destination without warning if it already exists. Add -i to be warned."
+}

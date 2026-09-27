@@ -1,0 +1,27 @@
+{
+  "name": "uniq",
+  "category": "text",
+  "summary": "Removes or counts consecutive repeated lines.",
+  "description": "Merges identical lines that follow each other. Watch out: uniq only compares a line with the previous one. To remove duplicates from a whole file, sort it first (sort | uniq, or simply sort -u).",
+  "synopsis": "uniq [OPTION]... [INPUT [OUTPUT]]",
+  "options": [
+    { "short": "-c", "long": "--count", "description": "Prefixes each line with its number of occurrences." },
+    { "short": "-d", "long": "--repeated", "description": "Shows only repeated lines (once each)." },
+    { "short": "-u", "long": "--unique", "description": "Shows only lines that appear once." },
+    { "short": "-i", "long": "--ignore-case", "description": "Ignores case when comparing.", "example": { "command": "sort -f names.txt | uniq -i", "output": "Alice\nBob" } },
+    { "short": "-f", "long": "--skip-fields", "description": "Skips the first N fields when comparing.", "takesValue": true, "valueName": "N", "example": { "command": "uniq -f 1 logins.log" } },
+    { "short": "-s", "long": "--skip-chars", "description": "Skips the first N characters when comparing.", "takesValue": true, "valueName": "N", "example": { "command": "uniq -s 11 log.txt" } }
+  ],
+  "arguments": [
+    { "name": "INPUT", "description": "File to read. Without a file: standard input.", "optional": true },
+    { "name": "OUTPUT", "description": "File to write the result to.", "optional": true }
+  ],
+  "examples": [
+    { "command": "sort names.txt | uniq", "explanation": "Lists the names without duplicates (sorting groups identical lines together)." },
+    { "command": "sort words.txt | uniq -c | sort -rn | head", "explanation": "The 10 most frequent lines, with their number of occurrences.", "output": "     42 error\n     17 warning\n      3 info" },
+    { "command": "sort emails.txt | uniq -d", "explanation": "Shows only the addresses that appear more than once." },
+    { "command": "uniq -u sorted_list.txt", "explanation": "The lines that appear only once." }
+  ],
+  "seeAlso": ["sort", "wc", "cut"],
+  "dangerLevel": "safe"
+}

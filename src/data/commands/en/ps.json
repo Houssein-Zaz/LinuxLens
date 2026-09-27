@@ -1,0 +1,28 @@
+{
+  "name": "ps",
+  "category": "processes",
+  "summary": "Shows a snapshot of running processes.",
+  "description": "Lists processes at the moment it is called. ps accepts two syntaxes: BSD, without a dash (ps aux), and UNIX, with a dash (ps -ef). For a display that keeps refreshing, use top or htop.",
+  "synopsis": "ps [OPTIONS]",
+  "options": [
+    { "short": "-e", "description": "Every process on the system (UNIX syntax). -A is the same." },
+    { "short": "-A", "description": "Same as -e.", "example": { "command": "ps -A | head -3", "output": "    PID TTY          TIME CMD\n      1 ?        00:00:02 systemd\n      2 ?        00:00:00 kthreadd" } },
+    { "short": "-f", "description": "Full format: UID, PID, PPID (parent process), start time, full command." },
+    { "short": "-u", "description": "Processes of the given user.", "takesValue": true, "valueName": "USER" },
+    { "short": "-p", "description": "Processes with the given PID.", "takesValue": true, "valueName": "PID", "example": { "command": "ps -p 812", "output": "    PID TTY          TIME CMD\n    812 ?        00:00:00 sshd" } },
+    { "short": "-o", "description": "Columns to show, for example -o pid,user,%cpu,cmd.", "takesValue": true, "valueName": "FORMAT", "example": { "command": "ps -o pid,user,%cpu,cmd -p 812", "output": "    PID USER     %CPU CMD\n    812 root      0.0 sshd: /usr/sbin/sshd -D" } },
+    { "long": "--sort", "description": "Sorts by a column; a “-” in front reverses the order (--sort=-%mem).", "takesValue": true, "valueName": "KEY" },
+    { "long": "--forest", "description": "Shows the tree of parent and child processes." }
+  ],
+  "arguments": [
+    { "name": "aux", "description": "BSD syntax: a (all users), u (user-oriented format, with %CPU and %MEM), x (including processes without a terminal).", "optional": true }
+  ],
+  "examples": [
+    { "command": "ps aux", "explanation": "Every process with CPU and memory usage.", "output": "USER    PID %CPU %MEM    VSZ   RSS TTY  STAT START TIME COMMAND\nroot      1  0.0  0.1 167588 11808 ?    Ss   09:12 0:02 /sbin/init" },
+    { "command": "ps -ef --forest", "explanation": "Every process, as a tree." },
+    { "command": "ps aux --sort=-%mem | head", "explanation": "The processes using the most memory." },
+    { "command": "ps -u esprit", "explanation": "The processes of the user esprit." }
+  ],
+  "seeAlso": ["top", "htop", "kill", "pgrep"],
+  "dangerLevel": "safe"
+}

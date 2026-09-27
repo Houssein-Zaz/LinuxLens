@@ -1,0 +1,21 @@
+{
+  "name": "alias",
+  "category": "misc",
+  "summary": "Creates a shortcut for a command.",
+  "description": "Shell builtin that links a short name to a longer command: alias ll='ls -alF' makes ll run ls -alF. There must be no spaces around the =. An alias only lasts for the session; to keep it, add the line to ~/.bashrc (or ~/.bash_aliases). unalias removes an alias, and \\command runs the original command, ignoring the alias.",
+  "synopsis": "alias [-p] [NAME[='COMMAND']]...",
+  "options": [
+    { "short": "-p", "description": "Prints every alias in a reusable form.", "example": { "command": "alias -p", "output": "alias grep='grep --color=auto'\nalias ll='ls -alF'" } }
+  ],
+  "arguments": [
+    { "name": "NAME='COMMAND'", "description": "Alias definition. With just a NAME, prints its definition; without an argument, lists every alias.", "optional": true, "variadic": true }
+  ],
+  "examples": [
+    { "command": "alias", "explanation": "Lists the defined aliases.", "output": "alias grep='grep --color=auto'\nalias ll='ls -alF'" },
+    { "command": "alias ll='ls -alF'", "explanation": "ll will now show a detailed list, hidden files included." },
+    { "command": "alias update='sudo apt update && sudo apt upgrade'", "explanation": "A shortcut for a full update." },
+    { "command": "alias ll", "explanation": "Prints the definition of an alias. To make it permanent, add the alias line to ~/.bashrc then run source ~/.bashrc.", "output": "alias ll='ls -alF'" }
+  ],
+  "seeAlso": ["source", "export", "history"],
+  "dangerLevel": "safe"
+}

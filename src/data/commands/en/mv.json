@@ -1,0 +1,28 @@
+{
+  "name": "mv",
+  "category": "files",
+  "summary": "Moves or renames files.",
+  "description": "Moves one or more sources to a destination. On the same file system, the operation is instant: only the name or location changes. Renaming a file is simply “moving” it to a new name.",
+  "synopsis": "mv [OPTION]... SOURCE... DESTINATION",
+  "options": [
+    { "short": "-i", "long": "--interactive", "description": "Asks for confirmation before overwriting an existing file." },
+    { "short": "-n", "long": "--no-clobber", "description": "Never overwrites an existing file.", "example": { "command": "mv -n report.pdf archives/" } },
+    { "short": "-f", "long": "--force", "description": "Never warns before overwriting.", "example": { "command": "mv -f new.conf app.conf" } },
+    { "short": "-v", "long": "--verbose", "description": "Prints each move made." },
+    { "short": "-u", "long": "--update", "description": "Moves only if the source is newer than the destination.", "example": { "command": "mv -u *.jpg ~/Pictures/" } },
+    { "short": "-b", "long": "--backup", "description": "Backs up the destination file (~ suffix) before overwriting it.", "example": { "command": "mv -b new.conf app.conf" } },
+    { "short": "-t", "long": "--target-directory", "description": "Moves every source into this directory.", "takesValue": true, "valueName": "DIRECTORY", "example": { "command": "mv -t archives/ 2022.pdf 2023.pdf" } }
+  ],
+  "arguments": [
+    { "name": "SOURCE", "description": "File(s) or directory(ies) to move.", "variadic": true },
+    { "name": "DESTINATION", "description": "New name, or destination directory." }
+  ],
+  "examples": [
+    { "command": "mv draft.txt final.txt", "explanation": "Renames draft.txt to final.txt." },
+    { "command": "mv *.pdf ~/Documents/", "explanation": "Moves every PDF in the current directory to ~/Documents." },
+    { "command": "mv -iv old/ new/", "explanation": "Renames a directory, with confirmation and output." }
+  ],
+  "seeAlso": ["cp", "rm", "rename"],
+  "dangerLevel": "caution",
+  "dangerNote": "If the destination exists, it is replaced without confirmation. Use -i or -n to avoid this."
+}

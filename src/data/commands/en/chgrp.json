@@ -1,0 +1,25 @@
+{
+  "name": "chgrp",
+  "category": "permissions",
+  "summary": "Changes the group that owns files.",
+  "description": "Gives files a new group, without touching the owner. A user can give one of their files to a group they belong to; beyond that, sudo is needed. chown :group file does the same thing.",
+  "synopsis": "chgrp [OPTION]... GROUP FILE...",
+  "options": [
+    { "short": "-R", "long": "--recursive", "description": "Applies the change to directories and everything in them." },
+    { "short": "-v", "long": "--verbose", "description": "Prints a message for each file processed." },
+    { "short": "-c", "long": "--changes", "description": "Prints only the files actually changed.", "example": { "command": "chgrp -c team *.pdf", "output": "changed group of 'report.pdf' from esprit to team" } },
+    { "short": "-h", "long": "--no-dereference", "description": "Changes the symbolic link itself rather than its target.", "example": { "command": "chgrp -h team doc_link" } },
+    { "long": "--reference", "description": "Copies the group of another file.", "takesValue": true, "valueName": "FILE", "example": { "command": "chgrp --reference=template.txt new.txt" } }
+  ],
+  "arguments": [
+    { "name": "GROUP", "description": "Name (or number) of the new group." },
+    { "name": "FILE", "description": "File(s) or directory(ies) to change.", "variadic": true }
+  ],
+  "examples": [
+    { "command": "chgrp developers project.py", "explanation": "The file now belongs to the developers group." },
+    { "command": "sudo chgrp -R www-data /var/www/site", "explanation": "Gives the whole site to the web server’s group." },
+    { "command": "chgrp -v team report.pdf", "explanation": "Changes the group and confirms it.", "output": "changed group of 'report.pdf' from esprit to team" }
+  ],
+  "seeAlso": ["chown", "chmod", "id", "groups"],
+  "dangerLevel": "safe"
+}

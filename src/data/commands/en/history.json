@@ -1,0 +1,23 @@
+{
+  "name": "history",
+  "category": "system",
+  "summary": "Shows the history of typed commands.",
+  "description": "Shell builtin that lists previous commands, numbered. The history is saved to ~/.bash_history when the shell closes. Useful shortcuts: !42 reruns command no. 42, !! reruns the last one (sudo !! to rerun it with sudo), and Ctrl+R searches the history as you type.",
+  "synopsis": "history [N] | history -c | history -d POSITION",
+  "options": [
+    { "short": "-c", "description": "Clears the history of the current session.", "example": { "command": "history -c" } },
+    { "short": "-d", "description": "Deletes the entry at this position.", "takesValue": true, "valueName": "POSITION" },
+    { "short": "-w", "description": "Writes the session history to ~/.bash_history right away.", "example": { "command": "history -w" } },
+    { "short": "-a", "description": "Appends the session’s new commands to the history file.", "example": { "command": "history -a" } }
+  ],
+  "arguments": [
+    { "name": "N", "description": "Shows only the last N commands.", "optional": true }
+  ],
+  "examples": [
+    { "command": "history 5", "explanation": "The last 5 commands.", "output": "  498  cd project\n  499  git status\n  500  npm test\n  501  git commit -m \"fix\"\n  502  history 5" },
+    { "command": "history | grep ssh", "explanation": "Finds SSH connections you have already typed." },
+    { "command": "history -d 501", "explanation": "Deletes entry 501, for example if it contained a password." }
+  ],
+  "seeAlso": ["alias", "fc"],
+  "dangerLevel": "safe"
+}

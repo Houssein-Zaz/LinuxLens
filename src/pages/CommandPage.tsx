@@ -9,27 +9,30 @@ import { CATEGORY_BY_ID } from '../data/categories';
 import { useTldrPage } from '../hooks/useTldr';
 import { getCommand } from '../lib/registry';
 import type { CommandDoc, TldrDoc } from '../types/command';
+import { useLang, useTr } from '../i18n';
 
 const TLDR_LICENSE = 'https://github.com/tldr-pages/tldr/blob/main/LICENSE.md';
 
 export function CommandPage() {
   const { name = '' } = useParams();
+  useLang();
+  const tr = useTr();
   const doc = getCommand(name);
   const tldr = useTldrPage(name, !doc);
 
   if (doc) return <DetailedDoc doc={doc} />;
-  if (tldr.status === 'loading') return <p className="text-zinc-500">Chargement…</p>;
+  if (tldr.status === 'loading') return <p className="text-zinc-500">{tr('Chargement…', 'Loading…')}</p>;
   if (tldr.status === 'ready') return <TldrView doc={tldr.doc} />;
 
   return (
     <>
-      <PageHeader title={name}>Aucune fiche n’existe pour cette commande.</PageHeader>
+      <PageHeader title={name}>{tr('Aucune fiche n’existe pour cette commande.', 'There is no page for this command.')}</PageHeader>
       <div className="flex gap-4 text-sm">
         <Link className="text-indigo-600 hover:underline dark:text-indigo-400" to={`/?c=${encodeURIComponent(name)}`}>
-          Analyser « {name} » quand même
+          {tr(`Analyser « ${name} » quand même`, `Analyze “${name}” anyway`)}
         </Link>
         <Link className="text-indigo-600 hover:underline dark:text-indigo-400" to="/explorer">
-          Parcourir les commandes
+          {tr('Parcourir les commandes', 'Browse the commands')}
         </Link>
       </div>
     </>
@@ -46,6 +49,7 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 }
 
 function ExampleCard({ command, text, output }: { command: string; text: string; output?: string | undefined }) {
+  const tr = useTr();
   return (
     <li className="overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
       <div className="px-4 pt-3 text-sm text-zinc-600 dark:text-zinc-400">{text}</div>
@@ -58,7 +62,7 @@ function ExampleCard({ command, text, output }: { command: string; text: string;
           to={`/?c=${encodeURIComponent(command)}`}
           className="shrink-0 rounded-md px-2 py-0.5 text-xs font-medium text-indigo-600 ring-1 ring-indigo-200 hover:bg-indigo-50 dark:text-indigo-300 dark:ring-indigo-500/40 dark:hover:bg-indigo-500/10"
         >
-          Expliquer
+          {tr('Expliquer', 'Explain')}
         </Link>
       </div>
       {output && (
@@ -72,9 +76,10 @@ function ExampleCard({ command, text, output }: { command: string; text: string;
 
 function DetailedDoc({ doc }: { doc: CommandDoc }) {
   const category = CATEGORY_BY_ID[doc.category];
+  const tr = useTr();
   return (
     <article>
-      <DocumentTitle title={`${doc.name} : ${doc.summary}`} />
+      <DocumentTitle title={`${doc.name}${tr(' : ', ': ')}${doc.summary}`} />
       <Link
         to={`/explorer`}
         className="mb-4 inline-block text-sm text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
@@ -100,11 +105,13 @@ function DetailedDoc({ doc }: { doc: CommandDoc }) {
               <div key={o.short ?? o.long} className="grid gap-1 px-4 py-3 sm:grid-cols-[14rem_1fr] sm:gap-4">
                 <dt className="font-mono text-sm text-amber-800 dark:text-amber-300">
                   {[o.short, o.long].filter(Boolean).join(', ')}
-                  {o.takesValue && <span className="text-zinc-500 dark:text-zinc-400"> {o.valueName ?? 'VALEUR'}</span>}
+                  {o.takesValue && <span className="text-zinc-500 dark:text-zinc-400"> {o.valueName ?? tr('VALEUR', 'VALUE')}</span>}
                 </dt>
                 <dd className="text-sm text-zinc-700 dark:text-zinc-300">
                   {o.description}
-                  {o.values && <span className="mt-1 block text-zinc-500 dark:text-zinc-400">Valeurs : {o.values.join(', ')}</span>}
+                  {o.values && <span className="mt-1 block text-zinc-500 dark:text-zinc-400">
+                      {tr('Valeurs :', 'Values:')} {o.values.join(', ')}
+                    </span>}
                   {o.example && <ExampleBlock example={o.example} className="mt-2" />}
                 </dd>
               </div>
@@ -121,7 +128,7 @@ function DetailedDoc({ doc }: { doc: CommandDoc }) {
                 <dt className="font-mono text-sm text-emerald-800 dark:text-emerald-300">
                   {a.name}
                   {a.variadic && '...'}
-                  {a.optional && <span className="ml-2 font-sans text-xs text-zinc-500">facultatif</span>}
+                  {a.optional && <span className="ml-2 font-sans text-xs text-zinc-500">{tr('facultatif', 'optional')}</span>}
                 </dt>
                 <dd className="text-sm text-zinc-700 dark:text-zinc-300">{a.description}</dd>
               </div>
@@ -130,7 +137,7 @@ function DetailedDoc({ doc }: { doc: CommandDoc }) {
         </Section>
       )}
 
-      <Section title="Exemples">
+      <Section title={tr('Exemples', 'Examples')}>
         <ul className="space-y-3">
           {doc.examples.map((ex) => (
             <ExampleCard key={ex.command} command={ex.command} text={ex.explanation} output={ex.output} />
@@ -139,7 +146,7 @@ function DetailedDoc({ doc }: { doc: CommandDoc }) {
       </Section>
 
       {doc.seeAlso && doc.seeAlso.length > 0 && (
-        <Section title="Voir aussi">
+        <Section title={tr('Voir aussi', 'See also')}>
           <ul className="flex flex-wrap gap-2">
             {doc.seeAlso.map((s) => (
               <li key={s}>
@@ -159,11 +166,12 @@ function DetailedDoc({ doc }: { doc: CommandDoc }) {
 }
 
 function TldrView({ doc }: { doc: TldrDoc }) {
+  const tr = useTr();
   return (
     <article>
       <DocumentTitle title={doc.name} />
       <Link to="/explorer" className="mb-4 inline-block text-sm text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100">
-        ← Explorer
+        ← {tr('Explorer', 'Explore')}
       </Link>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="font-mono text-3xl font-semibold tracking-tight">{doc.name}</h1>
@@ -171,26 +179,26 @@ function TldrView({ doc }: { doc: TldrDoc }) {
       </div>
       <p className="mt-2 text-lg text-zinc-700 dark:text-zinc-300">{doc.summary}</p>
       <p className="mt-4 rounded-lg bg-zinc-100 px-4 py-3 text-sm text-zinc-600 dark:bg-zinc-800/60 dark:text-zinc-300">
-        Fiche courte. Source :{' '}
+        {tr('Fiche courte. Source :', 'Short page. Source:')}{' '}
         <a className="text-indigo-600 hover:underline dark:text-indigo-400" href={doc.sourceUrl}>
           tldr-pages
         </a>{' '}
-        (licence{' '}
+        ({tr('licence', 'license')}{' '}
         <a className="text-indigo-600 hover:underline dark:text-indigo-400" href={TLDR_LICENSE}>
           CC BY 4.0
         </a>
-        ){doc.lang === 'en' && ' — disponible uniquement en anglais'}.
+        ){doc.lang === 'en' && tr(' — disponible uniquement en anglais', '')}.
         {doc.moreInfoUrl && (
           <>
             {' '}
             <a className="text-indigo-600 hover:underline dark:text-indigo-400" href={doc.moreInfoUrl}>
-              Documentation officielle
+              {tr('Documentation officielle', 'Official documentation')}
             </a>
             .
           </>
         )}
       </p>
-      <Section title="Exemples">
+      <Section title={tr('Exemples', 'Examples')}>
         <ul className="space-y-3">
           {doc.examples.map((ex) => (
             <ExampleCard key={ex.command} command={ex.command} text={ex.description} />

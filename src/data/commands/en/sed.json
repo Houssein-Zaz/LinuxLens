@@ -1,0 +1,29 @@
+{
+  "name": "sed",
+  "category": "text",
+  "summary": "Transforms a stream of text line by line.",
+  "description": "Stream EDitor: reads text line by line, applies a script to it (substitution, deletion, insertion…) and writes the result. The most common command is substitution, s/old/new/. By default, the original file is not changed: the result goes to standard output.",
+  "synopsis": "sed [OPTION]... SCRIPT [FILE]...",
+  "options": [
+    { "short": "-i", "long": "--in-place", "description": "Edits the file directly instead of printing the result. -i.bak keeps a backup copy." },
+    { "short": "-n", "long": "--quiet", "description": "Does not print every line automatically; only lines requested with the p command are printed." },
+    { "short": "-e", "long": "--expression", "description": "Adds a script; lets you chain several commands.", "takesValue": true, "valueName": "SCRIPT", "example": { "command": "sed -e 's/cat/dog/' -e 's/mouse/rabbit/' animals.txt", "output": "the dog and the rabbit" } },
+    { "short": "-f", "long": "--file", "description": "Reads the script from a file.", "takesValue": true, "valueName": "FILE", "example": { "command": "sed -f fixes.sed text.txt" } },
+    { "short": "-E", "long": "--regexp-extended", "description": "Extended regular expressions (+, ?, |, () without backslashes). -r is the same.", "example": { "command": "sed -E 's/[0-9]+/N/g' order.txt", "output": "Order N: N items" } },
+    { "short": "-r", "description": "Same as -E.", "example": { "command": "sed -r 's/(\\w+)@(\\w+)/\\1 at \\2/' contacts.txt", "output": "ali at example" } }
+  ],
+  "arguments": [
+    { "name": "SCRIPT", "description": "sed commands: s/pattern/replacement/g replaces, /pattern/d deletes, 5p prints line 5…" },
+    { "name": "FILE", "description": "File(s) to process. Without a file: standard input.", "optional": true, "variadic": true }
+  ],
+  "examples": [
+    { "command": "sed 's/cat/dog/' animals.txt", "explanation": "Replaces the first occurrence of “cat” on each line." },
+    { "command": "sed 's/cat/dog/g' animals.txt", "explanation": "The g flag replaces every occurrence on each line." },
+    { "command": "sed -i 's/localhost/0.0.0.0/g' config.ini", "explanation": "Edits the configuration file directly." },
+    { "command": "sed '/^$/d' text.txt", "explanation": "Deletes empty lines." },
+    { "command": "sed -n '10,20p' big.log", "explanation": "Prints only lines 10 to 20." }
+  ],
+  "seeAlso": ["awk", "grep", "tr"],
+  "dangerLevel": "caution",
+  "dangerNote": "With -i, the file is changed with no way back. Test without -i first, or use -i.bak to keep a copy."
+}

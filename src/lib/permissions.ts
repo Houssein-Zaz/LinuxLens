@@ -1,3 +1,5 @@
+import { getLang, labels, tr } from '../i18n';
+
 export type Who = 'owner' | 'group' | 'others';
 export type Right = 'read' | 'write' | 'execute';
 
@@ -19,8 +21,8 @@ export interface Permissions {
 export const WHO: Who[] = ['owner', 'group', 'others'];
 export const RIGHTS: Right[] = ['read', 'write', 'execute'];
 
-export const WHO_LABEL: Record<Who, string> = { owner: 'propriétaire', group: 'groupe', others: 'autres' };
-export const RIGHT_LABEL: Record<Right, string> = { read: 'lecture', write: 'écriture', execute: 'exécution' };
+export const WHO_LABEL: Record<Who, string> = labels({ owner: ['propriétaire', 'owner'], group: ['groupe', 'group'], others: ['autres', 'others'] });
+export const RIGHT_LABEL: Record<Right, string> = labels({ read: ['lecture', 'read'], write: ['écriture', 'write'], execute: ['exécution', 'execute'] });
 
 const empty = (): Triplet => ({ read: false, write: false, execute: false });
 
@@ -81,7 +83,7 @@ export function fromSymbolic(s: string): Permissions | null {
 }
 
 /** Commande chmod équivalente. */
-export function toChmodCommand(p: Permissions, target = 'fichier'): string {
+export function toChmodCommand(p: Permissions, target = tr('fichier', 'file')): string {
   return `chmod ${toOctal(p)} ${target}`;
 }
 
@@ -94,14 +96,15 @@ export function toChmodSymbolic(p: Permissions): string {
 /** « lecture, écriture » ; « aucun droit » si vide. */
 export function describeTriplet(t: Triplet): string {
   const rights = RIGHTS.filter((r) => t[r]).map((r) => RIGHT_LABEL[r]);
-  return rights.length ? rights.join(', ') : 'aucun droit';
+  return rights.length ? rights.join(', ') : tr('aucun droit', 'no permissions');
 }
 
 /** Phrase complète : « propriétaire : lecture, écriture ; groupe : lecture ; autres : aucun droit ». */
 export function describePermissions(p: Permissions): string {
-  const parts = WHO.map((w) => `${WHO_LABEL[w]} : ${describeTriplet(p[w])}`);
+  const colon = tr(' : ', ': ');
+  const parts = WHO.map((w) => `${WHO_LABEL[w]}${colon}${describeTriplet(p[w])}`);
   const special = [p.setuid && 'setuid', p.setgid && 'setgid', p.sticky && 'sticky bit'].filter(Boolean);
-  return parts.join(' ; ') + (special.length ? ` (+ ${special.join(', ')})` : '');
+  return parts.join(tr(' ; ', '; ')) + (special.length ? ` (+ ${special.join(', ')})` : '');
 }
 
 /* ------------------------------------------------------------------ */
@@ -109,16 +112,26 @@ export function describePermissions(p: Permissions): string {
 /* ------------------------------------------------------------------ */
 
 const WHO_LETTERS: Record<string, Who[]> = { u: ['owner'], g: ['group'], o: ['others'], a: ['owner', 'group', 'others'] };
-const WHO_PHRASE: Record<string, string> = { u: 'le propriétaire', g: 'le groupe', o: 'les autres', a: 'tout le monde' };
-const WHO_DATIVE: Record<string, string> = { u: 'au propriétaire', g: 'au groupe', o: 'aux autres', a: 'à tout le monde' };
-const PERM_PHRASE: Record<string, string> = {
-  r: 'la lecture',
-  w: "l'écriture",
-  x: "l'exécution",
-  X: "l'exécution (répertoires et fichiers déjà exécutables)",
-  s: 'le bit setuid/setgid',
-  t: 'le sticky bit',
-};
+const WHO_PHRASE: Record<string, string> = labels({
+  u: ['le propriétaire', 'the owner'],
+  g: ['le groupe', 'the group'],
+  o: ['les autres', 'others'],
+  a: ['tout le monde', 'everyone'],
+});
+const WHO_DATIVE: Record<string, string> = labels({
+  u: ['au propriétaire', 'to the owner'],
+  g: ['au groupe', 'to the group'],
+  o: ['aux autres', 'to others'],
+  a: ['à tout le monde', 'to everyone'],
+});
+const PERM_PHRASE: Record<string, string> = labels({
+  r: ['la lecture', 'read'],
+  w: ["l'écriture", 'write'],
+  x: ["l'exécution", 'execute'],
+  X: ["l'exécution (répertoires et fichiers déjà exécutables)", 'execute (directories and files that are already executable)'],
+  s: ['le bit setuid/setgid', 'the setuid/setgid bit'],
+  t: ['le sticky bit', 'the sticky bit'],
+});
 
 interface Clause {
   who: string;
@@ -139,28 +152,34 @@ function parseClauses(mode: string): Clause[] | null {
   return clauses;
 }
 
-const joinFr = (items: string[]) =>
-  items.length <= 1 ? (items[0] ?? '') : `${items.slice(0, -1).join(', ')} et ${items.at(-1)}`;
+const joinList = (items: string[]) =>
+  items.length <= 1 ? (items[0] ?? '') : `${items.slice(0, -1).join(', ')} ${tr('et', 'and')} ${items.at(-1)}`;
 
-/** Explication en français d'un mode symbolique, ou `null` s'il est invalide. */
+/** Explication d'un mode symbolique dans la langue courante, ou `null` s'il est invalide. */
 export function describeSymbolicMode(mode: string): string | null {
   const clauses = parseClauses(mode);
   if (!clauses) return null;
   const sentences = clauses.flatMap(({ who, actions }) => {
     const letters = [...new Set(who)];
-    const whoText = who ? joinFr(letters.map((c) => WHO_PHRASE[c]!)) : 'tout le monde (selon umask)';
-    const whoDative = who ? joinFr(letters.map((c) => WHO_DATIVE[c]!)) : 'à tout le monde (selon umask)';
+    const whoText = who ? joinList(letters.map((c) => WHO_PHRASE[c]!)) : tr('tout le monde (selon umask)', 'everyone (subject to umask)');
+    const whoDative = who ? joinList(letters.map((c) => WHO_DATIVE[c]!)) : tr('à tout le monde (selon umask)', 'to everyone (subject to umask)');
+    const en = getLang() === 'en';
     return actions.map(({ op, perms }) => {
       const copy = /^[ugo]$/.test(perms);
       const permText = copy
-        ? `les mêmes droits que ${WHO_PHRASE[perms]}`
-        : joinFr([...perms].map((c) => PERM_PHRASE[c]!));
+        ? tr(`les mêmes droits que ${WHO_PHRASE[perms]}`, `the same permissions as ${WHO_PHRASE[perms]}`)
+        : joinList([...perms].map((c) => PERM_PHRASE[c]!));
+      if (en) {
+        if (op === '+') return `adds ${permText} for ${whoText}`;
+        if (op === '-') return `removes ${permText} for ${whoText}`;
+        return perms ? `gives exactly ${permText} ${whoDative}` : `removes all permissions from ${whoText}`;
+      }
       if (op === '+') return `ajoute ${permText} pour ${whoText}`;
       if (op === '-') return `retire ${permText} pour ${whoText}`;
       return perms ? `donne exactement ${permText} ${whoDative}` : `retire tous les droits ${whoDative}`;
     });
   });
-  const text = sentences.join(', puis ');
+  const text = sentences.join(tr(', puis ', ', then '));
   return text.charAt(0).toUpperCase() + text.slice(1) + '.';
 }
 

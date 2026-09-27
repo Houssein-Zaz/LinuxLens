@@ -3,11 +3,15 @@ import { Link, useSearchParams } from 'react-router';
 import { PageHeader } from '../components/ui/PageHeader';
 import { FILE_TYPES, parseLsOutput } from '../lib/lsl';
 import type { LslEntry, LslFieldKind } from '../types/lsl';
+import { useLang, useTr, type Lang } from '../i18n';
 
-const DEFAULT = '-rw-rw-r-- 1 esprit esprit 47 juil. 12 21:14 fichier1';
+const DEFAULTS: Record<Lang, string> = {
+  fr: '-rw-rw-r-- 1 esprit esprit 47 juil. 12 21:14 fichier1',
+  en: '-rw-rw-r-- 1 esprit esprit 47 Jul 12 21:14 file1',
+};
 
-const SAMPLES = [
-  DEFAULT,
+const SAMPLES = (lang: Lang) => [
+  DEFAULTS[lang],
   'drwxr-xr-x 5 esprit esprit 4096 Jul 12 21:10 projets',
   'lrwxrwxrwx 1 root root 7 avril 22 2024 bin -> usr/bin',
   '-rwsr-xr-x 1 root root 68208 Feb 6 2024 /usr/bin/passwd',
@@ -33,20 +37,22 @@ const FIELD_STYLE: Record<LslFieldKind, string> = {
 
 export function LsPage() {
   const [params, setParams] = useSearchParams();
-  const text = params.get('l') ?? DEFAULT;
+  const lang = useLang();
+  const tr = useTr();
+  const text = params.get('l') ?? DEFAULTS[lang];
   const inputId = useId();
-  const lines = useMemo(() => parseLsOutput(text), [text]);
-  const setText = (value: string) => setParams(value === DEFAULT ? {} : { l: value }, { replace: true });
+  const lines = useMemo(() => parseLsOutput(text), [text, lang]);
+  const setText = (value: string) => setParams(value === DEFAULTS[lang] ? {} : { l: value }, { replace: true });
 
   return (
     <>
-      <PageHeader title="Analyseur de sortie ls -l">
-        Collez une ou plusieurs lignes produites par <code className="font-mono">ls -l</code> : chaque bloc est surligné
-        et expliqué.
+      <PageHeader title={tr('Analyseur de sortie ls -l', 'ls -l output analyzer')}>
+        {tr('Collez une ou plusieurs lignes produites par', 'Paste one or more lines produced by')} <code className="font-mono">ls -l</code>
+        {tr(' : chaque bloc est surligné et expliqué.', ': each block is highlighted and explained.')}
       </PageHeader>
 
       <label htmlFor={inputId} className="mb-2 block text-sm font-medium">
-        Sortie de ls -l
+        {tr('Sortie de ls -l', 'ls -l output')}
       </label>
       <textarea
         id={inputId}
@@ -57,8 +63,8 @@ export function LsPage() {
         className="w-full resize-y rounded-xl border border-zinc-200 bg-white px-4 py-3 font-mono text-sm shadow-sm outline-none transition-shadow focus:border-indigo-400 focus:ring-4 focus:ring-indigo-500/10 dark:border-zinc-800 dark:bg-zinc-900 dark:focus:border-indigo-500"
       />
       <div className="mt-3 flex flex-wrap gap-2">
-        <span className="text-sm text-zinc-500 dark:text-zinc-400">Exemples :</span>
-        {SAMPLES.map((s) => (
+        <span className="text-sm text-zinc-500 dark:text-zinc-400">{tr('Exemples :', 'Examples:')}</span>
+        {SAMPLES(lang).map((s) => (
           <button
             key={s}
             type="button"
@@ -93,10 +99,11 @@ export function LsPage() {
 
 function EntryView({ entry }: { entry: LslEntry }) {
   const [active, setActive] = useState<number | null>(null);
+  const tr = useTr();
   let cursor = 0;
 
   return (
-    <section aria-label={`Analyse de ${entry.name}`} className="space-y-4">
+    <section aria-label={tr(`Analyse de ${entry.name}`, `Analysis of ${entry.name}`)} className="space-y-4">
       <div className="overflow-x-auto rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm sm:p-6 dark:border-zinc-800 dark:bg-zinc-900">
         <div className="flex w-max items-center font-mono text-sm leading-loose sm:text-base">
           {entry.fields.map((f, i) => {
@@ -111,7 +118,7 @@ function EntryView({ entry }: { entry: LslEntry }) {
                   onMouseLeave={() => setActive(null)}
                   onFocus={() => setActive(i)}
                   onBlur={() => setActive(null)}
-                  aria-label={`${f.label} : ${f.raw}`}
+                  aria-label={`${f.label}${tr(' : ', ': ')}${f.raw}`}
                   className={`whitespace-pre rounded px-1 py-0.5 ring-1 ring-inset transition-shadow ${FIELD_STYLE[f.kind]} ${
                     active === i ? 'shadow-[0_0_0_2px] shadow-indigo-500' : ''
                   }`}
@@ -150,7 +157,7 @@ function EntryView({ entry }: { entry: LslEntry }) {
 
         <aside className="h-fit space-y-4 rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900">
           <div>
-            <div className="text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">Équivalent octal</div>
+            <div className="text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">{tr('Équivalent octal', 'Octal equivalent')}</div>
             <div className="mt-1 font-mono text-4xl font-semibold tracking-tight text-indigo-600 dark:text-indigo-400">{entry.octal}</div>
             <div className="mt-1 font-mono text-sm text-zinc-500 dark:text-zinc-400">{entry.symbolic}</div>
           </div>
@@ -162,7 +169,7 @@ function EntryView({ entry }: { entry: LslEntry }) {
             to={`/chmod?mode=${entry.octal}`}
             className="block text-sm text-indigo-600 hover:underline dark:text-indigo-400"
           >
-            Ouvrir dans le calculateur →
+            {tr('Ouvrir dans le calculateur →', 'Open in the calculator →')}
           </Link>
         </aside>
       </div>
@@ -173,10 +180,11 @@ function EntryView({ entry }: { entry: LslEntry }) {
 /** rw- rw- r-- → 4+2+0 = 6, … */
 function OctalBreakdown({ symbolic }: { symbolic: string }) {
   const parts = [0, 1, 2].map((k) => symbolic.slice(k * 3, k * 3 + 3));
-  const labels = ['Propr.', 'Groupe', 'Autres'];
+  const tr = useTr();
+  const labels = [tr('Propr.', 'Owner'), tr('Groupe', 'Group'), tr('Autres', 'Others')];
   return (
     <table className="w-full text-sm">
-      <caption className="sr-only">Calcul de la notation octale</caption>
+      <caption className="sr-only">{tr('Calcul de la notation octale', 'Working out the octal notation')}</caption>
       <tbody>
         {parts.map((p, k) => {
           const values = [p[0] === 'r' ? 4 : 0, p[1] === 'w' ? 2 : 0, /[xst]/.test(p[2]!) ? 1 : 0];

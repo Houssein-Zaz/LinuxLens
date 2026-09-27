@@ -1,0 +1,25 @@
+{
+  "name": "cat",
+  "category": "reading",
+  "summary": "Prints and concatenates the contents of files.",
+  "description": "Reads the files in order and writes their contents to standard output. Without a file, or with “-”, it reads standard input. Its name comes from “concatenate”: cat a b > c merges two files.",
+  "synopsis": "cat [OPTION]... [FILE]...",
+  "options": [
+    { "short": "-n", "long": "--number", "description": "Numbers every line." },
+    { "short": "-b", "long": "--number-nonblank", "description": "Numbers only non-empty lines.", "example": { "command": "cat -b poem.txt", "output": "     1\tFirst line\n\n     2\tSecond line" } },
+    { "short": "-s", "long": "--squeeze-blank", "description": "Squeezes runs of blank lines into one.", "example": { "command": "cat -s draft.txt", "output": "Line 1\n\nLine 2" } },
+    { "short": "-A", "long": "--show-all", "description": "Makes invisible characters visible: $ at the end of a line, ^I for a tab.", "example": { "command": "cat -A windows.txt", "output": "Hello^M$\nname^Iage$" } },
+    { "short": "-E", "long": "--show-ends", "description": "Prints $ at the end of each line.", "example": { "command": "cat -E config.ini", "output": "port=8080 $\nhost=localhost$" } },
+    { "short": "-T", "long": "--show-tabs", "description": "Shows tabs as ^I.", "example": { "command": "cat -T Makefile", "output": "build:\n^Igcc main.c -o app" } }
+  ],
+  "arguments": [
+    { "name": "FILE", "description": "File(s) to read. “-” means standard input.", "optional": true, "variadic": true }
+  ],
+  "examples": [
+    { "command": "cat notes.txt", "explanation": "Prints the contents of notes.txt." },
+    { "command": "cat -n script.sh", "explanation": "Prints a script with line numbers.", "output": "     1\t#!/bin/bash\n     2\techo \"Hello\"" },
+    { "command": "cat part1.txt part2.txt > full.txt", "explanation": "Merges two files into a third one." }
+  ],
+  "seeAlso": ["less", "head", "tail", "tac"],
+  "dangerLevel": "safe"
+}

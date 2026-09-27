@@ -1,0 +1,28 @@
+{
+  "name": "useradd",
+  "category": "permissions",
+  "summary": "Creates a user account.",
+  "description": "Low-level command to create an account (requires sudo). By default, it creates neither a home directory nor a password: remember -m, then passwd. On Debian and Ubuntu, adduser is a simpler interactive helper that does all of this automatically.",
+  "synopsis": "useradd [OPTION]... NAME",
+  "options": [
+    { "short": "-m", "long": "--create-home", "description": "Creates the home directory (/home/NAME) from /etc/skel." },
+    { "short": "-s", "long": "--shell", "description": "Login shell, for example /bin/bash.", "takesValue": true, "valueName": "SHELL" },
+    { "short": "-G", "long": "--groups", "description": "Extra groups, comma-separated.", "takesValue": true, "valueName": "GROUPS" },
+    { "short": "-g", "long": "--gid", "description": "Primary group.", "takesValue": true, "valueName": "GROUP", "example": { "command": "sudo useradd -m -g developers sara" } },
+    { "short": "-d", "long": "--home-dir", "description": "Path of the home directory, if it should not be /home/NAME.", "takesValue": true, "valueName": "DIRECTORY", "example": { "command": "sudo useradd -m -d /srv/app appuser" } },
+    { "short": "-c", "long": "--comment", "description": "Comment, usually the full name.", "takesValue": true, "valueName": "TEXT" },
+    { "short": "-e", "long": "--expiredate", "description": "Account expiry date (YYYY-MM-DD).", "takesValue": true, "valueName": "DATE", "example": { "command": "sudo useradd -m -e 2024-12-31 intern" } },
+    { "short": "-r", "long": "--system", "description": "Creates a system account (for a service, with no login)." }
+  ],
+  "arguments": [
+    { "name": "NAME", "description": "Login name of the new account (lowercase, no spaces)." }
+  ],
+  "examples": [
+    { "command": "sudo useradd -m -s /bin/bash alice", "explanation": "Creates alice with a home directory and bash as her shell." },
+    { "command": "sudo useradd -m -G sudo,docker -c \"Alice Martin\" alice", "explanation": "Creates alice and adds her to the sudo and docker groups." },
+    { "command": "sudo useradd -r -s /usr/sbin/nologin myservice", "explanation": "Creates a system account that cannot log in, to run a service." }
+  ],
+  "seeAlso": ["passwd", "id", "usermod", "userdel"],
+  "dangerLevel": "caution",
+  "dangerNote": "Adding someone to the sudo group gives full administrator rights. To change an existing account, use usermod -aG (without -a, the other groups are removed)."
+}

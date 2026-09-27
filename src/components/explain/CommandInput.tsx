@@ -1,5 +1,6 @@
 import { useId, useMemo, useRef, useState } from 'react';
 import { parseCommandLine } from '../../lib/parser';
+import { useTr } from '../../i18n';
 
 export interface Suggestion {
   name: string;
@@ -26,6 +27,7 @@ export function CommandInput({ value, onChange, suggest }: Props) {
   const [caret, setCaret] = useState(value.length);
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(0);
+  const tr = useTr();
 
   const word = useMemo(() => commandWordAt(value, caret), [value, caret]);
   const suggestions = useMemo(() => {
@@ -58,7 +60,7 @@ export function CommandInput({ value, onChange, suggest }: Props) {
           ref={inputRef}
           value={value}
           role="combobox"
-          aria-label="Commande à expliquer"
+          aria-label={tr('Commande à expliquer', 'Command to explain')}
           aria-autocomplete="list"
           aria-expanded={expanded}
           aria-controls={listId}
@@ -105,7 +107,7 @@ export function CommandInput({ value, onChange, suggest }: Props) {
             }}
             className="rounded-md px-2 py-1 text-sm text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
           >
-            Effacer
+            {tr('Effacer', 'Clear')}
           </button>
         )}
       </div>
@@ -113,7 +115,7 @@ export function CommandInput({ value, onChange, suggest }: Props) {
       <ul
         id={listId}
         role="listbox"
-        aria-label="Suggestions de commandes"
+        aria-label={tr('Suggestions de commandes', 'Command suggestions')}
         className={`absolute inset-x-0 top-full z-30 mt-2 overflow-hidden rounded-xl border border-zinc-200 bg-white py-1 shadow-lg dark:border-zinc-700 dark:bg-zinc-900 ${
           expanded ? '' : 'hidden'
         }`}

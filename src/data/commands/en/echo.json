@@ -1,0 +1,24 @@
+{
+  "name": "echo",
+  "category": "text",
+  "summary": "Prints text.",
+  "description": "Writes its arguments separated by a space, followed by a newline. Widely used to show the value of a variable or to write to a file with a redirection. In double quotes, variables ($HOME) are replaced; in single quotes, the text is printed as is.",
+  "synopsis": "echo [OPTION]... [TEXT]...",
+  "options": [
+    { "short": "-n", "description": "Does not add a newline at the end.", "example": { "command": "echo -n \"Name: \"", "output": "Name: " } },
+    { "short": "-e", "description": "Interprets escape sequences: \\n (newline), \\t (tab), \\\\ (backslash)." },
+    { "short": "-E", "description": "Does not interpret escape sequences (the bash default).", "example": { "command": "echo -E \"a\\tb\"", "output": "a\\tb" } }
+  ],
+  "arguments": [
+    { "name": "TEXT", "description": "Text to print. Several arguments are separated by a space.", "optional": true, "variadic": true }
+  ],
+  "examples": [
+    { "command": "echo \"Hello $USER\"", "explanation": "Prints a message with the value of the USER variable.", "output": "Hello esprit" },
+    { "command": "echo '$HOME'", "explanation": "In single quotes, the variable is not replaced.", "output": "$HOME" },
+    { "command": "echo \"added line\" >> notes.txt", "explanation": "Adds a line to the end of a file." },
+    { "command": "echo -e \"name\\tage\\nAli\\t21\"", "explanation": "Interprets \\t and \\n to build a small table.", "output": "name\tage\nAli\t21" },
+    { "command": "echo $?", "explanation": "Prints the exit code of the last command (0 = success)." }
+  ],
+  "seeAlso": ["printf", "cat"],
+  "dangerLevel": "safe"
+}

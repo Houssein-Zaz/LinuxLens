@@ -1,0 +1,17 @@
+{
+  "name": "pwd",
+  "category": "files",
+  "summary": "Prints the path of the current directory.",
+  "description": "Print Working Directory: writes the absolute path of the directory the shell is in.",
+  "synopsis": "pwd [-L|-P]",
+  "options": [
+    { "short": "-L", "long": "--logical", "description": "Prints the logical path, symbolic links included (the default in bash).", "example": { "command": "pwd -L", "output": "/home/esprit/shortcut" } },
+    { "short": "-P", "long": "--physical", "description": "Prints the physical path, with symbolic links resolved." }
+  ],
+  "examples": [
+    { "command": "pwd", "explanation": "Prints the current directory.", "output": "/home/esprit/projects" },
+    { "command": "pwd -P", "explanation": "Prints the real path if you got there through a symbolic link." }
+  ],
+  "seeAlso": ["cd", "ls"],
+  "dangerLevel": "safe"
+}

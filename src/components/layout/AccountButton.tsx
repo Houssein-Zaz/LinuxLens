@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState, type KeyboardEvent } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router';
 import { useAuth } from '../../hooks/useAuth';
+import { useTr } from '../../i18n';
 
 const itemClass =
   'flex w-full items-center rounded-lg px-3 py-2 text-left text-sm outline-none transition-colors hover:bg-zinc-100 focus-visible:bg-zinc-100 dark:hover:bg-zinc-800 dark:focus-visible:bg-zinc-800';
@@ -16,6 +17,7 @@ export function AccountButton() {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const id = useId();
+  const tr = useTr();
 
   useEffect(() => {
     if (!user) return setIsAdmin(false);
@@ -48,15 +50,15 @@ export function AccountButton() {
     return (
       <Link
         to="/connexion"
-        aria-label="Connexion"
-        title="Connexion"
+        aria-label={tr('Connexion', 'Sign in')}
+        title={tr('Connexion', 'Sign in')}
         className="grid h-9 place-items-center rounded-lg px-2 text-sm text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
       >
         <svg viewBox="0 0 24 24" className="size-5 lg:hidden" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
           <circle cx="12" cy="8" r="4" />
           <path d="M4 20c1.5-4 4.5-6 8-6s6.5 2 8 6" strokeLinecap="round" />
         </svg>
-        <span className="hidden lg:inline">Connexion</span>
+        <span className="hidden lg:inline">{tr('Connexion', 'Sign in')}</span>
       </Link>
     );
   }
@@ -92,7 +94,7 @@ export function AccountButton() {
       <button
         ref={buttonRef}
         type="button"
-        aria-label="Mon compte"
+        aria-label={tr('Mon compte', 'My account')}
         aria-haspopup="menu"
         aria-expanded={open}
         aria-controls={open ? id : undefined}
@@ -114,7 +116,7 @@ export function AccountButton() {
           ref={menuRef}
           id={id}
           role="menu"
-          aria-label="Mon compte"
+          aria-label={tr('Mon compte', 'My account')}
           onKeyDown={onMenuKeyDown}
           // Un lien vers la page déjà ouverte ne change pas l'adresse : on ferme ici aussi
           onClick={(e) => (e.target as HTMLElement).closest('a') && setOpen(false)}
@@ -126,22 +128,22 @@ export function AccountButton() {
           </div>
           <div className="my-1 border-t border-zinc-100 dark:border-zinc-800" role="none" />
           <Link to="/compte" role="menuitem" className={itemClass}>
-            Mon compte
+            {tr('Mon compte', 'My account')}
           </Link>
           <Link to="/compte/mot-de-passe" role="menuitem" className={itemClass}>
-            Changer le mot de passe
+            {tr('Changer le mot de passe', 'Change password')}
           </Link>
           {isAdmin && (
             <Link to="/admin" role="menuitem" className={itemClass}>
-              Tableau de bord administrateur
+              {tr('Tableau de bord administrateur', 'Admin dashboard')}
             </Link>
           )}
           <Link to="/compte/suppression" role="menuitem" className={`${itemClass} text-red-600 dark:text-red-400`}>
-            Supprimer mon compte
+            {tr('Supprimer mon compte', 'Delete my account')}
           </Link>
           <div className="my-1 border-t border-zinc-100 dark:border-zinc-800" role="none" />
           <button type="button" role="menuitem" onClick={signOut} className={itemClass}>
-            Se déconnecter
+            {tr('Se déconnecter', 'Sign out')}
           </button>
         </div>
       )}

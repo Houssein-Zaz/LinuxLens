@@ -1,0 +1,29 @@
+{
+  "name": "rm",
+  "category": "files",
+  "summary": "Deletes files or directories.",
+  "description": "Permanently deletes the given files. There is no trash: a file deleted with rm usually cannot be recovered. By default, rm refuses to delete a directory.",
+  "synopsis": "rm [OPTION]... FILE...",
+  "options": [
+    { "short": "-r", "long": "--recursive", "description": "Deletes directories and everything in them, recursively. -R is the same." },
+    { "short": "-R", "description": "Same as -r.", "example": { "command": "rm -R cache/" } },
+    { "short": "-f", "long": "--force", "description": "Never asks for confirmation and ignores files that do not exist.", "example": { "command": "rm -f maybe_missing.tmp" } },
+    { "short": "-i", "description": "Asks for confirmation before each deletion." },
+    { "short": "-I", "description": "Asks once before deleting more than three files or when deleting recursively.", "example": { "command": "rm -I *.log", "output": "rm: remove 12 arguments? " } },
+    { "short": "-d", "long": "--dir", "description": "Deletes empty directories.", "example": { "command": "rm -d empty_folder" } },
+    { "short": "-v", "long": "--verbose", "description": "Prints each file deleted.", "example": { "command": "rm -v *.tmp", "output": "removed 'a.tmp'\nremoved 'b.tmp'" } },
+    { "long": "--preserve-root", "description": "Refuses to operate on “/” (the default).", "example": { "command": "rm -r --preserve-root build/" } }
+  ],
+  "arguments": [
+    { "name": "FILE", "description": "File(s) or directory(ies) to delete.", "variadic": true }
+  ],
+  "examples": [
+    { "command": "rm old.log", "explanation": "Deletes a file." },
+    { "command": "rm -i *.tmp", "explanation": "Deletes the .tmp files, asking for confirmation for each one." },
+    { "command": "rm -r build/", "explanation": "Deletes the build directory and everything in it." },
+    { "command": "rm -- -weird-file", "explanation": "Deletes a file whose name starts with a dash: “--” marks the end of options." }
+  ],
+  "seeAlso": ["rmdir", "mv", "find"],
+  "dangerLevel": "danger",
+  "dangerNote": "Deletion is permanent. rm -rf deletes everything without confirmation: always check the path, especially with variables or wildcards (*)."
+}

@@ -12,6 +12,7 @@ import { useFavorites } from '../../hooks/useFavorites';
 import { useProgress } from '../../hooks/useProgress';
 import { computeStats } from '../../lib/stats';
 import type { Attempt, ExerciseKind, HistoryEntry, MyFeedback } from '../../types/backend';
+import { getLang, useTr } from '../../i18n';
 
 /** `wide` : toute la largeur ; `action` : lien ou bouton à droite du titre. */
 function Card({ title, id, children, wide, action }: { title: string; id: string; children: ReactNode; wide?: boolean; action?: ReactNode }) {
@@ -31,13 +32,18 @@ function Card({ title, id, children, wide, action }: { title: string; id: string
   );
 }
 
-const dateFormat = new Intl.DateTimeFormat('fr-FR', { dateStyle: 'medium', timeStyle: 'short' });
+const formats = {
+  fr: new Intl.DateTimeFormat('fr-FR', { dateStyle: 'medium', timeStyle: 'short' }),
+  en: new Intl.DateTimeFormat('en-GB', { dateStyle: 'medium', timeStyle: 'short' }),
+};
+const dateFormat = { format: (d: Date) => formats[getLang()].format(d) };
 
 export function AccountPage() {
   const { backend, user } = useAuth();
   const { favorites, toggle } = useFavorites();
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [confirm, confirmDialog] = useConfirm();
+  const tr = useTr();
 
   useEffect(() => {
     let alive = true;
@@ -54,19 +60,19 @@ export function AccountPage() {
 
   return (
     <>
-      <PageHeader title="Mon compte" />
+      <PageHeader title={tr('Mon compte', 'My account')} />
       <DemoBanner className="mb-6" />
 
       <div className="grid gap-6 lg:grid-cols-2">
         <ProfileCard />
         <ResultsCard />
 
-        <Card title="Favoris" id="favoris">
+        <Card title={tr('Favoris', 'Favorites')} id="favoris">
           {favorites.length === 0 ? (
             <p className="text-sm text-zinc-600 dark:text-zinc-400">
-              Aucun favori pour l’instant. Ajoutez-en avec le bouton ☆ d’une{' '}
+              {tr('Aucun favori pour l’instant. Ajoutez-en avec le bouton ☆ d’une', 'No favorites yet. Add some with the ☆ button on a')}{' '}
               <Link to="/explorer" className="underline underline-offset-2">
-                fiche de commande
+                {tr('fiche de commande', 'command page')}
               </Link>
               .
             </p>
@@ -81,14 +87,19 @@ export function AccountPage() {
                     type="button"
                     onClick={async () => {
                       const ok = await confirm({
-                        title: 'Retirer ce favori ?',
-                        message: <>La commande <code className="font-mono">{c}</code> ne sera plus dans vos favoris.</>,
-                        confirmLabel: 'Retirer',
+                        title: tr('Retirer ce favori ?', 'Remove this favorite?'),
+                        message: (
+                          <>
+                            {tr('La commande', 'The command')} <code className="font-mono">{c}</code>{' '}
+                            {tr('ne sera plus dans vos favoris.', 'will no longer be in your favorites.')}
+                          </>
+                        ),
+                        confirmLabel: tr('Retirer', 'Remove'),
                         danger: true,
                       });
                       if (ok) toggle(c);
                     }}
-                    aria-label={`Retirer ${c} des favoris`}
+                    aria-label={tr(`Retirer ${c} des favoris`, `Remove ${c} from favorites`)}
                     className="px-2 py-1 text-zinc-400 hover:bg-zinc-200 hover:text-zinc-900 dark:hover:bg-zinc-700 dark:hover:text-zinc-100"
                   >
                     ×
@@ -100,7 +111,7 @@ export function AccountPage() {
         </Card>
 
         <Card
-          title="Historique"
+          title={tr('Historique', 'History')}
           id="historique"
           action={
             history.length > 0 && (
@@ -108,9 +119,12 @@ export function AccountPage() {
                 type="button"
                 onClick={async () => {
                   const ok = await confirm({
-                    title: 'Effacer l’historique ?',
-                    message: `Les ${history.length} commande${history.length > 1 ? 's' : ''} de votre historique seront effacée${history.length > 1 ? 's' : ''} définitivement.`,
-                    confirmLabel: 'Effacer',
+                    title: tr('Effacer l’historique ?', 'Clear the history?'),
+                    message: tr(
+                      `Les ${history.length} commande${history.length > 1 ? 's' : ''} de votre historique seront effacée${history.length > 1 ? 's' : ''} définitivement.`,
+                      `The ${history.length} command${history.length > 1 ? 's' : ''} in your history will be permanently erased.`,
+                    ),
+                    confirmLabel: tr('Effacer', 'Clear'),
                     danger: true,
                   });
                   if (!ok) return;
@@ -119,13 +133,13 @@ export function AccountPage() {
                 }}
                 className="text-sm text-zinc-500 underline-offset-2 hover:underline dark:text-zinc-400"
               >
-                Effacer l’historique
+                {tr('Effacer l’historique', 'Clear the history')}
               </button>
             )
           }
         >
           {history.length === 0 ? (
-            <p className="text-sm text-zinc-600 dark:text-zinc-400">Les commandes que vous expliquez apparaîtront ici.</p>
+            <p className="text-sm text-zinc-600 dark:text-zinc-400">{tr('Les commandes que vous expliquez apparaîtront ici.', 'The commands you explain will appear here.')}</p>
           ) : (
             <ul className="-my-2 max-h-80 divide-y divide-zinc-100 overflow-y-auto dark:divide-zinc-800">
               {history.map((h) => (
@@ -156,6 +170,7 @@ function ResultsCard() {
   const { backend } = useAuth();
   const { solved } = useProgress();
   const [attempts, setAttempts] = useState<Attempt[] | null>(null);
+  const tr = useTr();
 
   useEffect(() => {
     let alive = true;
@@ -171,17 +186,19 @@ function ResultsCard() {
   // Progression en tête de carte, puis le détail des réponses quand il y en a
   const card = (details: ReactNode) => (
     <Card
-      title="Ma progression"
+      title={tr('Ma progression', 'My progress')}
       id="progression"
       wide
       action={
         <Link to="/exercices" className="text-sm font-medium text-indigo-600 hover:underline dark:text-indigo-400">
-          Continuer les exercices →
+          {tr('Continuer les exercices →', 'Continue the exercises →')}
         </Link>
       }
     >
       <p className="text-3xl font-semibold tracking-tight">
-        {solved.size} <span className="text-base font-normal text-zinc-500 dark:text-zinc-400">/ {ALL_EXERCISES.length} exercices réussis</span>
+        {solved.size} <span className="text-base font-normal text-zinc-500 dark:text-zinc-400">
+          / {ALL_EXERCISES.length} {tr('exercices réussis', 'exercises solved')}
+        </span>
       </p>
       <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800">
         <div className="h-full rounded-full bg-indigo-500" style={{ width: `${(solved.size / ALL_EXERCISES.length) * 100}%` }} />
@@ -190,20 +207,34 @@ function ResultsCard() {
     </Card>
   );
 
-  if (!attempts) return card(<p className="mt-5 text-sm text-zinc-500">Chargement…</p>);
+  if (!attempts) return card(<p className="mt-5 text-sm text-zinc-500">{tr('Chargement…', 'Loading…')}</p>);
   if (attempts.length === 0) {
     return card(
       <p className="mt-5 text-sm text-zinc-600 dark:text-zinc-400">
-        Vos réponses aux exercices apparaîtront ici : taux de réussite, exercices réussis du premier coup, points à revoir.
+        {tr(
+          'Vos réponses aux exercices apparaîtront ici : taux de réussite, exercices réussis du premier coup, points à revoir.',
+          'Your answers to the exercises will appear here: success rate, exercises solved on the first try, things to review.',
+        )}
       </p>,
     );
   }
 
   const s = computeStats(attempts);
   const tiles = [
-    { label: 'Taux de réussite', value: percent(s.successRate), detail: `${s.correct} bonne${s.correct > 1 ? 's' : ''} réponse${s.correct > 1 ? 's' : ''} sur ${s.attempts}` },
-    { label: 'Du premier coup', value: String(s.firstTry), detail: 'sans erreur ni aide' },
-    { label: 'Essais', value: String(s.attempts), detail: `sur ${s.exercises} exercice${s.exercises > 1 ? 's' : ''}` },
+    {
+      label: tr('Taux de réussite', 'Success rate'),
+      value: percent(s.successRate),
+      detail: tr(
+        `${s.correct} bonne${s.correct > 1 ? 's' : ''} réponse${s.correct > 1 ? 's' : ''} sur ${s.attempts}`,
+        `${s.correct} correct answer${s.correct > 1 ? 's' : ''} out of ${s.attempts}`,
+      ),
+    },
+    { label: tr('Du premier coup', 'First try'), value: String(s.firstTry), detail: tr('sans erreur ni aide', 'with no mistake or help') },
+    {
+      label: tr('Essais', 'Attempts'),
+      value: String(s.attempts),
+      detail: tr(`sur ${s.exercises} exercice${s.exercises > 1 ? 's' : ''}`, `on ${s.exercises} exercise${s.exercises > 1 ? 's' : ''}`),
+    },
   ];
 
   return card(
@@ -220,7 +251,7 @@ function ResultsCard() {
 
       <div className="mt-6 grid gap-6 md:grid-cols-2">
         <div>
-          <h3 className="mb-2 text-sm font-medium">Par type d’exercice</h3>
+          <h3 className="mb-2 text-sm font-medium">{tr('Par type d’exercice', 'By exercise type')}</h3>
           <ul className="space-y-2">
             {KINDS.filter((k) => s.byKind[k].attempts > 0).map((k) => {
               const kind = s.byKind[k];
@@ -230,12 +261,12 @@ function ResultsCard() {
                   <div className="flex justify-between">
                     <span>{EXERCISE_KIND_LABEL[k]}</span>
                     <span className="text-zinc-500 dark:text-zinc-400">
-                      {percent(rate)} · {kind.solved} réussi{kind.solved > 1 ? 's' : ''}
+                      {percent(rate)} · {kind.solved} {tr(`réussi${kind.solved > 1 ? 's' : ''}`, 'solved')}
                     </span>
                   </div>
                   <div
                     role="meter"
-                    aria-label={`Réussite : ${EXERCISE_KIND_LABEL[k]}`}
+                    aria-label={tr(`Réussite : ${EXERCISE_KIND_LABEL[k]}`, `Success: ${EXERCISE_KIND_LABEL[k]}`)}
                     aria-valuemin={0}
                     aria-valuemax={100}
                     aria-valuenow={Math.round(rate * 100)}
@@ -251,7 +282,7 @@ function ResultsCard() {
 
         {s.toReview.length > 0 && (
           <div>
-            <h3 className="mb-2 text-sm font-medium">À revoir</h3>
+            <h3 className="mb-2 text-sm font-medium">{tr('À revoir', 'To review')}</h3>
             <ul className="divide-y divide-zinc-100 text-sm dark:divide-zinc-800">
               {s.toReview.map((r) => {
                 const ex = EXERCISE_BY_ID.get(r.exerciseId);
@@ -259,8 +290,8 @@ function ResultsCard() {
                   <li key={r.exerciseId} className="flex items-baseline justify-between gap-4 py-2">
                     <span className="min-w-0 truncate">{ex ? exerciseTitle(ex) : r.exerciseId}</span>
                     <span className={`shrink-0 text-xs ${r.solved ? 'text-zinc-500 dark:text-zinc-400' : 'text-amber-700 dark:text-amber-300'}`}>
-                      {r.errors} erreur{r.errors > 1 ? 's' : ''}
-                      {r.solved ? ' · réussi' : ''}
+                      {r.errors} {tr(`erreur${r.errors > 1 ? 's' : ''}`, `mistake${r.errors > 1 ? 's' : ''}`)}
+                      {r.solved ? tr(' · réussi', ' · solved') : ''}
                     </span>
                   </li>
                 );
@@ -276,6 +307,7 @@ function ResultsCard() {
 function MessagesCard() {
   const { backend } = useAuth();
   const [messages, setMessages] = useState<MyFeedback[] | null>(null);
+  const tr = useTr();
 
   useEffect(() => {
     let alive = true;
@@ -289,16 +321,16 @@ function MessagesCard() {
   }, [backend]);
 
   return (
-    <Card title="Mes messages" id="messages" wide>
+    <Card title={tr('Mes messages', 'My messages')} id="messages" wide>
       {!messages ? (
-        <p className="text-sm text-zinc-500">Chargement…</p>
+        <p className="text-sm text-zinc-500">{tr('Chargement…', 'Loading…')}</p>
       ) : messages.length === 0 ? (
         <p className="text-sm text-zinc-600 dark:text-zinc-400">
-          Un avis, un problème ou une explication manquante ? Utilisez « Dites-le-nous » sous l’
+          {tr('Un avis, un problème ou une explication manquante ? Utilisez « Dites-le-nous » sous l’', 'Feedback, a problem or a missing explanation? Use “Tell us” below the ')}
           <Link to="/" className="underline underline-offset-2">
-            explication d’une commande
+            {tr('explication d’une commande', 'explanation of a command')}
           </Link>
-          . Vos messages et nos réponses apparaîtront ici.
+          {tr('. Vos messages et nos réponses apparaîtront ici.', '. Your messages and our replies will appear here.')}
         </p>
       ) : (
         <ul className="divide-y divide-zinc-100 dark:divide-zinc-800">
@@ -306,9 +338,9 @@ function MessagesCard() {
             <li key={m.id} className="py-3 first:pt-0 last:pb-0">
               <div className="flex items-baseline justify-between gap-4">
                 {m.reply ? (
-                  <span className="text-xs font-medium text-emerald-700 dark:text-emerald-300">✓ Répondu</span>
+                  <span className="text-xs font-medium text-emerald-700 dark:text-emerald-300">✓ {tr('Répondu', 'Replied')}</span>
                 ) : (
-                  <span className="text-xs text-zinc-500 dark:text-zinc-400">En attente de réponse</span>
+                  <span className="text-xs text-zinc-500 dark:text-zinc-400">{tr('En attente de réponse', 'Awaiting reply')}</span>
                 )}
                 <time dateTime={m.createdAt} className="shrink-0 text-xs text-zinc-500 dark:text-zinc-400">
                   {dateFormat.format(new Date(m.createdAt))}
@@ -326,7 +358,7 @@ function MessagesCard() {
               {m.reply && (
                 <div className="mt-2 rounded-xl border-l-4 border-indigo-400 bg-indigo-50 px-3 py-2 dark:border-indigo-500 dark:bg-indigo-400/10">
                   <p className="text-xs font-medium text-indigo-800 dark:text-indigo-200">
-                    Réponse de LinuxLens
+                    {tr('Réponse de LinuxLens', 'Reply from LinuxLens')}
                     {m.repliedAt && <span className="font-normal"> · {dateFormat.format(new Date(m.repliedAt))}</span>}
                   </p>
                   <p className="mt-1 text-sm whitespace-pre-line [overflow-wrap:anywhere]">{m.reply}</p>
@@ -345,25 +377,28 @@ function ProfileCard() {
   const [name, setName] = useState(user?.displayName ?? '');
   const [message, setMessage] = useState<{ ok: boolean; text: string }>();
   const [confirm, confirmDialog] = useConfirm();
+  const tr = useTr();
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
     const next = name.trim();
     const ok = await confirm({
-      title: 'Modifier votre profil ?',
-      message: next ? `Votre nom affiché deviendra « ${next} ».` : 'Votre nom affiché sera retiré : votre adresse e-mail sera utilisée à la place.',
-      confirmLabel: 'Enregistrer',
+      title: tr('Modifier votre profil ?', 'Update your profile?'),
+      message: next
+        ? tr(`Votre nom affiché deviendra « ${next} ».`, `Your display name will become “${next}”.`)
+        : tr('Votre nom affiché sera retiré : votre adresse e-mail sera utilisée à la place.', 'Your display name will be removed: your email address will be used instead.'),
+      confirmLabel: tr('Enregistrer', 'Save'),
     });
     if (!ok) return;
     const r = await backend.auth.updateProfile(name);
-    setMessage(r.error ? { ok: false, text: r.error } : { ok: true, text: 'Profil enregistré.' });
+    setMessage(r.error ? { ok: false, text: r.error } : { ok: true, text: tr('Profil enregistré.', 'Profile saved.') });
   };
 
   if (!user) return null;
   const shown = user.displayName || user.email;
 
   return (
-    <Card title="Profil" id="profil" wide>
+    <Card title={tr('Profil', 'Profile')} id="profil" wide>
       <div className="grid gap-6 md:grid-cols-2 md:items-end">
         <div className="flex min-w-0 items-center gap-4">
           <span aria-hidden="true" className="grid size-14 shrink-0 place-items-center rounded-full bg-indigo-600 text-xl font-semibold text-white dark:bg-indigo-500">
@@ -372,17 +407,17 @@ function ProfileCard() {
           <div className="min-w-0">
             {user.displayName && <p className="truncate font-medium">{user.displayName}</p>}
             <p className="truncate text-sm text-zinc-600 dark:text-zinc-400">
-              Connecté en tant que <strong className="font-medium text-zinc-900 dark:text-zinc-100">{user.email}</strong>
+              {tr('Connecté en tant que', 'Signed in as')} <strong className="font-medium text-zinc-900 dark:text-zinc-100">{user.email}</strong>
             </p>
           </div>
         </div>
         <form onSubmit={submit} className="space-y-3">
           <div className="flex items-end gap-2">
             <div className="min-w-0 flex-1">
-              <TextField label="Nom affiché" maxLength={50} value={name} onChange={(e) => setName(e.target.value)} />
+              <TextField label={tr('Nom affiché', 'Display name')} maxLength={50} value={name} onChange={(e) => setName(e.target.value)} />
             </div>
             <button type="submit" className={`${buttonClass.primary} h-11`}>
-              Enregistrer
+              {tr('Enregistrer', 'Save')}
             </button>
           </div>
           {message && (message.ok ? <FormSuccess>{message.text}</FormSuccess> : <FormError>{message.text}</FormError>)}

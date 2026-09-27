@@ -1,0 +1,39 @@
+{
+  "name": "grep",
+  "category": "text",
+  "summary": "Searches for lines matching a pattern.",
+  "description": "Reads files (or standard input) and prints the lines that contain the PATTERN. The pattern is a regular expression. With several files, each line is prefixed with the file name.",
+  "synopsis": "grep [OPTION]... PATTERN [FILE]...",
+  "options": [
+    { "short": "-i", "long": "--ignore-case", "description": "Ignores case: “Error” also finds “error” and “ERROR”." },
+    { "short": "-v", "long": "--invert-match", "description": "Inverts the search: prints the lines that do not match." },
+    { "short": "-r", "long": "--recursive", "description": "Searches every file in the directories, recursively." },
+    { "short": "-n", "long": "--line-number", "description": "Prefixes each line with its number." },
+    { "short": "-c", "long": "--count", "description": "Prints only the number of matching lines." },
+    { "short": "-l", "long": "--files-with-matches", "description": "Prints only the names of the files that contain the pattern.", "example": { "command": "grep -l \"password\" *.conf", "output": "app.conf\ndb.conf" } },
+    { "short": "-w", "long": "--word-regexp", "description": "Only matches whole words: “cat” does not match “catalog”.", "example": { "command": "grep -w cat animals.txt", "output": "the cat is asleep" } },
+    { "short": "-x", "long": "--line-regexp", "description": "The whole line must match the pattern.", "example": { "command": "grep -x \"END\" report.txt", "output": "END" } },
+    { "short": "-o", "long": "--only-matching", "description": "Prints only the matching part, not the whole line.", "example": { "command": "grep -o \"[0-9]\\+\" order.txt", "output": "42\n1500" } },
+    { "short": "-E", "long": "--extended-regexp", "description": "Extended regular expressions: +, ?, | and () without backslashes.", "example": { "command": "grep -E \"error|warning\" app.log", "output": "10:02 error: disk full\n10:05 warning: low memory" } },
+    { "short": "-F", "long": "--fixed-strings", "description": "Pattern taken literally, without interpreting special characters.", "example": { "command": "grep -F \"a.b*c\" formulas.txt", "output": "x = a.b*c" } },
+    { "short": "-e", "long": "--regexp", "description": "Pattern to search for; repeat it to search for several patterns.", "takesValue": true, "valueName": "PATTERN", "example": { "command": "grep -e error -e warning app.log", "output": "10:02 error: disk full\n10:05 warning: low memory" } },
+    { "short": "-A", "long": "--after-context", "description": "Also prints N lines after each match.", "takesValue": true, "valueName": "N", "example": { "command": "grep -A 2 \"Exception\" app.log", "output": "Exception: NullPointer\n  at Main.run(Main.java:12)\n  at Main.main(Main.java:5)" } },
+    { "short": "-B", "long": "--before-context", "description": "Also prints N lines before each match.", "takesValue": true, "valueName": "N", "example": { "command": "grep -B 1 \"FAILED\" tests.log", "output": "test_login ...\nFAILED" } },
+    { "short": "-C", "long": "--context", "description": "Prints N lines before and after each match.", "takesValue": true, "valueName": "N", "example": { "command": "grep -C 1 \"port\" config.ini", "output": "[server]\nport=8080\nhost=0.0.0.0" } },
+    { "long": "--include", "description": "With -r, searches only files matching the pattern (e.g. \"*.js\").", "takesValue": true, "valueName": "PATTERN", "example": { "command": "grep -rn \"useState\" --include=\"*.tsx\" src/", "output": "src/App.tsx:3:import { useState } from 'react';" } },
+    { "long": "--color", "description": "Highlights the matches.", "takesValue": true, "valueName": "WHEN", "values": ["auto", "always", "never"], "example": { "command": "grep --color=always -n error app.log | less -R" } }
+  ],
+  "arguments": [
+    { "name": "PATTERN", "description": "Text or regular expression to search for. Put it in quotes if it contains spaces or special characters." },
+    { "name": "FILE", "description": "File(s) to search. Without a file: standard input.", "optional": true, "variadic": true }
+  ],
+  "examples": [
+    { "command": "grep \"error\" app.log", "explanation": "Lines of app.log containing “error”." },
+    { "command": "grep -rn \"TODO\" src/", "explanation": "Every TODO in the src folder, with file and line number.", "output": "src/main.ts:12:// TODO: handle errors" },
+    { "command": "ps aux | grep -i nginx", "explanation": "Filters the process list to keep only nginx." },
+    { "command": "grep -v \"^#\" config.conf", "explanation": "Shows the configuration without the comment lines." },
+    { "command": "grep -c \"GET\" access.log", "explanation": "Counts the GET requests.", "output": "1284" }
+  ],
+  "seeAlso": ["sed", "awk", "find", "egrep"],
+  "dangerLevel": "safe"
+}

@@ -1,0 +1,39 @@
+{
+  "name": "apt",
+  "category": "packages",
+  "summary": "Installs, updates and removes software (Debian, Ubuntu).",
+  "description": "The package manager of Debian and Ubuntu. It downloads software from the repositories and handles its dependencies automatically. Operations that change the system require sudo. Two steps not to mix up: apt update refreshes the list of available versions, apt upgrade actually installs the updates.",
+  "synopsis": "apt [OPTION]... SUBCOMMAND [PACKAGE]...",
+  "options": [
+    { "short": "-y", "long": "--yes", "description": "Automatically answers “yes” to confirmations." },
+    { "long": "--no-install-recommends", "description": "Does not install packages that are merely recommended, only the required dependencies.", "example": { "command": "sudo apt install --no-install-recommends ffmpeg" } },
+    { "short": "-s", "long": "--simulate", "description": "Shows what would be done, without changing anything.", "example": { "command": "apt -s remove python3", "output": "Inst … (simulation): 142 packages would be removed" } },
+    { "long": "--installed", "description": "With list, only installed packages.", "example": { "command": "apt list --installed | grep python3", "output": "python3/noble,now 3.12.3-0ubuntu1 amd64 [installed]" } },
+    { "long": "--upgradable", "description": "With list, only packages that have an update." }
+  ],
+  "subcommands": [
+    { "name": "update", "description": "Downloads the up-to-date list of available packages (installs nothing)." },
+    { "name": "upgrade", "description": "Installs new versions of packages that are already installed." },
+    { "name": "full-upgrade", "description": "Like upgrade, but can also remove or add packages to resolve dependencies." },
+    { "name": "install", "description": "Installs one or more packages, with their dependencies." },
+    { "name": "remove", "description": "Uninstalls a package while keeping its configuration files." },
+    { "name": "purge", "description": "Uninstalls a package and also deletes its configuration." },
+    { "name": "autoremove", "description": "Removes dependencies that were installed automatically and are no longer needed." },
+    { "name": "search", "description": "Searches for a package by keyword in names and descriptions." },
+    { "name": "show", "description": "Shows the details of a package: version, size, dependencies, description." },
+    { "name": "list", "description": "List of packages, to filter with --installed or --upgradable." }
+  ],
+  "arguments": [
+    { "name": "PACKAGE", "description": "Name(s) of the package(s) the subcommand acts on.", "optional": true, "variadic": true }
+  ],
+  "examples": [
+    { "command": "sudo apt update && sudo apt upgrade", "explanation": "The classic update: refresh the list, then install the new versions." },
+    { "command": "sudo apt install -y git curl", "explanation": "Installs git and curl without asking for confirmation." },
+    { "command": "apt search \"image editor\"", "explanation": "Searches for software by description." },
+    { "command": "sudo apt purge apache2 && sudo apt autoremove", "explanation": "Completely uninstalls Apache, then cleans up unneeded dependencies." },
+    { "command": "apt list --upgradable", "explanation": "The packages that have an update available." }
+  ],
+  "seeAlso": ["dpkg", "snap", "sudo"],
+  "dangerLevel": "caution",
+  "dangerNote": "Read the list of packages to be removed before confirming: remove or full-upgrade can take away packages that other software depends on. -y skips this check."
+}

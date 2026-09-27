@@ -1,0 +1,26 @@
+{
+  "name": "locate",
+  "category": "files",
+  "summary": "Finds files by name instantly.",
+  "description": "Searches a database of every path on the system instead of walking the disk: it is much faster than find, but the database is only updated about once a day. A recently created file may therefore be missing: run sudo updatedb to refresh the database. Depending on the distribution, the command comes from plocate or mlocate.",
+  "synopsis": "locate [OPTION]... PATTERN...",
+  "options": [
+    { "short": "-i", "long": "--ignore-case", "description": "Ignores case." },
+    { "short": "-c", "long": "--count", "description": "Prints only the number of results." },
+    { "short": "-l", "long": "--limit", "description": "Limits the number of results.", "takesValue": true, "valueName": "N" },
+    { "short": "-b", "long": "--basename", "description": "Searches only the file name, not the whole path.", "example": { "command": "locate -b '\\nginx.conf'", "output": "/etc/nginx/nginx.conf" } },
+    { "short": "-e", "long": "--existing", "description": "Shows only files that still exist.", "example": { "command": "locate -e report.pdf", "output": "/home/esprit/Documents/report.pdf" } },
+    { "short": "-r", "long": "--regex", "description": "Treats the pattern as a regular expression." }
+  ],
+  "arguments": [
+    { "name": "PATTERN", "description": "Text to look for in paths. Without a wildcard, it just has to appear anywhere in the path.", "variadic": true }
+  ],
+  "examples": [
+    { "command": "locate nginx.conf", "explanation": "Finds every path containing nginx.conf.", "output": "/etc/nginx/nginx.conf\n/usr/share/doc/nginx/examples/nginx.conf" },
+    { "command": "locate -i readme -l 5", "explanation": "The first 5 files whose path contains “readme”, whatever the case." },
+    { "command": "locate -c \"*.jpg\"", "explanation": "Counts the JPEG images on the system." },
+    { "command": "locate -r '\\.conf$'", "explanation": "Paths ending in .conf (regular expression)." }
+  ],
+  "seeAlso": ["find", "which"],
+  "dangerLevel": "safe"
+}

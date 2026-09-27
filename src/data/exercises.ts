@@ -1,9 +1,11 @@
 import { fromOctal, toSymbolic } from '../lib/permissions';
 import type { CategoryId } from '../types/command';
+import { labels, tr, withEnglish } from '../i18n';
+import { QUIZ_EN, WRITE_EN } from './exercises.en';
 
 export type Level = 1 | 2 | 3;
 
-export const LEVEL_LABEL: Record<Level, string> = { 1: 'Débutant', 2: 'Intermédiaire', 3: 'Avancé' };
+export const LEVEL_LABEL: Record<Level, string> = labels({ 1: ['Débutant', 'Beginner'], 2: ['Intermédiaire', 'Intermediate'], 3: ['Avancé', 'Advanced'] });
 
 interface Base {
   id: string;
@@ -41,12 +43,15 @@ export interface PermExercise extends Base {
 
 export type Exercise = WriteExercise | QuizExercise | PermExercise;
 
-const write = (e: Omit<WriteExercise, 'kind'>): WriteExercise => ({ kind: 'write', ...e });
-const quiz = (e: Omit<QuizExercise, 'kind' | 'question'> & { question?: string }): QuizExercise => ({
-  kind: 'quiz',
-  question: 'Que fait cette commande ?',
-  ...e,
-});
+// Texte en français ; la traduction anglaise (exercises.en.ts) est branchée sur les mêmes champs
+const write = (e: Omit<WriteExercise, 'kind'>): WriteExercise => withEnglish<WriteExercise>({ kind: 'write', ...e }, WRITE_EN[e.id]);
+const quiz = (e: Omit<QuizExercise, 'kind' | 'question'> & { question?: string }): QuizExercise => {
+  const en = QUIZ_EN[e.id];
+  return withEnglish<QuizExercise>(
+    { kind: 'quiz', question: 'Que fait cette commande ?', ...e },
+    en && { ...en, question: en.question ?? 'What does this command do?' },
+  );
+};
 
 export const WRITE_EXERCISES: WriteExercise[] = [
   // Fichiers et répertoires
@@ -164,12 +169,18 @@ export const ALL_EXERCISES: Exercise[] = [...WRITE_EXERCISES, ...QUIZ_EXERCISES,
 
 export const EXERCISE_BY_ID: ReadonlyMap<string, Exercise> = new Map(ALL_EXERCISES.map((e) => [e.id, e]));
 
-export const EXERCISE_KIND_LABEL: Record<Exercise['kind'], string> = { write: 'Écrire la commande', quiz: 'Comprendre', perm: 'Conversion' };
+export const EXERCISE_KIND_LABEL: Record<Exercise['kind'], string> = labels({
+  write: ['Écrire la commande', 'Write the command'],
+  quiz: ['Comprendre', 'Understand'],
+  perm: ['Conversion', 'Conversion'],
+});
 
 /** Intitulé court d'un exercice, pour les listes. */
 export function exerciseTitle(e: Exercise): string {
   if (e.kind === 'write') return e.prompt;
   if (e.kind === 'quiz') return `${e.command} : ${e.question}`;
   // Même présentation que l'exercice : on montre ce qui est donné à convertir
-  return e.direction === 'to-octal' ? `Convertir ${toSymbolic(fromOctal(e.mode)!)} en octal` : `Écrire ${e.mode} en symbolique`;
+  return e.direction === 'to-octal'
+    ? tr(`Convertir ${toSymbolic(fromOctal(e.mode)!)} en octal`, `Convert ${toSymbolic(fromOctal(e.mode)!)} to octal`)
+    : tr(`Écrire ${e.mode} en symbolique`, `Write ${e.mode} in symbolic notation`);
 }

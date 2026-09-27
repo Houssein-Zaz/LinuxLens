@@ -1,0 +1,27 @@
+{
+  "name": "tail",
+  "category": "reading",
+  "summary": "Shows the end of a file, optionally as it grows.",
+  "description": "Shows the last lines (10 by default) of each file. With -f, it stays open and shows new lines as they arrive: the classic tool for following a log.",
+  "synopsis": "tail [OPTION]... [FILE]...",
+  "options": [
+    { "short": "-n", "long": "--lines", "description": "Number of lines to show. With a plus sign (-n +5), shows from line 5 onwards.", "takesValue": true, "valueName": "N" },
+    { "short": "-c", "long": "--bytes", "description": "Number of bytes to show instead of lines.", "takesValue": true, "valueName": "N", "example": { "command": "tail -c 100 file.log" } },
+    { "short": "-f", "long": "--follow", "description": "Follows the file: shows added lines in real time. Ctrl+C to stop." },
+    { "short": "-F", "description": "Like -f, but keeps going if the file is renamed or recreated (log rotation).", "example": { "command": "tail -F /var/log/nginx/access.log" } },
+    { "short": "-q", "long": "--quiet", "description": "Does not print file name headers.", "example": { "command": "tail -q -n 1 *.log", "output": "10:02 server started\n10:05 GET / request" } },
+    { "short": "-s", "long": "--sleep-interval", "description": "With -f, interval in seconds between two checks.", "takesValue": true, "valueName": "N", "example": { "command": "tail -f -s 5 app.log" } },
+    { "long": "--pid", "description": "With -f, stops when the given process ends.", "takesValue": true, "valueName": "PID", "example": { "command": "tail -f --pid=4242 build.log" } }
+  ],
+  "arguments": [
+    { "name": "FILE", "description": "File(s) to read. Without a file: standard input.", "optional": true, "variadic": true }
+  ],
+  "examples": [
+    { "command": "tail /var/log/syslog", "explanation": "The last 10 lines of the system log." },
+    { "command": "tail -n 50 app.log", "explanation": "The last 50 lines." },
+    { "command": "tail -f /var/log/nginx/access.log", "explanation": "Follows the requests nginx receives, live." },
+    { "command": "tail -n +2 data.csv", "explanation": "The whole file except the header line." }
+  ],
+  "seeAlso": ["head", "less", "journalctl"],
+  "dangerLevel": "safe"
+}

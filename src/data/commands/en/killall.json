@@ -1,0 +1,29 @@
+{
+  "name": "killall",
+  "category": "processes",
+  "summary": "Sends a signal to every process with a given name.",
+  "description": "Like kill, but targets processes by name rather than by PID: every matching instance receives the signal. The default signal is SIGTERM (clean stop). The name must match the program name exactly; for a looser search, see pkill.",
+  "synopsis": "killall [OPTION]... NAME...",
+  "options": [
+    { "short": "-s", "long": "--signal", "description": "Signal to send, by name or number (HUP, KILL, 9…).", "takesValue": true, "valueName": "SIGNAL" },
+    { "short": "-9", "description": "Sends SIGKILL: forced, immediate stop." },
+    { "short": "-i", "long": "--interactive", "description": "Asks for confirmation before each process." },
+    { "short": "-u", "long": "--user", "description": "Targets only this user’s processes.", "takesValue": true, "valueName": "USER" },
+    { "short": "-v", "long": "--verbose", "description": "Reports whether the signal was sent.", "example": { "command": "killall -v firefox", "output": "Killed firefox(4521) with signal 15" } },
+    { "short": "-w", "long": "--wait", "description": "Waits for every targeted process to finish.", "example": { "command": "killall -w dev_server" } },
+    { "short": "-I", "long": "--ignore-case", "description": "Ignores the case of the name.", "example": { "command": "killall -I Firefox" } },
+    { "short": "-l", "long": "--list", "description": "Lists the available signal names.", "example": { "command": "killall -l", "output": "HUP INT QUIT ILL TRAP ABRT BUS FPE KILL USR1 SEGV USR2 PIPE ALRM TERM" } }
+  ],
+  "arguments": [
+    { "name": "NAME", "description": "Exact name of the target program(s).", "variadic": true }
+  ],
+  "examples": [
+    { "command": "killall firefox", "explanation": "Asks every Firefox window to close cleanly." },
+    { "command": "killall -9 chrome", "explanation": "Forces every chrome process to stop." },
+    { "command": "sudo killall -s HUP nginx", "explanation": "Asks nginx to reload its configuration." },
+    { "command": "killall -i -u esprit python3", "explanation": "Stops esprit’s python3 processes, asking for confirmation for each one." }
+  ],
+  "seeAlso": ["kill", "pkill", "ps"],
+  "dangerLevel": "caution",
+  "dangerNote": "killall targets every instance of a program, including those in other sessions when run with sudo. Check with ps or pgrep first."
+}

@@ -1,0 +1,17 @@
+{
+  "name": "fg",
+  "category": "processes",
+  "summary": "Brings a job back to the foreground.",
+  "description": "Shell builtin that puts a job (running in the background or suspended) back in the foreground: it takes control of the terminal again and receives keyboard input, Ctrl+C included. Without an argument, fg acts on the current job (marked + in jobs).",
+  "synopsis": "fg [%JOB]",
+  "options": [],
+  "arguments": [
+    { "name": "%JOB", "description": "Job to resume: %1, %2… (numbers shown by jobs).", "optional": true }
+  ],
+  "examples": [
+    { "command": "fg", "explanation": "Resumes the current job, for example an editor suspended with Ctrl+Z." },
+    { "command": "fg %1", "explanation": "Brings job number 1 back to the foreground." }
+  ],
+  "seeAlso": ["bg", "jobs"],
+  "dangerLevel": "safe"
+}

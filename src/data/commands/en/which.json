@@ -1,0 +1,20 @@
+{
+  "name": "which",
+  "category": "system",
+  "summary": "Shows which program will run for a command.",
+  "description": "Looks for the command in the PATH directories, in order, and prints the path of the first executable found: that is the one the shell will run. Useful when several versions are installed. which does not see aliases or shell builtins; type does.",
+  "synopsis": "which [-a] COMMAND...",
+  "options": [
+    { "short": "-a", "description": "Prints every matching executable in the PATH, not just the first one." }
+  ],
+  "arguments": [
+    { "name": "COMMAND", "description": "Name(s) of the command(s) to locate.", "variadic": true }
+  ],
+  "examples": [
+    { "command": "which python3", "explanation": "Path of the python3 that is used.", "output": "/usr/bin/python3" },
+    { "command": "which -a node", "explanation": "Every version of node found in the PATH.", "output": "/home/esprit/.nvm/versions/node/v22.4.0/bin/node\n/usr/bin/node" },
+    { "command": "which docker || echo \"docker is not installed\"", "explanation": "which fails if the command cannot be found: handy in a script." }
+  ],
+  "seeAlso": ["type", "whereis", "man"],
+  "dangerLevel": "safe"
+}

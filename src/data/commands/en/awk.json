@@ -1,0 +1,25 @@
+{
+  "name": "awk",
+  "category": "text",
+  "summary": "Processes text column by column with a small language.",
+  "description": "awk reads text line by line and splits each line into fields: $1 is the first column, $2 the second, $0 the whole line, NF the number of fields and NR the line number. An awk program is a series of “pattern { action }” blocks: the action runs on the lines that match the pattern. BEGIN and END blocks run before and after reading.",
+  "synopsis": "awk [OPTION]... 'PROGRAM' [FILE]...",
+  "options": [
+    { "short": "-F", "long": "--field-separator", "description": "Field separator (default: spaces and tabs). -F: for /etc/passwd, -F, for a simple CSV.", "takesValue": true, "valueName": "SEP" },
+    { "short": "-v", "long": "--assign", "description": "Sets a variable before running: -v limit=100.", "takesValue": true, "valueName": "VAR=VALUE", "example": { "command": "awk -v limit=10 '$2 > limit' grades.txt", "output": "Sara 14\nYanis 12" } },
+    { "short": "-f", "long": "--file", "description": "Reads the awk program from a file instead of the command line.", "takesValue": true, "valueName": "FILE", "example": { "command": "awk -f report.awk sales.csv" } }
+  ],
+  "arguments": [
+    { "name": "PROGRAM", "description": "awk program, in single quotes so the shell leaves $1, $2… alone. Example: '{print $1}'." },
+    { "name": "FILE", "description": "File(s) to process. Without a file: standard input.", "optional": true, "variadic": true }
+  ],
+  "examples": [
+    { "command": "awk '{print $1}' access.log", "explanation": "Prints the first column of each line (here the client’s IP address)." },
+    { "command": "awk -F: '{print $1, $7}' /etc/passwd", "explanation": "With “:” as the separator, prints each user’s name and shell.", "output": "root /bin/bash\ndaemon /usr/sbin/nologin" },
+    { "command": "awk '$3 > 100' grades.txt", "explanation": "With no action, awk prints the lines whose 3rd column is over 100." },
+    { "command": "awk '{ total += $2 } END { print total }' sales.txt", "explanation": "Adds up the 2nd column and prints the total at the end." },
+    { "command": "ps aux | awk 'NR > 1 { print $2, $11 }'", "explanation": "Skips the header line (NR > 1) and prints each process’s PID and command." }
+  ],
+  "seeAlso": ["cut", "sed", "grep", "sort"],
+  "dangerLevel": "safe"
+}

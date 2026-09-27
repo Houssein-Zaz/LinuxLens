@@ -1,0 +1,36 @@
+{
+  "name": "ip",
+  "category": "network",
+  "summary": "Shows and configures network interfaces, addresses and routes.",
+  "description": "The modern network configuration tool (iproute2 package), which replaces ifconfig and route. It is organized as objects followed by an action: ip addr show, ip link set, ip route add… Names can be shortened (ip a for ip addr). Its options are whole words with a single dash (-br, -c). Changes made with ip are lost on reboot.",
+  "synopsis": "ip [OPTION]... OBJECT [COMMAND]",
+  "options": [
+    { "short": "-br", "description": "Brief output: one line per interface (-brief)." },
+    { "short": "-c", "description": "Colored output (-color)." },
+    { "short": "-4", "description": "IPv4 only.", "example": { "command": "ip -4 a", "output": "2: wlp2s0: …\n    inet 192.168.1.42/24 brd 192.168.1.255 scope global dynamic wlp2s0" } },
+    { "short": "-6", "description": "IPv6 only.", "example": { "command": "ip -6 route", "output": "fe80::/64 dev wlp2s0 proto kernel metric 1024 pref medium" } },
+    { "short": "-s", "description": "Adds statistics (packets, errors).", "example": { "command": "ip -s link show wlp2s0", "output": "RX:  bytes packets errors\n  182734501  201834      0" } }
+  ],
+  "subcommands": [
+    { "name": "addr", "description": "The interfaces’ IP addresses (short forms: a, address)." },
+    { "name": "address", "description": "The interfaces’ IP addresses." },
+    { "name": "a", "description": "Short for addr: the interfaces’ IP addresses." },
+    { "name": "link", "description": "The network interfaces themselves: state, MAC address, enabling (short form: l)." },
+    { "name": "route", "description": "Routing table: which way packets go, default gateway (short form: r)." },
+    { "name": "r", "description": "Short for route: routing table." },
+    { "name": "neigh", "description": "Neighbors on the local network (ARP table): IP ↔ MAC mapping." }
+  ],
+  "arguments": [
+    { "name": "COMMAND", "description": "Action and parameters: show, add, del, set dev eth0 up…", "optional": true, "variadic": true }
+  ],
+  "examples": [
+    { "command": "ip a", "explanation": "Every interface and its addresses.", "output": "2: wlp2s0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 state UP\n    link/ether 3c:a9:f4:12:ab:cd brd ff:ff:ff:ff:ff:ff\n    inet 192.168.1.42/24 brd 192.168.1.255 scope global dynamic wlp2s0" },
+    { "command": "ip -br -c a", "explanation": "One line per interface, in color: the most readable.", "output": "lo        UNKNOWN  127.0.0.1/8 ::1/128\nwlp2s0    UP       192.168.1.42/24" },
+    { "command": "ip route", "explanation": "The routing table; the “default via” line gives the gateway.", "output": "default via 192.168.1.1 dev wlp2s0 proto dhcp metric 600\n192.168.1.0/24 dev wlp2s0 proto kernel scope link src 192.168.1.42" },
+    { "command": "sudo ip link set eth0 down", "explanation": "Disables the eth0 interface (up to enable it again)." },
+    { "command": "sudo ip addr add 192.168.1.50/24 dev eth0", "explanation": "Adds an IP address to the interface, until the next reboot." }
+  ],
+  "seeAlso": ["ifconfig", "ss", "ping"],
+  "dangerLevel": "caution",
+  "dangerNote": "Disabling an interface or changing routes remotely (over SSH) can cut your own connection to the server."
+}

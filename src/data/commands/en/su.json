@@ -1,0 +1,24 @@
+{
+  "name": "su",
+  "category": "permissions",
+  "summary": "Opens a shell as another user.",
+  "description": "Switch user: changes identity in the terminal. Unlike sudo, su asks for the TARGET user’s password (root’s for a plain su). On Ubuntu, the root account has no password by default: use sudo -i or sudo su instead. Type exit to go back to your own account.",
+  "synopsis": "su [OPTION]... [-] [USER]",
+  "options": [
+    { "short": "-l", "long": "--login", "description": "Login shell: loads the target user’s full environment (home directory, variables). Same as “su -”.", "example": { "command": "su -l alice" } },
+    { "short": "-c", "long": "--command", "description": "Runs a single command as the user, then comes back.", "takesValue": true, "valueName": "COMMAND" },
+    { "short": "-s", "long": "--shell", "description": "Uses this shell instead of the target user’s.", "takesValue": true, "valueName": "SHELL", "example": { "command": "sudo su -s /bin/bash www-data" } }
+  ],
+  "arguments": [
+    { "name": "USER", "description": "Account to use. Default: root. A lone dash before the name (su - name) loads their full environment.", "optional": true }
+  ],
+  "examples": [
+    { "command": "su -", "explanation": "Becomes root with root’s environment (root’s password is asked for)." },
+    { "command": "su - alice", "explanation": "Opens a session as alice, in her home directory." },
+    { "command": "su -c 'systemctl restart nginx' root", "explanation": "Runs a single command as root." },
+    { "command": "sudo su - postgres", "explanation": "Becomes postgres with your own password, thanks to sudo." }
+  ],
+  "seeAlso": ["sudo", "whoami", "exit"],
+  "dangerLevel": "caution",
+  "dangerNote": "As root, nothing stops you from damaging the system. Leave the root shell (exit) as soon as you are done."
+}

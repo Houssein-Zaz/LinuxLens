@@ -1,6 +1,9 @@
 /**
- * Télécharge les pages tldr-pages (Linux + communes, français puis anglais)
- * et les convertit en JSON dans public/tldr/ :
+ * Télécharge les pages tldr-pages (Linux + communes, français et anglais)
+ * et les convertit en JSON :
+ *   - public/tldr/     : site en français (page française, sinon anglaise)
+ *   - public/tldr/en/  : site en anglais (pages anglaises)
+ * Dans chaque dossier :
  *   - index.json        : [{ name, summary, lang }] pour la recherche et l'autocomplétion
  *   - pages/<nom>.json  : fiche complète, chargée à la demande
  *
@@ -65,22 +68,30 @@ async function main() {
   }
 
   rmSync(OUT_DIR, { recursive: true, force: true });
-  mkdirSync(join(OUT_DIR, 'pages'), { recursive: true });
-
-  const chosen = pickPages(all);
-  const index: TldrIndexEntry[] = [];
-  for (const [name, doc] of [...chosen].sort(([a], [b]) => a.localeCompare(b))) {
-    writeFileSync(join(OUT_DIR, 'pages', `${name}.json`), JSON.stringify(doc));
-    index.push({ name, summary: shortSummary(doc.summary), lang: doc.lang });
-  }
-  writeFileSync(join(OUT_DIR, 'index.json'), JSON.stringify(index));
+  const index = writeSet(OUT_DIR, pickPages(all));
+  const english = writeSet(join(OUT_DIR, 'en'), pickPages(all.filter((d) => d.lang === 'en')));
 
   const fr = index.filter((e) => e.lang === 'fr').length;
   if (index.length === 0) {
     // En déploiement, publier le site sans ses 6 000 fiches serait une régression silencieuse
     if (STRICT) throw new Error('aucune page tldr générée');
     console.warn('⚠ Aucune page tldr : l’application fonctionnera avec les seules fiches détaillées.');
-  } else console.log(`✓ ${index.length} pages tldr (${fr} en français, ${index.length - fr} en anglais) → public/tldr/`);
+  } else {
+    console.log(`✓ ${index.length} pages tldr (${fr} en français, ${index.length - fr} en anglais) → public/tldr/`);
+    console.log(`✓ ${english.length} pages tldr en anglais → public/tldr/en/`);
+  }
+}
+
+/** Écrit un jeu de fiches (index + pages) dans `dir`. */
+function writeSet(dir: string, chosen: Map<string, TldrDoc>): TldrIndexEntry[] {
+  mkdirSync(join(dir, 'pages'), { recursive: true });
+  const index: TldrIndexEntry[] = [];
+  for (const [name, doc] of [...chosen].sort(([a], [b]) => a.localeCompare(b))) {
+    writeFileSync(join(dir, 'pages', `${name}.json`), JSON.stringify(doc));
+    index.push({ name, summary: shortSummary(doc.summary), lang: doc.lang });
+  }
+  writeFileSync(join(dir, 'index.json'), JSON.stringify(index));
+  return index;
 }
 
 main().catch((err: unknown) => {

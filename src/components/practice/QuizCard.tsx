@@ -2,9 +2,11 @@ import { useState } from 'react';
 import { Link } from 'react-router';
 import type { QuizExercise } from '../../data/exercises';
 import { Feedback } from './Feedback';
+import { useTr } from '../../i18n';
 
 export function QuizCard({ exercise, onAnswer }: { exercise: QuizExercise; onAnswer(correct: boolean, answer: string, usedHelp: boolean): void }) {
   const [picked, setPicked] = useState<number | null>(null);
+  const tr = useTr();
   const answered = picked !== null;
   const correct = picked === exercise.answer;
 
@@ -55,15 +57,15 @@ export function QuizCard({ exercise, onAnswer }: { exercise: QuizExercise; onAns
       </div>
 
       {answered && (
-        <Feedback tone={correct ? 'success' : 'error'} title={correct ? 'Bonne réponse !' : 'Ce n’est pas ça.'}>
+        <Feedback tone={correct ? 'success' : 'error'} title={correct ? tr('Bonne réponse !', 'Correct!') : tr('Ce n’est pas ça.', 'That’s not it.')}>
           <p>{exercise.explanation}</p>
           <div className="mt-2 flex flex-wrap gap-x-4">
             <Link to={`/?c=${encodeURIComponent(exercise.command)}`} className="underline underline-offset-2">
-              Décortiquer la commande →
+              {tr('Décortiquer la commande →', 'Break down the command →')}
             </Link>
             {!correct && (
               <button type="button" onClick={() => setPicked(null)} className="underline underline-offset-2">
-                Réessayer
+                {tr('Réessayer', 'Try again')}
               </button>
             )}
           </div>

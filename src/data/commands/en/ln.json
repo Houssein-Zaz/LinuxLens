@@ -1,0 +1,28 @@
+{
+  "name": "ln",
+  "category": "files",
+  "summary": "Creates links between files.",
+  "description": "Without options, ln creates a hard link: a second name for the same contents on disk; the contents are only erased once all their names are deleted. With -s, it creates a symbolic link: a small file holding a path to the target, like a shortcut. Symbolic links can point to a directory or another disk; they break if the target is moved. Mind the order: the target first, then the link name.",
+  "synopsis": "ln [OPTION]... TARGET [LINK_NAME]",
+  "options": [
+    { "short": "-s", "long": "--symbolic", "description": "Creates a symbolic link instead of a hard link." },
+    { "short": "-f", "long": "--force", "description": "Replaces the destination file if it already exists." },
+    { "short": "-n", "long": "--no-dereference", "description": "If the link name is already a link to a directory, replaces it instead of creating the link inside it (useful with -sf).", "example": { "command": "ln -sfn versions/v2 current" } },
+    { "short": "-r", "long": "--relative", "description": "Stores a path relative to the link’s location." },
+    { "short": "-i", "long": "--interactive", "description": "Asks for confirmation before replacing a destination.", "example": { "command": "ln -si /opt/app/bin/app ~/bin/app", "output": "ln: replace '/home/esprit/bin/app'?" } },
+    { "short": "-v", "long": "--verbose", "description": "Prints each link created." }
+  ],
+  "arguments": [
+    { "name": "TARGET", "description": "File or directory the link points to." },
+    { "name": "LINK_NAME", "description": "Name of the link to create. Default: the target’s name, in the current directory.", "optional": true }
+  ],
+  "examples": [
+    { "command": "ln -s /var/www/mysite ~/site", "explanation": "Creates ~/site, a shortcut to /var/www/mysite." },
+    { "command": "ln -sf python3.12 /usr/local/bin/python", "explanation": "Creates or replaces a link pointing to python3.12." },
+    { "command": "ln report.txt report-copy.txt", "explanation": "Creates a hard link: two names for the same contents (same inode)." },
+    { "command": "ln -srv config/app.conf app.conf", "explanation": "Creates a relative symbolic link and prints what was done.", "output": "'app.conf' -> 'config/app.conf'" }
+  ],
+  "seeAlso": ["ls", "readlink", "cp", "stat"],
+  "dangerLevel": "caution",
+  "dangerNote": "With -f, an existing file with the link’s name is replaced without confirmation. And do not swap the arguments: the target comes first."
+}

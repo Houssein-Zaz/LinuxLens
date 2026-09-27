@@ -44,6 +44,7 @@ Plus de 75 exercices corrigés automatiquement, avec progression mémorisée dan
 ### Et aussi
 - Page **Explorer** : toutes les commandes par catégorie, avec une recherche insensible aux accents.
 - **Mode sombre** en option (clair par défaut, choix mémorisé).
+- **Français ou anglais** : bouton FR / EN dans l’en-tête (langue du navigateur par défaut, choix mémorisé). Interface, explications, fiches détaillées (`src/data/commands/en/`), exercices (`src/data/exercises.en.ts`) et fiches tldr sont traduits ; les fiches anglaises ne sont téléchargées que si l’on choisit l’anglais.
 - **Responsive** et **accessible** : navigation clavier, rôles ARIA (combobox, tooltip), lien d’évitement, contrastes AA, `prefers-reduced-motion`.
 
 | Mode sombre | Mobile |
@@ -77,8 +78,9 @@ Sans configuration, l’application tourne en **mode démo** : inscription, conn
 
 1. Créer un projet sur [supabase.com](https://supabase.com).
 2. Dans **SQL Editor**, exécuter [`supabase/schema.sql`](supabase/schema.sql) : il crée les tables `exercise_progress`, `exercise_attempts` (chaque réponse, pour les statistiques de « Mon compte »), `favorites` et `history`, active la Row Level Security (chacun ne voit que ses lignes) et ajoute la fonction `delete_user()` pour la suppression de compte.
-3. Dans **Authentication → URL Configuration**, déclarer l’URL du site (et `http://localhost:5173` en développement) : les liens de confirmation et de réinitialisation y renvoient (`/connexion`, `/nouveau-mot-de-passe`).
-4. Copier `.env.example` en `.env.local` et renseigner `VITE_SUPABASE_URL` et `VITE_SUPABASE_ANON_KEY` (**Project Settings → API**). Sur Vercel, ajouter les mêmes variables dans les réglages du projet.
+3. Dans **Authentication → URL Configuration**, déclarer l’URL du site (et `http://localhost:5173` en développement) : les liens de réinitialisation y renvoient (`/nouveau-mot-de-passe`).
+4. Dans **Authentication → Sign In / Providers → Email**, désactiver **Confirm email** : l’inscription connecte alors directement, sans e-mail de confirmation (l’envoi d’e-mails par défaut de Supabase est limité à quelques messages par heure).
+5. Copier `.env.example` en `.env.local` et renseigner `VITE_SUPABASE_URL` et `VITE_SUPABASE_ANON_KEY` (**Project Settings → API**). Sur Vercel, ajouter les mêmes variables dans les réglages du projet.
 
 La clé « anon » est publique par conception : la sécurité repose sur les règles RLS. La clé `service_role` ne doit jamais être utilisée côté navigateur.
 

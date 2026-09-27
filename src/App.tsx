@@ -8,6 +8,8 @@ import { ErrorBoundary } from './components/layout/ErrorBoundary';
 import { ExplainPage } from './pages/ExplainPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import type { Backend } from './types/backend';
+import { LanguageProvider, useTr, type Lang } from './i18n';
+import { englishCommands, loadEnglishCommands } from './data';
 
 // L'accueil est chargé tout de suite ; les autres pages seulement quand on les ouvre.
 const page = <K extends string>(load: () => Promise<Record<K, ComponentType>>, name: K) =>
@@ -29,9 +31,25 @@ const ResetPasswordPage = page(() => import('./pages/auth/ResetPasswordPage'), '
 const SignInPage = page(() => import('./pages/auth/SignInPage'), 'SignInPage');
 const SignUpPage = page(() => import('./pages/auth/SignUpPage'), 'SignUpPage');
 
-/** `backend` : injecté par les tests ; sinon choisi selon la configuration (Supabase ou démo). */
-export default function App({ backend }: { backend?: Backend }) {
+/** Les fiches en anglais sont téléchargées seulement si l'on choisit l'anglais. */
+const loadContent = (lang: Lang): Promise<boolean> =>
+  lang === 'en' && !englishCommands() ? loadEnglishCommands().then(() => true) : Promise.resolve(false);
+
+/**
+ * `backend` : injecté par les tests ; sinon choisi selon la configuration (Supabase ou démo).
+ * `lang` : langue imposée (tests) ; sinon choix enregistré ou langue du navigateur.
+ */
+export default function App({ backend, lang }: { backend?: Backend; lang?: Lang }) {
+  return (
+    <LanguageProvider {...(lang && { initial: lang })} loadContent={loadContent}>
+      <Shell backend={backend} />
+    </LanguageProvider>
+  );
+}
+
+function Shell({ backend }: { backend: Backend | undefined }) {
   const { pathname } = useLocation();
+  const tr = useTr();
   return (
     <AuthProvider {...(backend && { backend })}>
       <div className="flex min-h-dvh flex-col overflow-x-clip">
@@ -39,12 +57,12 @@ export default function App({ backend }: { backend?: Backend }) {
           href="#main"
           className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-white focus:px-3 focus:py-2 focus:shadow"
         >
-          Aller au contenu
+          {tr('Aller au contenu', 'Skip to content')}
         </a>
         <Header />
         <main id="main" className="mx-auto w-full max-w-5xl flex-1 px-4 py-10 sm:px-6">
           <ErrorBoundary key={pathname}>
-            <Suspense fallback={<p className="text-zinc-500">Chargement…</p>}>
+            <Suspense fallback={<p className="text-zinc-500">{tr('Chargement…', 'Loading…')}</p>}>
               <Routes>
                 <Route path="/" element={<ExplainPage />} />
                 <Route path="/explorer" element={<ExplorerPage />} />

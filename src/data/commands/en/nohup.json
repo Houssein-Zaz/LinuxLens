@@ -1,0 +1,18 @@
+{
+  "name": "nohup",
+  "category": "processes",
+  "summary": "Runs a command that survives closing the terminal.",
+  "description": "Runs a command while ignoring the SIGHUP signal, which is sent when you close the terminal or log out of an SSH session. Without a redirection, the output is written to nohup.out. It is almost always combined with & to get the prompt back immediately.",
+  "synopsis": "nohup COMMAND [ARGUMENT]...",
+  "options": [],
+  "arguments": [
+    { "name": "COMMAND", "description": "Program to run, followed by its own options and arguments." }
+  ],
+  "examples": [
+    { "command": "nohup ./backup.sh &", "explanation": "Runs the script in the background; it keeps going even if you close the terminal.", "output": "nohup: ignoring input and appending output to 'nohup.out'" },
+    { "command": "nohup python3 server.py > server.log 2>&1 &", "explanation": "Runs a server in the background, sending its output and errors to server.log." },
+    { "command": "nohup rsync -a data/ server:/backup/ &", "explanation": "A long copy that is not interrupted if the SSH connection drops." }
+  ],
+  "seeAlso": ["bg", "jobs", "screen", "tmux"],
+  "dangerLevel": "safe"
+}

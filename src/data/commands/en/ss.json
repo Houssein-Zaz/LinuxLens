@@ -1,0 +1,28 @@
+{
+  "name": "ss",
+  "category": "network",
+  "summary": "Shows sockets: connections and listening ports.",
+  "description": "Socket statistics: the modern, faster replacement for netstat. It lists network connections (TCP, UDP) and local sockets. The classic reflex to find out which program is listening on which port: sudo ss -tulpn. You can also filter by state or port right in the command.",
+  "synopsis": "ss [OPTION]... [FILTER]",
+  "options": [
+    { "short": "-t", "long": "--tcp", "description": "TCP sockets." },
+    { "short": "-u", "long": "--udp", "description": "UDP sockets." },
+    { "short": "-l", "long": "--listening", "description": "Only listening sockets." },
+    { "short": "-a", "long": "--all", "description": "Every socket, listening and established.", "example": { "command": "ss -a | head -3" } },
+    { "short": "-n", "long": "--numeric", "description": "Ports and addresses as numbers (22 instead of ssh)." },
+    { "short": "-p", "long": "--processes", "description": "Shows the program using each socket (sudo to see everything)." },
+    { "short": "-s", "long": "--summary", "description": "Statistical summary.", "example": { "command": "ss -s", "output": "Total: 812\nTCP:   24 (estab 9, closed 5, orphaned 0, timewait 3)" } },
+    { "short": "-4", "long": "--ipv4", "description": "IPv4 only.", "example": { "command": "ss -4 -tn" } },
+    { "short": "-6", "long": "--ipv6", "description": "IPv6 only.", "example": { "command": "ss -6 -tln" } }
+  ],
+  "arguments": [
+    { "name": "FILTER", "description": "Optional filter: state established, sport = :443, dst 192.168.1.10…", "optional": true, "variadic": true }
+  ],
+  "examples": [
+    { "command": "sudo ss -tulpn", "explanation": "Listening TCP and UDP ports, as numbers, with the program behind each.", "output": "Netid State  Recv-Q Send-Q Local Address:Port Peer Address:Port Process\ntcp   LISTEN 0      128          0.0.0.0:22        0.0.0.0:*     users:((\"sshd\",pid=812,fd=3))" },
+    { "command": "ss -tn state established", "explanation": "Established TCP connections." },
+    { "command": "ss -ltn 'sport = :5432'", "explanation": "Checks that something is listening on the PostgreSQL port." }
+  ],
+  "seeAlso": ["netstat", "ip", "lsof"],
+  "dangerLevel": "safe"
+}

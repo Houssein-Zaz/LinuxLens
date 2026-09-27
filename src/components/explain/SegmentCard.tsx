@@ -6,6 +6,7 @@ import { DangerNote } from '../ui/DangerNote';
 import { ExampleBlock } from '../ui/ExampleBlock';
 import type { ExplainedToken } from './TokenLine';
 import { TOKEN_STYLE } from './tokenStyles';
+import { useTr } from '../../i18n';
 
 interface Props {
   index: number;
@@ -19,6 +20,7 @@ interface Props {
 
 /** Explication détaillée d'un segment (une commande entre deux opérateurs). */
 export function SegmentCard({ index, segment, items, selectedKey, onSelect, fallbackSource }: Props) {
+  const tr = useTr();
   const rows = items.filter((i) => i.token.kind !== 'pipe' && i.token.kind !== 'chain');
   const docs = segment.commands.map((c) => getCommand(c)).filter((d) => d !== undefined);
   const unknown = segment.commands.filter((c) => !getCommand(c) && !fallbackSource?.(c) && !isPathCommand(c));
@@ -33,13 +35,13 @@ export function SegmentCard({ index, segment, items, selectedKey, onSelect, fall
           {index + 1}
         </span>
         <h2 id={`segment-${index}`} className="font-mono text-lg font-semibold">
-          {segment.commands.join(' → ') || 'Redirection seule'}
+          {segment.commands.join(' → ') || tr('Redirection seule', 'Redirection only')}
         </h2>
         <div className="ml-auto flex gap-3 text-sm">
           {segment.commands.map((c) =>
             getCommand(c) || fallbackSource?.(c) ? (
               <Link key={c} to={`/commande/${encodeURIComponent(c)}`} className="text-indigo-600 hover:underline dark:text-indigo-400">
-                Fiche {c} →
+                {tr('Fiche', 'Page:')} {c} →
               </Link>
             ) : null,
           )}
@@ -55,8 +57,11 @@ export function SegmentCard({ index, segment, items, selectedKey, onSelect, fall
 
       {unknown.length > 0 && (
         <p className="mx-5 mt-4 rounded-lg bg-zinc-50 px-4 py-3 text-sm text-zinc-600 dark:bg-zinc-800/60 dark:text-zinc-300">
-          Aucune fiche pour <span className="font-mono">{unknown.join(', ')}</span>. Le découpage ci-dessous
-          (commande, options, arguments) est déduit de la syntaxe du shell, sans explication spécifique.
+          {tr('Aucune fiche pour', 'No page for')} <span className="font-mono">{unknown.join(', ')}</span>.{' '}
+          {tr(
+            'Le découpage ci-dessous (commande, options, arguments) est déduit de la syntaxe du shell, sans explication spécifique.',
+            'The breakdown below (command, options, arguments) is deduced from shell syntax, without specific explanations.',
+          )}
         </p>
       )}
 

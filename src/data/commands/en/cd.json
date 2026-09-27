@@ -1,0 +1,22 @@
+{
+  "name": "cd",
+  "category": "files",
+  "summary": "Changes the current directory.",
+  "description": "Shell builtin that moves the working directory. Without an argument, it takes you back to your home directory ($HOME). Paths can be absolute (/etc) or relative to the current directory (../docs).",
+  "synopsis": "cd [-L|-P] [DIRECTORY]",
+  "options": [
+    { "short": "-L", "description": "Follows symbolic links logically (the default): “..” goes back up the path as it was typed.", "example": { "command": "cd -L shortcut/.. && pwd", "output": "/home/esprit" } },
+    { "short": "-P", "description": "Uses the physical layout of the disk: symbolic links are resolved before “..” is handled.", "example": { "command": "cd -P shortcut && pwd", "output": "/var/www/mysite" } }
+  ],
+  "arguments": [
+    { "name": "DIRECTORY", "description": "Destination. “~” means the home directory, “..” the parent, “-” the previous directory.", "optional": true }
+  ],
+  "examples": [
+    { "command": "cd /var/log", "explanation": "Goes to /var/log (absolute path)." },
+    { "command": "cd ..", "explanation": "Goes up one level, into the parent directory." },
+    { "command": "cd", "explanation": "Goes back to the home directory." },
+    { "command": "cd -", "explanation": "Goes back to the previous directory and prints its path.", "output": "/home/esprit/projects" }
+  ],
+  "seeAlso": ["pwd", "ls"],
+  "dangerLevel": "safe"
+}

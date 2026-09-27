@@ -1,0 +1,29 @@
+{
+  "name": "wget",
+  "category": "network",
+  "summary": "Downloads files from the web.",
+  "description": "Downloads a URL and saves it straight to a file in the current directory. wget is designed for downloading: resuming an interrupted transfer, automatic retries, recursive download of a site. For testing an API, curl is better suited.",
+  "synopsis": "wget [OPTION]... URL...",
+  "options": [
+    { "short": "-O", "long": "--output-document", "description": "Output file name; -O - writes to standard output.", "takesValue": true, "valueName": "FILE" },
+    { "short": "-P", "long": "--directory-prefix", "description": "Directory to save the files in.", "takesValue": true, "valueName": "DIRECTORY" },
+    { "short": "-c", "long": "--continue", "description": "Resumes an interrupted download." },
+    { "short": "-q", "long": "--quiet", "description": "Prints nothing.", "example": { "command": "wget -q https://example.com/data.csv" } },
+    { "short": "-b", "long": "--background", "description": "Carries on downloading in the background (log in wget-log).", "example": { "command": "wget -b https://example.com/ubuntu.iso", "output": "Continuing in background, pid 4521.\nOutput will be written to 'wget-log'." } },
+    { "short": "-i", "long": "--input-file", "description": "Downloads every URL listed in a file.", "takesValue": true, "valueName": "FILE" },
+    { "short": "-r", "long": "--recursive", "description": "Recursive download: follows the links in pages.", "example": { "command": "wget -r -l 1 https://example.com/docs/" } },
+    { "long": "--no-parent", "description": "With -r, never goes up into parent directories (short form: -np).", "example": { "command": "wget -r --no-parent https://example.com/docs/" } },
+    { "long": "--limit-rate", "description": "Limits the download speed, for example 500k or 2m.", "takesValue": true, "valueName": "RATE", "example": { "command": "wget --limit-rate=500k https://example.com/ubuntu.iso" } }
+  ],
+  "arguments": [
+    { "name": "URL", "description": "Address(es) to download.", "variadic": true }
+  ],
+  "examples": [
+    { "command": "wget https://example.com/ubuntu.iso", "explanation": "Downloads the file into the current directory, with a progress bar." },
+    { "command": "wget -c https://example.com/ubuntu.iso", "explanation": "Resumes the download where it stopped." },
+    { "command": "wget -O logo.png https://example.com/images/logo-2024.png", "explanation": "Saves under a different name." },
+    { "command": "wget -i links.txt -P downloads/", "explanation": "Downloads every URL in links.txt into the downloads directory." }
+  ],
+  "seeAlso": ["curl", "scp"],
+  "dangerLevel": "safe"
+}

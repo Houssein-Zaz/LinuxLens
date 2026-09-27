@@ -1,0 +1,17 @@
+{
+  "name": "bg",
+  "category": "processes",
+  "summary": "Resumes a suspended job in the background.",
+  "description": "Shell builtin. After suspending a program with Ctrl+Z, bg starts it again in the background: it keeps running while you get the terminal back. Without an argument, bg acts on the current job (marked + in jobs).",
+  "synopsis": "bg [%JOB...]",
+  "options": [],
+  "arguments": [
+    { "name": "%JOB", "description": "Job to resume: %1, %2… (numbers shown by jobs).", "optional": true, "variadic": true }
+  ],
+  "examples": [
+    { "command": "bg", "explanation": "Resumes in the background the last job suspended with Ctrl+Z.", "output": "[1]+ ./build.sh &" },
+    { "command": "bg %2", "explanation": "Resumes job number 2." }
+  ],
+  "seeAlso": ["fg", "jobs", "nohup"],
+  "dangerLevel": "safe"
+}

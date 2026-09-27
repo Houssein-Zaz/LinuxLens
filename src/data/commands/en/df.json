@@ -1,0 +1,25 @@
+{
+  "name": "df",
+  "category": "system",
+  "summary": "Shows free disk space.",
+  "description": "Disk free: for each mounted file system, shows its size, used space, available space, usage percentage and mount point. To find out what is taking up space in a directory, use du.",
+  "synopsis": "df [OPTION]... [FILE]...",
+  "options": [
+    { "short": "-h", "long": "--human-readable", "description": "Sizes in readable units (K, M, G)." },
+    { "short": "-T", "long": "--print-type", "description": "Adds the file system type (ext4, tmpfs, vfat…)." },
+    { "short": "-i", "long": "--inodes", "description": "Shows inode usage instead of blocks: a disk can be “full” for lack of inodes.", "example": { "command": "df -i /", "output": "Filesystem     Inodes IUsed IFree IUse% Mounted on\n/dev/sda2         15M  812K   14M    6% /" } },
+    { "short": "-t", "long": "--type", "description": "Shows only file systems of this type.", "takesValue": true, "valueName": "TYPE", "example": { "command": "df -h -t ext4", "output": "/dev/sda2  234G  98G  124G  45% /" } },
+    { "short": "-x", "long": "--exclude-type", "description": "Excludes this file system type.", "takesValue": true, "valueName": "TYPE" },
+    { "long": "--total", "description": "Adds a total line.", "example": { "command": "df -h --total", "output": "…\ntotal  245G  99G  134G  43% -" } }
+  ],
+  "arguments": [
+    { "name": "FILE", "description": "Shows only the file system that contains this path.", "optional": true, "variadic": true }
+  ],
+  "examples": [
+    { "command": "df -h", "explanation": "Usage of every disk, in readable units.", "output": "Filesystem      Size  Used Avail Use% Mounted on\n/dev/sda2       234G   98G  124G  45% /\n/dev/sda1       511M  6.1M  505M   2% /boot/efi" },
+    { "command": "df -h /home", "explanation": "Only the disk that contains /home." },
+    { "command": "df -hT -x tmpfs", "explanation": "With the type of each file system, leaving out temporary in-memory ones." }
+  ],
+  "seeAlso": ["du", "lsblk", "mount"],
+  "dangerLevel": "safe"
+}

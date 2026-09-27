@@ -1,0 +1,21 @@
+{
+  "name": "free",
+  "category": "system",
+  "summary": "Shows RAM and swap usage.",
+  "description": "Shows total, used, free, shared, cached and available memory. The column to look at is “available”: Linux uses free memory as a disk cache and gives it back as soon as a program needs it, so a low “free” value is nothing to worry about.",
+  "synopsis": "free [OPTION]...",
+  "options": [
+    { "short": "-h", "long": "--human", "description": "Readable units (Mi, Gi)." },
+    { "short": "-m", "long": "--mebi", "description": "Values in mebibytes.", "example": { "command": "free -m", "output": "        total    used    free\nMem:     7851    3120    2143" } },
+    { "short": "-g", "long": "--gibi", "description": "Values in gibibytes.", "example": { "command": "free -g", "output": "        total    used    free\nMem:        7       3       2" } },
+    { "short": "-t", "long": "--total", "description": "Adds a total line (memory + swap).", "example": { "command": "free -h -t", "output": "…\nTotal:    9.7Gi   3.0Gi   4.1Gi" } },
+    { "short": "-w", "long": "--wide", "description": "Splits the buffers and cache columns.", "example": { "command": "free -h -w", "output": "        total   used    free    shared  buffers  cache   available\nMem:    7.7Gi   3.0Gi   2.1Gi   312Mi   180Mi    2.3Gi   4.4Gi" } },
+    { "short": "-s", "long": "--seconds", "description": "Refreshes the display every N seconds.", "takesValue": true, "valueName": "N" }
+  ],
+  "examples": [
+    { "command": "free -h", "explanation": "Memory status in readable units.", "output": "               total        used        free      shared  buff/cache   available\nMem:           7.7Gi       3.0Gi       2.1Gi       312Mi       2.5Gi       4.4Gi\nSwap:          2.0Gi          0B       2.0Gi" },
+    { "command": "free -h -s 2", "explanation": "Shows the status again every 2 seconds (Ctrl+C to stop)." }
+  ],
+  "seeAlso": ["top", "htop", "vmstat"],
+  "dangerLevel": "safe"
+}

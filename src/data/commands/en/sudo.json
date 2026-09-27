@@ -1,0 +1,29 @@
+{
+  "name": "sudo",
+  "category": "permissions",
+  "summary": "Runs a command with another user’s privileges, root by default.",
+  "description": "Superuser do: runs the command that follows with administrator privileges, after asking for YOUR password (not root’s). The right to use sudo is set in /etc/sudoers, often through the sudo or wheel group. The password is remembered for a few minutes. Every use is logged.",
+  "synopsis": "sudo [OPTION]... COMMAND [ARGUMENT]...",
+  "options": [
+    { "short": "-u", "long": "--user", "description": "Runs the command as this user instead of root.", "takesValue": true, "valueName": "USER" },
+    { "short": "-i", "long": "--login", "description": "Opens a full root login shell (root’s environment)." },
+    { "short": "-s", "long": "--shell", "description": "Opens a root shell while keeping the current environment.", "example": { "command": "sudo -s" } },
+    { "short": "-l", "long": "--list", "description": "Lists the commands you are allowed to run." },
+    { "short": "-k", "long": "--reset-timestamp", "description": "Forgets the remembered password: it will be asked for next time.", "example": { "command": "sudo -k" } },
+    { "short": "-E", "long": "--preserve-env", "description": "Keeps the user’s environment variables.", "example": { "command": "sudo -E npm install -g pnpm" } },
+    { "short": "-g", "long": "--group", "description": "Runs the command with this primary group.", "takesValue": true, "valueName": "GROUP", "example": { "command": "sudo -g docker docker ps" } }
+  ],
+  "arguments": [
+    { "name": "COMMAND", "description": "Command to run with elevated privileges, followed by its own options." }
+  ],
+  "examples": [
+    { "command": "sudo apt update", "explanation": "Updates the package list, which requires root privileges." },
+    { "command": "sudo -u postgres psql", "explanation": "Opens psql as the postgres user." },
+    { "command": "sudo -i", "explanation": "Opens a root shell; type exit to come back." },
+    { "command": "sudo -l", "explanation": "Checks what you are allowed to do with sudo." },
+    { "command": "echo \"127.0.0.1 dev.local\" | sudo tee -a /etc/hosts", "explanation": "Writes to a protected file: “sudo echo … >> /etc/hosts” would fail, because the redirection is done by your shell, without privileges." }
+  ],
+  "seeAlso": ["su", "whoami", "id"],
+  "dangerLevel": "caution",
+  "dangerNote": "With sudo, a command can change or delete anything on the system. Reread the command before pressing Enter, and never run a script you do not understand with sudo."
+}

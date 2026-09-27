@@ -1,4 +1,5 @@
 import { useId, useState, type InputHTMLAttributes, type ReactNode } from 'react';
+import { useTr } from '../../i18n';
 
 const inputClass =
   'h-11 w-full rounded-xl border border-zinc-200 bg-white px-3 text-sm shadow-sm outline-none transition-shadow focus:border-indigo-400 focus:ring-4 focus:ring-indigo-500/10 aria-[invalid=true]:border-red-300 dark:border-zinc-700 dark:bg-zinc-950 dark:focus:border-indigo-500 dark:aria-[invalid=true]:border-red-500/60';
@@ -35,6 +36,7 @@ export function TextField({ label, hint, error, ...input }: FieldProps) {
 export function PasswordField({ label, hint, error, ...input }: FieldProps) {
   const id = useId();
   const [visible, setVisible] = useState(false);
+  const tr = useTr();
   return (
     <div>
       <label htmlFor={id} className="mb-1.5 block text-sm font-medium">
@@ -55,7 +57,7 @@ export function PasswordField({ label, hint, error, ...input }: FieldProps) {
           aria-pressed={visible}
           className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md px-2 py-1 text-xs text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
         >
-          {visible ? 'Masquer' : 'Afficher'}
+          {visible ? tr('Masquer', 'Hide') : tr('Afficher', 'Show')}
         </button>
       </div>
       {(error || hint) && (
@@ -86,6 +88,7 @@ export function FormSuccess({ children }: { children?: ReactNode }) {
 }
 
 export function SubmitButton({ pending, disabled = false, children }: { pending: boolean; disabled?: boolean; children: ReactNode }) {
+  const tr = useTr();
   return (
     <button
       type="submit"
@@ -93,7 +96,7 @@ export function SubmitButton({ pending, disabled = false, children }: { pending:
       aria-busy={pending}
       className="inline-flex h-11 w-full items-center justify-center rounded-xl bg-indigo-600 px-4 text-sm font-medium text-white shadow-sm transition-colors hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60 aria-busy:cursor-wait dark:bg-indigo-500 dark:hover:bg-indigo-400"
     >
-      {pending ? 'Un instant…' : children}
+      {pending ? tr('Un instant…', 'One moment…') : children}
     </button>
   );
 }

@@ -1,0 +1,27 @@
+{
+  "name": "chmod",
+  "category": "permissions",
+  "summary": "Changes file permissions.",
+  "description": "Changes the read (r), write (w) and execute (x) permissions for the owner (u), the group (g) and others (o). The MODE is written in octal (755: each digit adds up r=4, w=2, x=1) or symbolically (u+x adds execute for the owner, go-w removes write from the group and others).",
+  "synopsis": "chmod [OPTION]... MODE FILE...",
+  "options": [
+    { "short": "-R", "long": "--recursive", "description": "Applies the change to directories and everything in them." },
+    { "short": "-v", "long": "--verbose", "description": "Prints a message for each file processed.", "example": { "command": "chmod -v 644 notes.txt", "output": "mode of 'notes.txt' changed from 0664 (rw-rw-r--) to 0644 (rw-r--r--)" } },
+    { "short": "-c", "long": "--changes", "description": "Like -v, but only when a change actually happens.", "example": { "command": "chmod -c u+x *.sh", "output": "mode of 'deploy.sh' changed from 0644 (rw-r--r--) to 0744 (rwxr--r--)" } },
+    { "short": "-f", "long": "--silent", "description": "Suppresses most error messages.", "example": { "command": "chmod -f 600 missing_file.txt" } },
+    { "long": "--reference", "description": "Copies the permissions of another file instead of giving a MODE.", "takesValue": true, "valueName": "FILE", "example": { "command": "chmod --reference=template.sh new.sh" } }
+  ],
+  "arguments": [
+    { "name": "MODE", "description": "New permissions: octal (644, 755) or symbolic (u+x, go-w, a=r)." },
+    { "name": "FILE", "description": "File(s) or directory(ies) to change.", "variadic": true }
+  ],
+  "examples": [
+    { "command": "chmod u+x script.sh", "explanation": "Makes the script executable by its owner." },
+    { "command": "chmod 755 script.sh", "explanation": "rwxr-xr-x: the owner can do everything, others can read and execute." },
+    { "command": "chmod 600 ~/.ssh/id_ed25519", "explanation": "rw-------: a private key readable only by its owner (required by SSH)." },
+    { "command": "chmod -R go-w shared/", "explanation": "Removes write from the group and others on a whole directory." }
+  ],
+  "seeAlso": ["chown", "chgrp", "umask", "ls"],
+  "dangerLevel": "caution",
+  "dangerNote": "chmod 777 gives everyone every permission: it is almost always a bad idea. With -R, a mistake applies to the whole tree."
+}

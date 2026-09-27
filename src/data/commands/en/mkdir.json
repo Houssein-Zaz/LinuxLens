@@ -1,0 +1,23 @@
+{
+  "name": "mkdir",
+  "category": "files",
+  "summary": "Creates directories.",
+  "description": "Creates one or more directories. By default, the parent directory must already exist and mkdir fails if the directory already exists.",
+  "synopsis": "mkdir [OPTION]... DIRECTORY...",
+  "options": [
+    { "short": "-p", "long": "--parents", "description": "Also creates missing parent directories, with no error if the directory already exists." },
+    { "short": "-m", "long": "--mode", "description": "Sets the permissions of the new directory (like chmod).", "takesValue": true, "valueName": "MODE" },
+    { "short": "-v", "long": "--verbose", "description": "Prints a message for each directory created." }
+  ],
+  "arguments": [
+    { "name": "DIRECTORY", "description": "Path of the directory (or directories) to create.", "variadic": true }
+  ],
+  "examples": [
+    { "command": "mkdir photos", "explanation": "Creates the photos directory in the current directory." },
+    { "command": "mkdir -p project/src/components", "explanation": "Creates the whole tree in one go, parents included." },
+    { "command": "mkdir -m 700 private", "explanation": "Creates a directory only its owner can access." },
+    { "command": "mkdir -pv a/b", "explanation": "Creates a then a/b, printing each creation.", "output": "mkdir: created directory 'a'\nmkdir: created directory 'a/b'" }
+  ],
+  "seeAlso": ["rmdir", "touch", "cd"],
+  "dangerLevel": "safe"
+}

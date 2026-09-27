@@ -1,0 +1,23 @@
+{
+  "name": "tee",
+  "category": "misc",
+  "summary": "Writes its input both to a file and to the screen.",
+  "description": "Like a T-fitting on a pipe: tee reads standard input, writes it to one or more files and also passes it on to standard output. It lets you keep a record of a command while seeing the result, or write to a protected file with sudo tee (sudo does not apply to a > redirection).",
+  "synopsis": "tee [OPTION]... [FILE]...",
+  "options": [
+    { "short": "-a", "long": "--append", "description": "Appends to the end of the files instead of overwriting them." },
+    { "short": "-i", "long": "--ignore-interrupts", "description": "Ignores Ctrl+C (SIGINT).", "example": { "command": "ping google.com | tee -i ping.log" } }
+  ],
+  "arguments": [
+    { "name": "FILE", "description": "File(s) to copy the input to.", "optional": true, "variadic": true }
+  ],
+  "examples": [
+    { "command": "npm run build | tee build.log", "explanation": "Shows the build and saves it to build.log." },
+    { "command": "echo \"vm.swappiness=10\" | sudo tee -a /etc/sysctl.conf", "explanation": "Adds a line to a protected system file." },
+    { "command": "ls -l | tee list.txt | wc -l", "explanation": "Saves the list to a file and counts the lines at the same time." },
+    { "command": "echo \"Hello\" | tee > /dev/null a.txt b.txt", "explanation": "Writes to two files without showing anything." }
+  ],
+  "seeAlso": ["xargs", "cat", "sudo"],
+  "dangerLevel": "caution",
+  "dangerNote": "Without -a, tee overwrites the contents of the target files. With sudo tee, a wrong path can replace a system file."
+}

@@ -1,0 +1,32 @@
+{
+  "name": "tar",
+  "category": "archives",
+  "summary": "Creates or extracts .tar, .tar.gz and .tar.xz archives.",
+  "description": "Bundles several files into a single archive (tape archive), optionally compressed. You pick an action (c create, x extract, t list), then options; f is followed by the archive name, so it must come last in a group such as -czvf.",
+  "synopsis": "tar [ACTION][OPTIONS] -f ARCHIVE [FILE]...",
+  "options": [
+    { "short": "-c", "long": "--create", "description": "Creates a new archive." },
+    { "short": "-x", "long": "--extract", "description": "Extracts the contents of an archive." },
+    { "short": "-t", "long": "--list", "description": "Lists the contents of an archive without extracting it." },
+    { "short": "-f", "long": "--file", "description": "Name of the archive file to create or read.", "takesValue": true, "valueName": "ARCHIVE" },
+    { "short": "-v", "long": "--verbose", "description": "Prints the files as they are processed." },
+    { "short": "-z", "long": "--gzip", "description": "Compresses or decompresses with gzip (.tar.gz, .tgz)." },
+    { "short": "-j", "long": "--bzip2", "description": "Compresses or decompresses with bzip2 (.tar.bz2).", "example": { "command": "tar -cjf archive.tar.bz2 folder/" } },
+    { "short": "-J", "long": "--xz", "description": "Compresses or decompresses with xz (.tar.xz).", "example": { "command": "tar -cJf archive.tar.xz folder/" } },
+    { "short": "-C", "long": "--directory", "description": "Changes to this directory before acting (where to extract to).", "takesValue": true, "valueName": "DIRECTORY" },
+    { "short": "-r", "long": "--append", "description": "Adds files to the end of an existing (uncompressed) archive.", "example": { "command": "tar -rf archive.tar forgotten.txt" } },
+    { "long": "--exclude", "description": "Excludes files matching the pattern.", "takesValue": true, "valueName": "PATTERN", "example": { "command": "tar -czf site.tar.gz --exclude=node_modules site/" } }
+  ],
+  "arguments": [
+    { "name": "FILE", "description": "Files or directories to archive, or to extract from the archive.", "optional": true, "variadic": true }
+  ],
+  "examples": [
+    { "command": "tar -czvf project.tar.gz project/", "explanation": "Creates (c) a gzip-compressed (z) archive of project/, printing (v) the files, in project.tar.gz (f)." },
+    { "command": "tar -xzvf project.tar.gz", "explanation": "Extracts the archive into the current directory." },
+    { "command": "tar -xf archive.tar.xz -C /opt", "explanation": "Extracts into /opt; recent versions of tar detect the compression on their own when extracting." },
+    { "command": "tar -tf backup.tar", "explanation": "Lists the contents without extracting." }
+  ],
+  "seeAlso": ["gzip", "zip", "unzip"],
+  "dangerLevel": "caution",
+  "dangerNote": "When extracting, existing files with the same name are overwritten. List the contents with -t first if in doubt."
+}

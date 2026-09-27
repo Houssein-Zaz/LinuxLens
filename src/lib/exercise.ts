@@ -2,6 +2,7 @@ import type { ParsedLine } from '../types/parser';
 import { applyChmod, emptyPermissions, fromOctal, fromSymbolic, toOctal, toSymbolic } from './permissions';
 import { parseCommandLine } from './parser';
 import { findOption, getCommand, registrySpec } from './registry';
+import { getLang, tr } from '../i18n';
 
 /**
  * Forme canonique d'une ligne de commande, pour comparer deux écritures équivalentes :
@@ -91,17 +92,28 @@ function compare(user: CanonicalSegment[], expected: CanonicalSegment[], ignore:
   if (user.length !== expected.length) {
     return [
       expected.length > user.length
-        ? `La solution attendue enchaîne ${expected.length} commandes : il en manque dans votre réponse.`
-        : `Votre réponse enchaîne ${user.length} commandes, la solution n’en demande que ${expected.length}.`,
+        ? tr(
+            `La solution attendue enchaîne ${expected.length} commandes : il en manque dans votre réponse.`,
+            `The expected solution chains ${expected.length} commands: some are missing from your answer.`,
+          )
+        : tr(
+            `Votre réponse enchaîne ${user.length} commandes, la solution n’en demande que ${expected.length}.`,
+            `Your answer chains ${user.length} commands, the solution only needs ${expected.length}.`,
+          ),
     ];
   }
+  const en = getLang() === 'en';
   const messages: string[] = [];
   expected.forEach((exp, i) => {
     const got = user[i]!;
-    const where = expected.length > 1 ? ` (commande ${i + 1})` : '';
+    const where = expected.length > 1 ? tr(` (commande ${i + 1})`, ` (command ${i + 1})`) : '';
     if (got.commands.join(' ') !== exp.commands.join(' ')) {
       const name = got.commands.at(-1) ?? '';
-      messages.push(name ? `« ${name} » n’est pas la commande attendue${where}.` : `Il manque la commande${where}.`);
+      messages.push(
+        name
+          ? tr(`« ${name} » n’est pas la commande attendue${where}.`, `“${name}” is not the expected command${where}.`)
+          : tr(`Il manque la commande${where}.`, `The command is missing${where}.`),
+      );
       return;
     }
     const gotOptions = got.options.filter((o) => !ignore.has(flagOf(shown(o))));
@@ -109,24 +121,39 @@ function compare(user: CanonicalSegment[], expected: CanonicalSegment[], ignore:
     const extra = gotOptions.filter((o) => !exp.options.includes(o));
     for (const e of extra) {
       const sameFlag = missing.find((m) => flagOf(m) === flagOf(e));
-      if (sameFlag) messages.push(`La valeur donnée à ${flagOf(shown(e))} n’est pas la bonne${where}.`);
-      else messages.push(`L’option ${shown(e)} n’est pas nécessaire ici${where}.`);
+      if (sameFlag) {
+        messages.push(tr(`La valeur donnée à ${flagOf(shown(e))} n’est pas la bonne${where}.`, `The value given to ${flagOf(shown(e))} is not the right one${where}.`));
+      } else messages.push(tr(`L’option ${shown(e)} n’est pas nécessaire ici${where}.`, `The option ${shown(e)} is not needed here${where}.`));
     }
     const reallyMissing = missing.filter((m) => !extra.some((e) => flagOf(e) === flagOf(m)));
     if (reallyMissing.length) {
-      messages.push(`Il manque ${reallyMissing.length === 1 ? 'une option' : `${reallyMissing.length} options`}${where}.`);
+      const n = reallyMissing.length;
+      messages.push(
+        en
+          ? `${n === 1 ? 'An option is' : `${n} options are`} missing${where}.`
+          : `Il manque ${n === 1 ? 'une option' : `${n} options`}${where}.`,
+      );
     }
     if (got.positionals.join('\n') !== exp.positionals.join('\n')) {
+      const want = exp.positionals.length;
+      const plural = want > 1 ? 's' : '';
       messages.push(
-        got.positionals.length === exp.positionals.length
-          ? `Vérifiez les arguments (noms de fichiers, motif, mode…)${where}.`
-          : `La solution attend ${exp.positionals.length} argument${exp.positionals.length > 1 ? 's' : ''}, vous en avez donné ${got.positionals.length}${where}.`,
+        got.positionals.length === want
+          ? tr(`Vérifiez les arguments (noms de fichiers, motif, mode…)${where}.`, `Check the arguments (file names, pattern, mode…)${where}.`)
+          : tr(
+              `La solution attend ${want} argument${plural}, vous en avez donné ${got.positionals.length}${where}.`,
+              `The solution expects ${want} argument${plural}, you gave ${got.positionals.length}${where}.`,
+            ),
       );
     }
     if (got.redirects.join() !== exp.redirects.join()) {
-      messages.push(exp.redirects.length ? `Vérifiez la redirection${where}.` : `Aucune redirection n’est nécessaire${where}.`);
+      messages.push(
+        exp.redirects.length
+          ? tr(`Vérifiez la redirection${where}.`, `Check the redirection${where}.`)
+          : tr(`Aucune redirection n’est nécessaire${where}.`, `No redirection is needed${where}.`),
+      );
     }
-    if (got.next !== exp.next) messages.push(`Vérifiez l’opérateur qui relie les commandes${where}.`);
+    if (got.next !== exp.next) messages.push(tr(`Vérifiez l’opérateur qui relie les commandes${where}.`, `Check the operator that links the commands${where}.`));
   });
   return messages;
 }
@@ -136,7 +163,7 @@ function compare(user: CanonicalSegment[], expected: CanonicalSegment[], ignore:
  * `ignoreOptions` : options tolérées en plus (`-v`…).
  */
 export function checkCommand(input: string, solutions: string[], ignoreOptions: string[] = []): CheckResult {
-  if (!input.trim()) return { ok: false, messages: ['Tapez une commande.'] };
+  if (!input.trim()) return { ok: false, messages: [tr('Tapez une commande.', 'Type a command.')] };
   const user = canonicalize(input);
   if (user.errors.length) return { ok: false, messages: user.errors };
 
@@ -147,7 +174,7 @@ export function checkCommand(input: string, solutions: string[], ignoreOptions: 
     if (messages.length === 0) return { ok: true, matched: solution };
     if (!best || messages.length < best.length) best = messages;
   }
-  return { ok: false, messages: best ?? ['Réponse incorrecte.'] };
+  return { ok: false, messages: best ?? [tr('Réponse incorrecte.', 'Incorrect answer.')] };
 }
 
 /* ------------------------------------------------------------------ */

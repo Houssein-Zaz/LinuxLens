@@ -1,0 +1,27 @@
+{
+  "name": "kill",
+  "category": "processes",
+  "summary": "Sends a signal to a process.",
+  "description": "Despite its name, kill sends a signal, which does not necessarily kill the process. The default signal is SIGTERM (15): a polite request to stop, which the program can catch to shut down cleanly. SIGKILL (9) stops the process immediately, without giving it time to save anything.",
+  "synopsis": "kill [-SIGNAL] PID...",
+  "options": [
+    { "short": "-s", "description": "Signal to send, by name (TERM, KILL, HUP) or by number.", "takesValue": true, "valueName": "SIGNAL", "example": { "command": "kill -s HUP 812" } },
+    { "short": "-l", "description": "Lists the available signal names." },
+    { "short": "-9", "description": "SIGKILL: immediate, forced stop that cannot be caught. A last resort." },
+    { "short": "-15", "description": "SIGTERM: request to stop cleanly (the default signal).", "example": { "command": "kill -15 1234" } },
+    { "short": "-1", "description": "SIGHUP: often used to ask a service to reload its configuration.", "example": { "command": "sudo kill -1 812" } },
+    { "short": "-2", "description": "SIGINT: interrupt, like Ctrl+C.", "example": { "command": "kill -2 4321" } }
+  ],
+  "arguments": [
+    { "name": "PID", "description": "Identifier of the target process(es) (see ps or pgrep). %1 means shell job 1.", "variadic": true }
+  ],
+  "examples": [
+    { "command": "kill 1234", "explanation": "Asks process 1234 to stop cleanly (SIGTERM)." },
+    { "command": "kill -9 1234", "explanation": "Forces process 1234 to stop immediately." },
+    { "command": "kill -HUP $(pgrep nginx)", "explanation": "Asks nginx to reload its configuration." },
+    { "command": "kill -l", "explanation": "Lists the signals.", "output": " 1) SIGHUP\t 2) SIGINT\t 3) SIGQUIT\t 4) SIGILL\t 5) SIGTRAP\n 6) SIGABRT\t 7) SIGBUS\t 8) SIGFPE\t 9) SIGKILL\t10) SIGUSR1" }
+  ],
+  "seeAlso": ["killall", "ps", "top", "pkill"],
+  "dangerLevel": "caution",
+  "dangerNote": "kill -9 does not let the program save its data. Try a plain kill (SIGTERM) first."
+}

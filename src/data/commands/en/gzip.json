@@ -1,0 +1,28 @@
+{
+  "name": "gzip",
+  "category": "archives",
+  "summary": "Compresses files to .gz format.",
+  "description": "Compresses each file on its own and replaces it with a .gz version: the original file disappears, unless -k is used. gzip does not bundle several files into one; for a directory, first create an archive with tar (tar -czf does both at once).",
+  "synopsis": "gzip [OPTION]... [FILE]...",
+  "options": [
+    { "short": "-d", "long": "--decompress", "description": "Decompresses (same as gunzip).", "example": { "command": "gzip -d app.log.gz" } },
+    { "short": "-k", "long": "--keep", "description": "Keeps the original file." },
+    { "short": "-c", "long": "--stdout", "description": "Writes the result to standard output without touching the files.", "example": { "command": "gzip -c report.txt > report.txt.gz" } },
+    { "short": "-r", "long": "--recursive", "description": "Compresses each file in directories, recursively.", "example": { "command": "gzip -r logs/" } },
+    { "short": "-v", "long": "--verbose", "description": "Prints the compression ratio of each file." },
+    { "short": "-l", "long": "--list", "description": "Shows compressed size, original size and ratio." },
+    { "short": "-1", "long": "--fast", "description": "Fastest compression, less size reduction.", "example": { "command": "gzip -1 big_dump.sql" } },
+    { "short": "-9", "long": "--best", "description": "Maximum compression, slower (6 by default)." }
+  ],
+  "arguments": [
+    { "name": "FILE", "description": "File(s) to compress. Without a file: standard input.", "optional": true, "variadic": true }
+  ],
+  "examples": [
+    { "command": "gzip app.log", "explanation": "Replaces app.log with app.log.gz." },
+    { "command": "gzip -kv -9 dump.sql", "explanation": "Maximum compression while keeping the original, with the ratio achieved.", "output": "dump.sql:\t 84.3% -- created dump.sql.gz" },
+    { "command": "gzip -l archive.gz", "explanation": "Compression ratio of a .gz file." },
+    { "command": "mysqldump mydb | gzip > mydb.sql.gz", "explanation": "Compresses a database backup on the fly." }
+  ],
+  "seeAlso": ["gunzip", "tar", "zip"],
+  "dangerLevel": "safe"
+}

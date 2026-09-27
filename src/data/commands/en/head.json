@@ -1,0 +1,23 @@
+{
+  "name": "head",
+  "category": "reading",
+  "summary": "Shows the beginning of a file.",
+  "description": "Shows the first lines (10 by default) of each file. Very useful at the end of a pipe to limit long output.",
+  "synopsis": "head [OPTION]... [FILE]...",
+  "options": [
+    { "short": "-n", "long": "--lines", "description": "Number of lines to show. With a minus sign (-n -5), shows everything except the last 5.", "takesValue": true, "valueName": "N" },
+    { "short": "-c", "long": "--bytes", "description": "Number of bytes to show instead of lines.", "takesValue": true, "valueName": "N", "example": { "command": "head -c 16 image.png | od -c" } },
+    { "short": "-q", "long": "--quiet", "description": "Does not print the “==> file <==” header with several files.", "example": { "command": "head -q -n 1 *.csv", "output": "id,name,city\nid,product,price" } },
+    { "short": "-v", "long": "--verbose", "description": "Always prints the header with the file name.", "example": { "command": "head -v -n 2 notes.txt", "output": "==> notes.txt <==\nMeeting on Monday\nCall Sara" } }
+  ],
+  "arguments": [
+    { "name": "FILE", "description": "File(s) to read. Without a file: standard input.", "optional": true, "variadic": true }
+  ],
+  "examples": [
+    { "command": "head file.csv", "explanation": "The first 10 lines of a file." },
+    { "command": "head -n 3 /etc/passwd", "explanation": "The first 3 lines.", "output": "root:x:0:0:root:/root:/bin/bash\ndaemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin\nbin:x:2:2:bin:/bin:/usr/sbin/nologin" },
+    { "command": "ls -t | head -1", "explanation": "The most recently modified file." }
+  ],
+  "seeAlso": ["tail", "cat", "less"],
+  "dangerLevel": "safe"
+}

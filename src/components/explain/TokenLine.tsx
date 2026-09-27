@@ -2,6 +2,7 @@ import { Fragment, useId } from 'react';
 import type { Explanation } from '../../lib/explain';
 import type { Token } from '../../types/parser';
 import { TOKEN_STYLE } from './tokenStyles';
+import { useTr } from '../../i18n';
 
 export interface ExplainedToken {
   key: string;
@@ -18,11 +19,12 @@ interface Props {
 
 /** La ligne de commande, chaque token coloré avec son explication au survol, au focus ou au clic. */
 export function TokenLine({ input, items, selectedKey, onSelect }: Props) {
+  const tr = useTr();
   let cursor = 0;
   return (
     <div
       className="rounded-2xl border border-zinc-200 bg-white p-4 font-mono text-base leading-loose shadow-sm sm:p-6 sm:text-lg dark:border-zinc-800 dark:bg-zinc-900"
-      aria-label="Commande découpée en éléments"
+      aria-label={tr('Commande découpée en éléments', 'Command broken down into parts')}
     >
       <div className="flex flex-wrap items-center gap-y-2">
         {items.map((item) => {

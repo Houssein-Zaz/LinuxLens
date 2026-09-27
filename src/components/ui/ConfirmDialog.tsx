@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useId, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
+import { useTr } from '../../i18n';
 import { buttonClass } from '../practice/Feedback';
 
 export interface ConfirmOptions {
@@ -26,6 +27,7 @@ export function useConfirm() {
 }
 
 function ConfirmDialog({ title, message, confirmLabel, danger, onClose }: ConfirmOptions & { onClose(ok: boolean): void }) {
+  const tr = useTr();
   const id = useId();
   const cancelRef = useRef<HTMLButtonElement>(null);
   const confirmRef = useRef<HTMLButtonElement>(null);
@@ -69,7 +71,7 @@ function ConfirmDialog({ title, message, confirmLabel, danger, onClose }: Confir
         )}
         <div className="mt-5 flex flex-wrap justify-end gap-2">
           <button ref={cancelRef} type="button" className={buttonClass.secondary} onClick={() => onClose(false)}>
-            Annuler
+            {tr('Annuler', 'Cancel')}
           </button>
           <button
             ref={confirmRef}

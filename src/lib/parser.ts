@@ -1,3 +1,4 @@
+import { tr } from '../i18n';
 import type {
   ControlOperator,
   ParsedLine,
@@ -101,7 +102,7 @@ function lex(input: string, errors: ParseError[]): Lexeme[] {
         const close = input.indexOf("'", i + 1);
         quoted ??= 'single';
         if (close === -1) {
-          errors.push({ message: 'Guillemet simple non fermé', start: i, end: n });
+          errors.push({ message: tr('Guillemet simple non fermé', 'Unclosed single quote'), start: i, end: n });
           value += input.slice(i + 1);
           i = n;
         } else {
@@ -126,7 +127,7 @@ function lex(input: string, errors: ParseError[]): Lexeme[] {
             j++;
           }
         }
-        if (!closed) errors.push({ message: 'Guillemet double non fermé', start: i, end: n });
+        if (!closed) errors.push({ message: tr('Guillemet double non fermé', 'Unclosed double quote'), start: i, end: n });
         i = j;
       } else if (ch === '\\') {
         if (i + 1 < n) value += input[i + 1];
@@ -134,7 +135,7 @@ function lex(input: string, errors: ParseError[]): Lexeme[] {
       } else if (ch === '$' && (input[i + 1] === '(' || input[i + 1] === '{')) {
         const end = findClosing(input, i + 1);
         if (end === -1) {
-          errors.push({ message: `« ${input[i + 1] === '(' ? '$(' : '${'} » non fermé`, start: i, end: n });
+          errors.push({ message: tr(`« ${input[i + 1] === '(' ? '$(' : '${'} » non fermé`, `Unclosed “${input[i + 1] === '(' ? '$(' : '${'}”`), start: i, end: n });
           value += input.slice(i);
           i = n;
         } else {
@@ -144,7 +145,7 @@ function lex(input: string, errors: ParseError[]): Lexeme[] {
       } else if (ch === '`') {
         const close = input.indexOf('`', i + 1);
         if (close === -1) {
-          errors.push({ message: 'Accent grave (`) non fermé', start: i, end: n });
+          errors.push({ message: tr('Accent grave (`) non fermé', 'Unclosed backtick (`)'), start: i, end: n });
           value += input.slice(i);
           i = n;
         } else {
@@ -251,14 +252,14 @@ export function parseCommandLine(input: string, spec: ParserSpec = {}): ParsedLi
     const { pendingRedirect, pendingOption } = state;
     if (pendingRedirect) {
       errors.push({
-        message: `Redirection « ${pendingRedirect.redirect.op} » sans cible`,
+        message: tr(`Redirection « ${pendingRedirect.redirect.op} » sans cible`, `Redirection “${pendingRedirect.redirect.op}” has no target`),
         start: pendingRedirect.token.start,
         end: pendingRedirect.token.end,
       });
     }
     if (pendingOption) {
       errors.push({
-        message: `L'option ${pendingOption.value} attend une valeur`,
+        message: tr(`L'option ${pendingOption.value} attend une valeur`, `The option ${pendingOption.value} expects a value`),
         start: pendingOption.start,
         end: pendingOption.end,
       });
@@ -291,7 +292,7 @@ export function parseCommandLine(input: string, spec: ParserSpec = {}): ParsedLi
         end: lx.end,
       };
       if (seg.tokens.length === 0) {
-        errors.push({ message: `Commande manquante avant « ${lx.op} »`, start: lx.start, end: lx.end });
+        errors.push({ message: tr(`Commande manquante avant « ${lx.op} »`, `Missing command before “${lx.op}”`), start: lx.start, end: lx.end });
       }
       closeSegment();
       seg.tokens.push(token);
@@ -306,7 +307,7 @@ export function parseCommandLine(input: string, spec: ParserSpec = {}): ParsedLi
       const token: Token = { kind: 'redirect', raw: lx.raw, value: lx.raw, start: lx.start, end: lx.end };
       if (state.pendingRedirect) {
         const p = state.pendingRedirect;
-        errors.push({ message: `Redirection « ${p.redirect.op} » sans cible`, start: p.token.start, end: p.token.end });
+        errors.push({ message: tr(`Redirection « ${p.redirect.op} » sans cible`, `Redirection “${p.redirect.op}” has no target`), start: p.token.start, end: p.token.end });
       }
       const redirect = { ...lx.redirect };
       seg.tokens.push(token);
@@ -454,7 +455,7 @@ export function parseCommandLine(input: string, spec: ParserSpec = {}): ParsedLi
     segments.push(last);
   } else if (lastControl && CONTINUES_AFTER.has(lastControl.op)) {
     errors.push({
-      message: `Commande manquante après « ${lastControl.op} »`,
+      message: tr(`Commande manquante après « ${lastControl.op} »`, `Missing command after “${lastControl.op}”`),
       start: lastControl.start,
       end: lastControl.end,
     });

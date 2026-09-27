@@ -1,0 +1,31 @@
+{
+  "name": "dpkg",
+  "category": "packages",
+  "summary": "Manages .deb packages at a low level.",
+  "description": "The tool apt is built on. dpkg installs a local .deb file, but downloads nothing and does not resolve dependencies; if dependencies are missing, sudo apt install -f fills them in. Today, sudo apt install ./file.deb does it all at once. dpkg is still very useful for querying the list of installed packages.",
+  "synopsis": "dpkg ACTION [OPTION]... PACKAGE|FILE",
+  "options": [
+    { "short": "-i", "long": "--install", "description": "Installs a .deb file." },
+    { "short": "-r", "long": "--remove", "description": "Uninstalls a package while keeping its configuration.", "example": { "command": "sudo dpkg -r google-chrome-stable" } },
+    { "short": "-P", "long": "--purge", "description": "Uninstalls a package and its configuration.", "example": { "command": "sudo dpkg -P google-chrome-stable" } },
+    { "short": "-l", "long": "--list", "description": "Lists installed packages (ii at the start of the line = installed)." },
+    { "short": "-L", "long": "--listfiles", "description": "Lists the files installed by a package." },
+    { "short": "-S", "long": "--search", "description": "Finds the package that installed a given file." },
+    { "short": "-s", "long": "--status", "description": "Shows a package’s status and description.", "example": { "command": "dpkg -s curl", "output": "Package: curl\nStatus: install ok installed\nVersion: 8.5.0-2ubuntu10" } },
+    { "long": "--configure", "description": "Finishes configuring packages; --configure -a resumes an interrupted installation." },
+    { "short": "-a", "long": "--pending", "description": "With --configure, processes every pending package." }
+  ],
+  "arguments": [
+    { "name": "PACKAGE|FILE", "description": "Package name, .deb file or path, depending on the action.", "optional": true, "variadic": true }
+  ],
+  "examples": [
+    { "command": "sudo dpkg -i google-chrome-stable_current_amd64.deb", "explanation": "Installs a package downloaded by hand." },
+    { "command": "dpkg -l | grep nginx", "explanation": "Checks whether nginx is installed, and which version.", "output": "ii  nginx  1.24.0-2ubuntu7  amd64  small, powerful, scalable web/proxy server" },
+    { "command": "dpkg -L curl", "explanation": "Lists the files installed by the curl package." },
+    { "command": "dpkg -S /usr/bin/convert", "explanation": "Which package installed this program?", "output": "imagemagick-6.q16: /usr/bin/convert" },
+    { "command": "sudo dpkg --configure -a", "explanation": "Repairs an interrupted installation (“dpkg was interrupted” error)." }
+  ],
+  "seeAlso": ["apt", "snap"],
+  "dangerLevel": "caution",
+  "dangerNote": "dpkg does not install dependencies and can leave the system in an inconsistent state. Prefer apt install ./file.deb."
+}

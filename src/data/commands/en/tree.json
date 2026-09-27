@@ -1,0 +1,28 @@
+{
+  "name": "tree",
+  "category": "files",
+  "summary": "Shows a directory tree.",
+  "description": "Draws the contents of a directory and its subdirectories as a tree, then the total number of folders and files. Very handy for seeing the structure of a project. tree is not always installed by default (sudo apt install tree).",
+  "synopsis": "tree [OPTION]... [DIRECTORY]...",
+  "options": [
+    { "short": "-L", "description": "Maximum depth shown.", "takesValue": true, "valueName": "LEVEL" },
+    { "short": "-d", "description": "Shows only directories." },
+    { "short": "-a", "description": "Also shows hidden files.", "example": { "command": "tree -a -L 1", "output": ".\n├── .git\n├── .gitignore\n└── README.md" } },
+    { "short": "-h", "description": "Shows the size of each file in readable units.", "example": { "command": "tree -h project", "output": "project\n├── [4.0K]  src\n│   └── [ 12K]  app.js\n└── [1.2K]  README.md" } },
+    { "short": "-f", "description": "Shows the full path of each file.", "example": { "command": "tree -f project", "output": "project\n├── project/README.md\n└── project/src\n    └── project/src/app.js" } },
+    { "short": "-I", "description": "Excludes files matching the pattern; separate several patterns with | (e.g. 'node_modules|dist').", "takesValue": true, "valueName": "PATTERN" },
+    { "short": "-P", "description": "Shows only files matching the pattern.", "takesValue": true, "valueName": "PATTERN", "example": { "command": "tree -P \"*.py\" project", "output": "project\n└── src\n    └── main.py" } },
+    { "long": "--dirsfirst", "description": "Lists directories before files." },
+    { "long": "--gitignore", "description": "Ignores the files listed in .gitignore.", "example": { "command": "tree --gitignore" } }
+  ],
+  "arguments": [
+    { "name": "DIRECTORY", "description": "Root of the tree. Default: the current directory.", "optional": true, "variadic": true }
+  ],
+  "examples": [
+    { "command": "tree -L 2 project", "explanation": "The first two levels of the project directory.", "output": "project\n├── README.md\n├── package.json\n└── src\n    ├── App.tsx\n    └── main.tsx\n\n2 directories, 4 files" },
+    { "command": "tree -d", "explanation": "Only the directory tree." },
+    { "command": "tree -I 'node_modules|dist' --dirsfirst", "explanation": "The tree of a web project without the generated folders, directories first." }
+  ],
+  "seeAlso": ["ls", "find", "du"],
+  "dangerLevel": "safe"
+}

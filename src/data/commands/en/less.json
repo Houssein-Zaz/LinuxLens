@@ -1,0 +1,26 @@
+{
+  "name": "less",
+  "category": "reading",
+  "summary": "Shows a file page by page, with scrolling and search.",
+  "description": "Opens a file (or the output of a pipe) in a full-screen pager, without loading it entirely: ideal for large files. Keys: Space / b to go forward / back one page, arrows for one line, g and G for the start and end, /pattern to search (n and N for the next and previous match), F to follow the file like tail -f, q to quit. It is the pager man uses.",
+  "synopsis": "less [OPTION]... [FILE]...",
+  "options": [
+    { "short": "-N", "long": "--LINE-NUMBERS", "description": "Shows line numbers." },
+    { "short": "-S", "long": "--chop-long-lines", "description": "Does not wrap long lines: scroll sideways with the arrows (handy for CSV files)." },
+    { "short": "-i", "long": "--ignore-case", "description": "Case-insensitive search, unless the pattern contains an uppercase letter.", "example": { "command": "less -i app.log" } },
+    { "short": "-R", "long": "--RAW-CONTROL-CHARS", "description": "Shows colors (ANSI codes) properly, for example those of grep --color=always." },
+    { "short": "-F", "long": "--quit-if-one-screen", "description": "Quits immediately if the contents fit on one screen.", "example": { "command": "git log --oneline | less -F" } },
+    { "short": "-X", "long": "--no-init", "description": "Leaves the contents displayed in the terminal after quitting.", "example": { "command": "less -X config.ini" } }
+  ],
+  "arguments": [
+    { "name": "FILE", "description": "File(s) to read. Without a file: standard input (end of a pipe).", "optional": true, "variadic": true }
+  ],
+  "examples": [
+    { "command": "less /var/log/syslog", "explanation": "Browses the system log; /error then n to find each error." },
+    { "command": "less -N script.sh", "explanation": "Reads a script with line numbers." },
+    { "command": "less -S data.csv", "explanation": "Reads a wide CSV without wrapping lines." },
+    { "command": "grep --color=always -n error app.log | less -R", "explanation": "Browses grep’s results while keeping their colors." }
+  ],
+  "seeAlso": ["more", "cat", "head", "tail"],
+  "dangerLevel": "safe"
+}

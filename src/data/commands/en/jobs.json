@@ -1,0 +1,24 @@
+{
+  "name": "jobs",
+  "category": "processes",
+  "summary": "Lists the jobs started from the current shell.",
+  "description": "Shell builtin that shows the session’s jobs: those started in the background with &, or suspended with Ctrl+Z. Each job has a number ([1], [2]…) that can be used with fg, bg or kill as %1. The + marks the current job, the - the previous one.",
+  "synopsis": "jobs [-lnprs] [%JOB...]",
+  "options": [
+    { "short": "-l", "description": "Adds the PID of each job." },
+    { "short": "-p", "description": "Prints only the PIDs." },
+    { "short": "-r", "description": "Only running jobs.", "example": { "command": "jobs -r", "output": "[1]-  Running                 sleep 300 &" } },
+    { "short": "-s", "description": "Only suspended (stopped) jobs.", "example": { "command": "jobs -s", "output": "[2]+  Stopped                 vim notes.txt" } },
+    { "short": "-n", "description": "Only jobs whose state has changed since they were last shown.", "example": { "command": "jobs -n", "output": "[1]-  Done                    sleep 300" } }
+  ],
+  "arguments": [
+    { "name": "%JOB", "description": "Job(s) to show: %1, %+ (current), %- (previous).", "optional": true, "variadic": true }
+  ],
+  "examples": [
+    { "command": "jobs", "explanation": "Lists the session’s jobs.", "output": "[1]-  Running                 sleep 300 &\n[2]+  Stopped                 vim notes.txt" },
+    { "command": "jobs -l", "explanation": "The same list with the PID of each job.", "output": "[1]- 48213 Running                 sleep 300 &\n[2]+ 48260 Stopped                 vim notes.txt" },
+    { "command": "jobs -p | xargs kill", "explanation": "Stops every job in the session: jobs -p gives the PIDs, xargs passes them to kill." }
+  ],
+  "seeAlso": ["bg", "fg", "kill", "nohup"],
+  "dangerLevel": "safe"
+}

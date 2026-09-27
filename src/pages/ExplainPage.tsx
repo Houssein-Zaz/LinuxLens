@@ -12,6 +12,7 @@ import { CONTROL_TEXT, explainSegment } from '../lib/explain';
 import { parseCommandLine } from '../lib/parser';
 import { getCommand, registrySpec, suggestCommands } from '../lib/registry';
 import type { ControlOperator } from '../types/parser';
+import { useLang, useTr } from '../i18n';
 
 const EXAMPLES = [
   'ls -la /home',
@@ -27,6 +28,8 @@ export function ExplainPage() {
   const input = params.get('c') ?? '';
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const tldr = useTldrIndex();
+  const lang = useLang();
+  const tr = useTr();
 
   const setInput = useCallback(
     (value: string) => {
@@ -44,10 +47,10 @@ export function ExplainPage() {
         name,
         summary: getCommand(name)?.summary ?? tldr.get(name)?.summary,
       })),
-    [tldr],
+    [tldr, lang],
   );
 
-  const parsed = useMemo(() => parseCommandLine(input, registrySpec), [input]);
+  const parsed = useMemo(() => parseCommandLine(input, registrySpec), [input, lang]);
   const perSegment = useMemo(
     () =>
       parsed.segments.map((segment, s) => {
@@ -63,9 +66,12 @@ export function ExplainPage() {
     <div className="space-y-8">
       <DocumentTitle />
       <div className="mx-auto max-w-3xl space-y-3 pt-4 text-center sm:pt-10">
-        <h1 className="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">Comprendre une commande Linux</h1>
+        <h1 className="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">{tr('Comprendre une commande Linux', 'Understand a Linux command')}</h1>
         <p className="text-zinc-600 text-balance dark:text-zinc-400">
-          Tapez ou collez une commande : chaque élément est coloré et expliqué, en français.
+          {tr(
+            'Tapez ou collez une commande : chaque élément est coloré et expliqué, en français.',
+            'Type or paste a command: each part is highlighted and explained.',
+          )}
         </p>
       </div>
 
@@ -91,7 +97,7 @@ export function ExplainPage() {
         <ul role="alert" className="space-y-1 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:border-amber-400/30 dark:bg-amber-400/10 dark:text-amber-200">
           {parsed.errors.map((e) => (
             <li key={`${e.start}-${e.message}`}>
-              {e.message} <span className="text-amber-700 dark:text-amber-300/80">(position {e.start + 1})</span>
+              {e.message} <span className="text-amber-700 dark:text-amber-300/80">({tr('position', 'position')} {e.start + 1})</span>
             </li>
           ))}
         </ul>
@@ -101,14 +107,15 @@ export function ExplainPage() {
         <>
           <div className="space-y-3">
             <TokenLine input={input} items={allItems} selectedKey={selectedKey} onSelect={setSelectedKey} />
-            <ul aria-label="Légende" className="flex flex-wrap items-center gap-x-2 gap-y-2.5 text-xs text-zinc-500 dark:text-zinc-400">
+            <ul aria-label={tr('Légende', 'Legend')} className="flex flex-wrap items-center gap-x-2 gap-y-2.5 text-xs text-zinc-500 dark:text-zinc-400">
               {LEGEND.map(({ kind, label }) => (
                 <li key={kind}>
                   <span className={`rounded px-1.5 py-0.5 ring-1 ring-inset ${TOKEN_STYLE[kind]}`}>{label}</span>
                 </li>
               ))}
               <li className="ml-1">
-                <span className="underline decoration-dotted underline-offset-4">souligné</span> = non documenté
+                <span className="underline decoration-dotted underline-offset-4">{tr('souligné', 'underlined')}</span> ={' '}
+                {tr('non documenté', 'not documented')}
               </li>
             </ul>
           </div>

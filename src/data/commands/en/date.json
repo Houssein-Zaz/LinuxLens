@@ -1,0 +1,27 @@
+{
+  "name": "date",
+  "category": "system",
+  "summary": "Prints or formats the date and time.",
+  "description": "Without an argument, prints the current date and time. An argument starting with + sets the format: %Y (year), %m (month), %d (day), %H:%M:%S (time), %s (seconds since 1970, the “Unix timestamp”). Widely used in scripts to name backup files. Changing the system time requires sudo; timedatectl is usually used instead.",
+  "synopsis": "date [OPTION]... [+FORMAT]",
+  "options": [
+    { "short": "-d", "long": "--date", "description": "Prints a date other than now: \"tomorrow\", \"2 days ago\", \"2024-12-25\", \"@1700000000\" (timestamp).", "takesValue": true, "valueName": "TEXT" },
+    { "short": "-u", "long": "--utc", "description": "Prints UTC time instead of local time.", "example": { "command": "date -u", "output": "Fri Jul 12 19:14:05 UTC 2024" } },
+    { "short": "-I", "long": "--iso-8601", "description": "ISO 8601 format (2024-07-12).", "example": { "command": "date -I", "output": "2024-07-12" } },
+    { "short": "-R", "long": "--rfc-email", "description": "Email header format (RFC 5322).", "example": { "command": "date -R", "output": "Fri, 12 Jul 2024 21:14:05 +0200" } },
+    { "short": "-r", "long": "--reference", "description": "Prints the last modification date of a file.", "takesValue": true, "valueName": "FILE", "example": { "command": "date -r report.pdf", "output": "Thu Jul 11 18:02:47 CEST 2024" } },
+    { "short": "-s", "long": "--set", "description": "Sets the system clock (root).", "takesValue": true, "valueName": "TEXT", "example": { "command": "sudo date -s \"2024-07-12 21:14\"", "output": "Fri Jul 12 21:14:00 CEST 2024" } }
+  ],
+  "arguments": [
+    { "name": "+FORMAT", "description": "Display format, for example +%d/%m/%Y or +%H:%M.", "optional": true }
+  ],
+  "examples": [
+    { "command": "date", "explanation": "The current date and time.", "output": "Fri Jul 12 21:14:05 CEST 2024" },
+    { "command": "date +%Y-%m-%d", "explanation": "Date in year-month-day format.", "output": "2024-07-12" },
+    { "command": "date +\"%m/%d/%Y %H:%M\"", "explanation": "US-style format; the quotes protect the space. In a script, $(date +%F) inserts today’s date into a file name.", "output": "07/12/2024 21:14" },
+    { "command": "date -d \"next monday\" +%A\\ %B\\ %d", "explanation": "Works out a relative date.", "output": "Monday July 15" },
+    { "command": "date +%s", "explanation": "The Unix timestamp: seconds elapsed since January 1, 1970.", "output": "1720811645" }
+  ],
+  "seeAlso": ["cal", "timedatectl", "touch"],
+  "dangerLevel": "safe"
+}

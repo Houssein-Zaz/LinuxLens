@@ -1,0 +1,23 @@
+{
+  "name": "htop",
+  "category": "processes",
+  "summary": "Interactive, colorful process monitor.",
+  "description": "A more comfortable version of top: colored bars for each core and for memory, scrolling, mouse selection, process tree. The function keys are listed at the bottom of the screen: F3 searches, F4 filters, F5 shows the tree, F6 sorts, F9 sends a signal, F10 or q quits. htop is not always installed by default (sudo apt install htop).",
+  "synopsis": "htop [OPTION]...",
+  "options": [
+    { "short": "-u", "long": "--user", "description": "Shows only this user’s processes.", "takesValue": true, "valueName": "USER" },
+    { "short": "-p", "long": "--pid", "description": "Shows only the given PIDs (comma-separated).", "takesValue": true, "valueName": "PID", "example": { "command": "htop -p 812,905" } },
+    { "short": "-d", "long": "--delay", "description": "Refresh interval, in tenths of a second.", "takesValue": true, "valueName": "TENTHS", "example": { "command": "htop -d 50" } },
+    { "short": "-s", "long": "--sort-key", "description": "Column to sort by at startup (PERCENT_CPU, PERCENT_MEM…).", "takesValue": true, "valueName": "COLUMN" },
+    { "short": "-t", "long": "--tree", "description": "Starts in tree view (parents and children)." },
+    { "short": "-C", "long": "--no-color", "description": "Turns colors off.", "example": { "command": "htop -C" } }
+  ],
+  "examples": [
+    { "command": "htop", "explanation": "Opens the interactive monitor." },
+    { "command": "htop -u esprit", "explanation": "Only the processes of the user esprit." },
+    { "command": "htop -t", "explanation": "Shows the process tree straight away." },
+    { "command": "htop -s PERCENT_MEM", "explanation": "Sorts by memory use from the start." }
+  ],
+  "seeAlso": ["top", "ps", "kill"],
+  "dangerLevel": "safe"
+}

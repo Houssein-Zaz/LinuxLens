@@ -1,0 +1,22 @@
+{
+  "name": "printf",
+  "category": "text",
+  "summary": "Prints formatted text.",
+  "description": "Prints its arguments according to a FORMAT, like the C printf function. In the format, %s is replaced by text, %d by an integer, %f by a decimal number, and \\n adds a newline (printf never adds one on its own). If there are more arguments than %, the format is reused. More predictable than echo in scripts.",
+  "synopsis": "printf FORMAT [ARGUMENT]...",
+  "options": [
+    { "short": "-v", "description": "(bash) Stores the result in a variable instead of printing it.", "takesValue": true, "valueName": "VARIABLE", "example": { "command": "printf -v message \"Hello %s\" \"$USER\" && echo \"$message\"", "output": "Hello esprit" } }
+  ],
+  "arguments": [
+    { "name": "FORMAT", "description": "Template: %s (text), %d (integer), %.2f (decimal with 2 digits), %-10s (text left-aligned over 10 characters), \\n, \\t." },
+    { "name": "ARGUMENT", "description": "Values inserted into the format, in order.", "optional": true, "variadic": true }
+  ],
+  "examples": [
+    { "command": "printf \"Hello %s\\n\" \"$USER\"", "explanation": "Inserts the user name into the message.", "output": "Hello esprit" },
+    { "command": "printf \"%s\\n\" apple pear kiwi", "explanation": "The format is reused for each argument: one fruit per line.", "output": "apple\npear\nkiwi" },
+    { "command": "printf \"%-10s|%5d\\n\" Ali 21 Sara 7", "explanation": "Left-aligns a name over 10 characters and right-aligns a number over 5.", "output": "Ali       |   21\nSara      |    7" },
+    { "command": "printf \"%.2f\\n\" 3.14159", "explanation": "Rounds to two decimal places.", "output": "3.14" }
+  ],
+  "seeAlso": ["echo"],
+  "dangerLevel": "safe"
+}

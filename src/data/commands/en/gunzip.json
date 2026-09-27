@@ -1,0 +1,26 @@
+{
+  "name": "gunzip",
+  "category": "archives",
+  "summary": "Decompresses .gz files.",
+  "description": "Restores a file compressed by gzip and removes the .gz, unless -k is used. It is the same as gzip -d. For a .tar.gz archive, use tar -xzf directly instead, which decompresses and extracts in one step. To read a .gz without decompressing it to disk, there are zcat and zless.",
+  "synopsis": "gunzip [OPTION]... [FILE]...",
+  "options": [
+    { "short": "-k", "long": "--keep", "description": "Keeps the .gz file." },
+    { "short": "-c", "long": "--stdout", "description": "Writes the decompressed contents to standard output, without creating a file." },
+    { "short": "-f", "long": "--force", "description": "Overwrites an existing file with the same name.", "example": { "command": "gunzip -f report.txt.gz" } },
+    { "short": "-t", "long": "--test", "description": "Checks the integrity of the compressed file.", "example": { "command": "gunzip -t backup.sql.gz" } },
+    { "short": "-l", "long": "--list", "description": "Shows the sizes and compression ratio.", "example": { "command": "gunzip -l backup.sql.gz", "output": "  compressed  uncompressed  ratio uncompressed_name\n     2048576      12582912  83.7% backup.sql" } },
+    { "short": "-r", "long": "--recursive", "description": "Decompresses the files in directories, recursively.", "example": { "command": "gunzip -r archives/" } },
+    { "short": "-v", "long": "--verbose", "description": "Prints the name and ratio of each file.", "example": { "command": "gunzip -v app.log.gz", "output": "app.log.gz:\t 79.2% -- replaced with app.log" } }
+  ],
+  "arguments": [
+    { "name": "FILE", "description": ".gz file(s) to decompress.", "optional": true, "variadic": true }
+  ],
+  "examples": [
+    { "command": "gunzip app.log.gz", "explanation": "Restores app.log." },
+    { "command": "gunzip -k backup.sql.gz", "explanation": "Decompresses while keeping the .gz file." },
+    { "command": "gunzip -c access.log.2.gz | grep 404", "explanation": "Searches a compressed log without decompressing it to disk." }
+  ],
+  "seeAlso": ["gzip", "tar", "unzip"],
+  "dangerLevel": "safe"
+}

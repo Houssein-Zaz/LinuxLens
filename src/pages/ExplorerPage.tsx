@@ -6,6 +6,7 @@ import { useTldrIndex } from '../hooks/useTldr';
 import { allCommands } from '../lib/registry';
 import { matchScore } from '../lib/search';
 import type { CommandDoc } from '../types/command';
+import { useTr } from '../i18n';
 
 const MAX_TLDR_RESULTS = 60;
 
@@ -13,6 +14,7 @@ export function ExplorerPage() {
   const [params, setParams] = useSearchParams();
   const query = params.get('q') ?? '';
   const tldr = useTldrIndex();
+  const tr = useTr();
   const commands = allCommands();
 
   const detailed = useMemo(
@@ -37,7 +39,7 @@ export function ExplorerPage() {
 
   return (
     <>
-      <PageHeader title="Explorer les commandes" />
+      <PageHeader title={tr('Explorer les commandes', 'Explore the commands')} />
 
       <div className="relative mb-10 max-w-xl">
         <svg aria-hidden="true" viewBox="0 0 20 20" className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-zinc-400" fill="none" stroke="currentColor" strokeWidth="2">
@@ -48,17 +50,17 @@ export function ExplorerPage() {
           type="search"
           value={query}
           onChange={(e) => setParams(e.target.value ? { q: e.target.value } : {}, { replace: true })}
-          placeholder="Rechercher : nom ou description (ex. « archive », « processus »)"
-          aria-label="Rechercher une commande"
+          placeholder={tr('Rechercher : nom ou description (ex. « archive », « processus »)', 'Search: name or description (e.g. “archive”, “process”)')}
+          aria-label={tr('Rechercher une commande', 'Search for a command')}
           className="h-11 w-full rounded-xl border border-zinc-200 bg-white pl-10 pr-4 text-sm shadow-sm outline-none transition-shadow focus:border-indigo-400 focus:ring-4 focus:ring-indigo-500/10 dark:border-zinc-800 dark:bg-zinc-900 dark:focus:border-indigo-500"
         />
       </div>
 
       {byCategory.length === 0 && extended.length === 0 && (
         <p className="text-zinc-600 dark:text-zinc-400">
-          Aucune commande ne correspond à « {query} ».{' '}
+          {tr(`Aucune commande ne correspond à « ${query} ».`, `No command matches “${query}”.`)}{' '}
           <Link className="text-indigo-600 hover:underline dark:text-indigo-400" to={`/?c=${encodeURIComponent(query)}`}>
-            L’analyser quand même
+            {tr('L’analyser quand même', 'Analyze it anyway')}
           </Link>
         </p>
       )}
@@ -83,9 +85,9 @@ export function ExplorerPage() {
         {extended.length > 0 && (
           <section aria-labelledby="cat-tldr">
             <h2 id="cat-tldr" className="text-lg font-semibold tracking-tight">
-              Autres commandes
+              {tr('Autres commandes', 'Other commands')}
             </h2>
-            <p className="mb-4 text-sm text-zinc-500 dark:text-zinc-400">Fiches courtes : un résumé et des exemples.</p>
+            <p className="mb-4 text-sm text-zinc-500 dark:text-zinc-400">{tr('Fiches courtes : un résumé et des exemples.', 'Short pages: a summary and examples.')}</p>
             <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {extended.map((e) => (
                 <li key={e.name}>

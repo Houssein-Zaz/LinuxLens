@@ -1,4 +1,5 @@
 import type { Attempt, Backend, HistoryEntry, MyFeedback, User } from '../../types/backend';
+import { tr } from '../../i18n';
 import {
   ANSWER_MAX_LENGTH,
   ATTEMPTS_LIMIT,
@@ -125,7 +126,7 @@ export function createDemoBackend(store: KeyValueStore = safeLocalStorage): Back
         if (error) return { error };
         const key = normalizeEmail(email);
         const all = users();
-        if (all[key]) return { error: 'Un compte existe déjà avec cette adresse e-mail.' };
+        if (all[key]) return { error: tr('Un compte existe déjà avec cette adresse e-mail.', 'An account already exists with this email address.') };
         const salt = toHex(crypto.getRandomValues(new Uint8Array(16)));
         all[key] = {
           id: crypto.randomUUID(),
@@ -142,7 +143,7 @@ export function createDemoBackend(store: KeyValueStore = safeLocalStorage): Back
       async signIn(email, password) {
         const u = users()[normalizeEmail(email)];
         if (!u || (await hashPassword(password, u.salt)) !== u.hash) {
-          return { error: 'E-mail ou mot de passe incorrect.' };
+          return { error: tr('E-mail ou mot de passe incorrect.', 'Incorrect email or password.') };
         }
         store.setItem(SESSION_KEY, u.id);
         emit();
@@ -155,13 +156,18 @@ export function createDemoBackend(store: KeyValueStore = safeLocalStorage): Back
       async requestPasswordReset(email) {
         return validateEmail(email)
           ? { error: validateEmail(email)! }
-          : { error: 'En mode démo, aucun e-mail n’est envoyé : la réinitialisation sera disponible avec la base de données.' };
+          : {
+              error: tr(
+                'En mode démo, aucun e-mail n’est envoyé : la réinitialisation sera disponible avec la base de données.',
+                'In demo mode, no email is sent: password reset will be available once the database is connected.',
+              ),
+            };
       },
       async updatePassword(password) {
         const error = validatePassword(password);
         if (error) return { error };
         const u = current();
-        if (!u) return { error: 'Vous devez être connecté.' };
+        if (!u) return { error: tr('Vous devez être connecté.', 'You must be signed in.') };
         const all = users();
         const salt = toHex(crypto.getRandomValues(new Uint8Array(16)));
         all[u.email] = { ...u, salt, hash: await hashPassword(password, salt) };
@@ -170,7 +176,7 @@ export function createDemoBackend(store: KeyValueStore = safeLocalStorage): Back
       },
       async updateProfile(displayName) {
         const u = current();
-        if (!u) return { error: 'Vous devez être connecté.' };
+        if (!u) return { error: tr('Vous devez être connecté.', 'You must be signed in.') };
         const all = users();
         all[u.email] = { ...u, displayName: displayName.trim() || null };
         saveUsers(all);
@@ -179,7 +185,7 @@ export function createDemoBackend(store: KeyValueStore = safeLocalStorage): Back
       },
       async deleteAccount() {
         const u = current();
-        if (!u) return { error: 'Vous devez être connecté.' };
+        if (!u) return { error: tr('Vous devez être connecté.', 'You must be signed in.') };
         const all = users();
         delete all[u.email];
         saveUsers(all);

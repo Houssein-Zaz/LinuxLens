@@ -1,0 +1,25 @@
+{
+  "name": "wc",
+  "category": "reading",
+  "summary": "Counts lines, words and bytes.",
+  "description": "Word Count: prints, for each file, the number of lines, words and bytes, then a total if there are several files. At the end of a pipe, wc -l is used to count results. Watch out: wc -l counts newline characters, so a last line without a newline is not counted.",
+  "synopsis": "wc [OPTION]... [FILE]...",
+  "options": [
+    { "short": "-l", "long": "--lines", "description": "Counts only lines." },
+    { "short": "-w", "long": "--words", "description": "Counts only words (separated by whitespace).", "example": { "command": "wc -w report.txt", "output": "318 report.txt" } },
+    { "short": "-c", "long": "--bytes", "description": "Counts only bytes.", "example": { "command": "wc -c photo.jpg", "output": "248913 photo.jpg" } },
+    { "short": "-m", "long": "--chars", "description": "Counts characters (an accented character counts as one, versus two bytes in UTF-8).", "example": { "command": "echo -n \"été\" | wc -m", "output": "3" } },
+    { "short": "-L", "long": "--max-line-length", "description": "Prints the length of the longest line.", "example": { "command": "wc -L code.py", "output": "112 code.py" } }
+  ],
+  "arguments": [
+    { "name": "FILE", "description": "File(s) to analyze. Without a file: standard input.", "optional": true, "variadic": true }
+  ],
+  "examples": [
+    { "command": "wc report.txt", "explanation": "Lines, words and bytes of the file.", "output": "  42  318 2051 report.txt" },
+    { "command": "wc -l *.py", "explanation": "Number of lines in each Python script, with the total.", "output": "  120 app.py\n   45 utils.py\n  165 total" },
+    { "command": "ls | wc -l", "explanation": "Counts the entries in the current directory." },
+    { "command": "grep -r \"TODO\" src/ | wc -l", "explanation": "Counts the TODOs in a project." }
+  ],
+  "seeAlso": ["grep", "cat", "du"],
+  "dangerLevel": "safe"
+}

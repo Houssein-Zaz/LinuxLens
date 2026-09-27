@@ -1,0 +1,23 @@
+{
+  "name": "ifconfig",
+  "category": "network",
+  "summary": "Shows and configures network interfaces (older tool).",
+  "description": "The historic tool from the net-tools package, still very common in courses and tutorials. It is no longer installed by default on recent distributions: its replacement is ip (ifconfig corresponds to ip a). Without an argument, it shows the active interfaces with their IPv4, IPv6 and MAC addresses.",
+  "synopsis": "ifconfig [-a] [INTERFACE] [SETTINGS]",
+  "options": [
+    { "short": "-a", "description": "Shows every interface, including disabled ones.", "example": { "command": "ifconfig -a", "output": "eth0: flags=4098<BROADCAST,MULTICAST>  mtu 1500\n…" } },
+    { "short": "-s", "description": "Short display, as a table.", "example": { "command": "ifconfig -s", "output": "Iface   MTU    RX-OK RX-ERR TX-OK TX-ERR Flg\nwlp2s0  1500  182734      0 90211      0 BMRU" } }
+  ],
+  "arguments": [
+    { "name": "INTERFACE", "description": "Interface to show or configure: eth0, wlan0, lo…", "optional": true },
+    { "name": "SETTINGS", "description": "up, down, an IP address, netmask 255.255.255.0…", "optional": true, "variadic": true }
+  ],
+  "examples": [
+    { "command": "ifconfig", "explanation": "The active interfaces and their addresses.", "output": "wlp2s0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500\n        inet 192.168.1.42  netmask 255.255.255.0  broadcast 192.168.1.255\n        ether 3c:a9:f4:12:ab:cd  txqueuelen 1000  (Ethernet)" },
+    { "command": "ifconfig eth0", "explanation": "Only the eth0 interface." },
+    { "command": "sudo ifconfig eth0 192.168.1.50 netmask 255.255.255.0 up", "explanation": "Gives eth0 an address and brings it up (modern equivalent: ip addr add)." }
+  ],
+  "seeAlso": ["ip", "netstat", "ping"],
+  "dangerLevel": "caution",
+  "dangerNote": "Disabling or reconfiguring the interface you are connected through over SSH cuts the connection."
+}

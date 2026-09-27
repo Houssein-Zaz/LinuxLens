@@ -1,6 +1,7 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react';
 import { reportError } from '../../lib/errorReporting';
 import { PageHeader } from '../ui/PageHeader';
+import { tr } from '../../i18n';
 
 /**
  * Affiche un message au lieu d'un écran blanc quand une page plante.
@@ -24,10 +25,10 @@ export class ErrorBoundary extends Component<{ children: ReactNode }, { error: E
     const staleChunk = /dynamically imported module|Importing a module script failed/i.test(this.state.error.message);
     return (
       <>
-        <PageHeader title="Une erreur est survenue">
+        <PageHeader title={tr('Une erreur est survenue', 'Something went wrong')}>
           {staleChunk
-            ? 'Une nouvelle version du site est disponible. Rechargez la page pour continuer.'
-            : 'Cette page a rencontré un problème inattendu. Rechargez-la ou revenez à l’accueil.'}
+            ? tr('Une nouvelle version du site est disponible. Rechargez la page pour continuer.', 'A new version of the site is available. Reload the page to continue.')
+            : tr('Cette page a rencontré un problème inattendu. Rechargez-la ou revenez à l’accueil.', 'This page ran into an unexpected problem. Reload it or go back to the home page.')}
         </PageHeader>
         <div className="flex gap-4 text-sm">
           <button
@@ -35,10 +36,10 @@ export class ErrorBoundary extends Component<{ children: ReactNode }, { error: E
             onClick={() => window.location.reload()}
             className="rounded-md bg-indigo-600 px-3 py-1.5 font-medium text-white hover:bg-indigo-500"
           >
-            Recharger la page
+            {tr('Recharger la page', 'Reload the page')}
           </button>
           <a href="/" className="self-center text-indigo-600 hover:underline dark:text-indigo-400">
-            Retour à l’accueil
+            {tr('Retour à l’accueil', 'Back to home')}
           </a>
         </div>
       </>

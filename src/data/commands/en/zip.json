@@ -1,0 +1,29 @@
+{
+  "name": "zip",
+  "category": "archives",
+  "summary": "Creates .zip archives.",
+  "description": "Bundles and compresses files into a .zip archive, the format most compatible with Windows and macOS. Mind the order: the archive name first, then the files to put in it. To include the contents of a directory, you need -r. If the archive already exists, the files are added or updated.",
+  "synopsis": "zip [OPTION]... ARCHIVE.zip FILE...",
+  "options": [
+    { "short": "-r", "long": "--recurse-paths", "description": "Includes directories and everything in them." },
+    { "short": "-e", "long": "--encrypt", "description": "Protects the archive with a password (typed at the keyboard)." },
+    { "short": "-q", "long": "--quiet", "description": "Prints nothing.", "example": { "command": "zip -qr project.zip project/" } },
+    { "short": "-u", "long": "--update", "description": "Replaces only the files changed since last time.", "example": { "command": "zip -u project.zip project/README.md" } },
+    { "short": "-d", "long": "--delete", "description": "Removes the given files from the archive.", "example": { "command": "zip -d project.zip \"*.log\"", "output": "deleting: project/debug.log" } },
+    { "short": "-j", "long": "--junk-paths", "description": "Stores the files without their directories.", "example": { "command": "zip -j photos.zip holidays/*.jpg" } },
+    { "short": "-x", "long": "--exclude", "description": "Excludes the files matching the patterns that follow." },
+    { "short": "-9", "description": "Maximum compression (-0: no compression).", "example": { "command": "zip -9 -r archive.zip documents/" } }
+  ],
+  "arguments": [
+    { "name": "ARCHIVE.zip", "description": "Name of the archive to create or change." },
+    { "name": "FILE", "description": "Files and directories to add.", "variadic": true }
+  ],
+  "examples": [
+    { "command": "zip documents.zip resume.pdf letter.docx", "explanation": "Creates an archive containing two files." },
+    { "command": "zip -r project.zip project/", "explanation": "Archives a whole directory." },
+    { "command": "zip -r site.zip site/ -x \"*.log\" \"site/node_modules/*\"", "explanation": "Archives a site without the logs or dependencies." },
+    { "command": "zip -e secret.zip statement.pdf", "explanation": "Creates a password-protected archive." }
+  ],
+  "seeAlso": ["unzip", "tar", "gzip"],
+  "dangerLevel": "safe"
+}

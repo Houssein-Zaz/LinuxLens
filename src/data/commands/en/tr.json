@@ -1,0 +1,26 @@
+{
+  "name": "tr",
+  "category": "text",
+  "summary": "Replaces or deletes characters.",
+  "description": "Translate: reads standard input and replaces each character of SET1 with the matching character of SET2. Sets accept ranges (a-z) and classes ([:upper:], [:digit:], [:space:]). tr never reads a file directly: you send it text through a pipe or a < redirection.",
+  "synopsis": "tr [OPTION]... SET1 [SET2]",
+  "options": [
+    { "short": "-d", "long": "--delete", "description": "Deletes the characters of SET1 instead of replacing them." },
+    { "short": "-s", "long": "--squeeze-repeats", "description": "Squeezes repeats of the same character into a single one (several spaces → one)." },
+    { "short": "-c", "long": "--complement", "description": "Uses the complement of SET1: every character not in it." },
+    { "short": "-t", "long": "--truncate-set1", "description": "Truncates SET1 to the length of SET2.", "example": { "command": "echo abc | tr -t abc xy", "output": "xyc" } }
+  ],
+  "arguments": [
+    { "name": "SET1", "description": "Characters to look for: 'abc', 'a-z', '[:lower:]'…" },
+    { "name": "SET2", "description": "Replacement characters, in the same order.", "optional": true }
+  ],
+  "examples": [
+    { "command": "echo \"hello\" | tr 'a-z' 'A-Z'", "explanation": "Converts the text to uppercase.", "output": "HELLO" },
+    { "command": "tr -d '\\r' < windows.txt > unix.txt", "explanation": "Removes the carriage returns from a file created on Windows." },
+    { "command": "tr -s ' ' < columns.txt", "explanation": "Replaces runs of spaces with a single space." },
+    { "command": "echo $PATH | tr ':' '\\n'", "explanation": "Prints each PATH directory on its own line." },
+    { "command": "tr -cd '[:alnum:]\\n' < text.txt", "explanation": "Keeps only letters, digits and newlines." }
+  ],
+  "seeAlso": ["sed", "cut", "awk"],
+  "dangerLevel": "safe"
+}

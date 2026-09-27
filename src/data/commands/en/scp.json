@@ -1,0 +1,28 @@
+{
+  "name": "scp",
+  "category": "network",
+  "summary": "Copies files between machines over SSH.",
+  "description": "Secure copy: works like cp, but one end (or both) can be remote, written user@host:path. The transfer is encrypted and uses the same authentication as ssh (password or key, aliases from ~/.ssh/config). For large transfers or repeated syncs, rsync is more efficient.",
+  "synopsis": "scp [OPTION]... SOURCE... DESTINATION",
+  "options": [
+    { "short": "-r", "description": "Copies directories recursively." },
+    { "short": "-P", "description": "The server’s SSH port (uppercase, unlike ssh -p).", "takesValue": true, "valueName": "PORT" },
+    { "short": "-i", "description": "Private key to use.", "takesValue": true, "valueName": "FILE", "example": { "command": "scp -i ~/.ssh/project_key site.zip ubuntu@server.com:~" } },
+    { "short": "-p", "description": "Preserves timestamps and permissions.", "example": { "command": "scp -p report.pdf server:/backup/" } },
+    { "short": "-C", "description": "Compresses data during the transfer.", "example": { "command": "scp -C dump.sql server:/tmp/" } },
+    { "short": "-q", "description": "Hides the progress bar.", "example": { "command": "scp -q config.yml server:/etc/app/" } },
+    { "short": "-J", "description": "Goes through a jump host (bastion).", "takesValue": true, "valueName": "HOST", "example": { "command": "scp -J bastion.com notes.txt internal:/tmp/" } }
+  ],
+  "arguments": [
+    { "name": "SOURCE", "description": "File(s) to copy: local path or user@host:path.", "variadic": true },
+    { "name": "DESTINATION", "description": "Target location: local path or user@host:path." }
+  ],
+  "examples": [
+    { "command": "scp report.pdf esprit@192.168.1.20:/home/esprit/", "explanation": "Sends a file to a remote machine." },
+    { "command": "scp server:/var/log/nginx/error.log .", "explanation": "Fetches a remote file into the current directory (“.”)." },
+    { "command": "scp -r -P 2222 site/ admin@server.com:/var/www/", "explanation": "Sends a whole directory to an SSH server listening on port 2222." }
+  ],
+  "seeAlso": ["ssh", "rsync", "cp"],
+  "dangerLevel": "caution",
+  "dangerNote": "scp overwrites existing files at the destination without confirmation."
+}

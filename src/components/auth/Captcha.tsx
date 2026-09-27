@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
+import { useLang, useTr } from '../../i18n';
 
 /*
  * Vérification anti-robot Cloudflare Turnstile, exigée par Supabase quand la protection
@@ -69,6 +70,8 @@ export function useCaptcha(siteKey: string | undefined = TURNSTILE_SITE_KEY): Ca
   const widgetId = useRef<string | null>(null);
   const [token, setToken] = useState<string>();
   const [failed, setFailed] = useState(false);
+  const lang = useLang();
+  const tr = useTr();
 
   useEffect(() => {
     if (!siteKey) return;
@@ -78,7 +81,7 @@ export function useCaptcha(siteKey: string | undefined = TURNSTILE_SITE_KEY): Ca
         if (cancelled || !container.current) return;
         widgetId.current = turnstile.render(container.current, {
           sitekey: siteKey,
-          language: 'fr',
+          language: lang,
           theme: 'auto',
           callback: setToken,
           'expired-callback': () => setToken(undefined),
@@ -93,7 +96,7 @@ export function useCaptcha(siteKey: string | undefined = TURNSTILE_SITE_KEY): Ca
       if (widgetId.current) window.turnstile?.remove(widgetId.current);
       widgetId.current = null;
     };
-  }, [siteKey]);
+  }, [siteKey, lang]);
 
   const reset = useCallback(() => {
     setToken(undefined);
@@ -105,7 +108,10 @@ export function useCaptcha(siteKey: string | undefined = TURNSTILE_SITE_KEY): Ca
       <div ref={container} data-testid="captcha" className="min-h-[65px]" />
       {failed && (
         <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-          La vérification anti-robot n’a pas pu se charger. Désactivez un éventuel bloqueur de contenu, puis rechargez la page.
+          {tr(
+            'La vérification anti-robot n’a pas pu se charger. Désactivez un éventuel bloqueur de contenu, puis rechargez la page.',
+            'The anti-bot check could not load. Turn off any content blocker, then reload the page.',
+          )}
         </p>
       )}
     </div>

@@ -1,0 +1,27 @@
+{
+  "name": "cut",
+  "category": "text",
+  "summary": "Extracts columns or characters from each line.",
+  "description": "Keeps only part of each line: certain fields separated by a delimiter (-d and -f), or certain character positions (-c). Lists are written 1,3 (fields 1 and 3), 2-4 (2 to 4) or 3- (from the 3rd onwards). cut cannot treat several consecutive spaces as a single separator: in that case, use awk.",
+  "synopsis": "cut OPTION... [FILE]...",
+  "options": [
+    { "short": "-d", "long": "--delimiter", "description": "Character separating the fields (tab by default).", "takesValue": true, "valueName": "SEP" },
+    { "short": "-f", "long": "--fields", "description": "Fields to keep: 1, 1,3, 2-4, 3-…", "takesValue": true, "valueName": "LIST" },
+    { "short": "-c", "long": "--characters", "description": "Character positions to keep: -c1-8 keeps the first 8.", "takesValue": true, "valueName": "LIST" },
+    { "short": "-b", "long": "--bytes", "description": "Byte positions to keep (differs from -c for accented characters).", "takesValue": true, "valueName": "LIST", "example": { "command": "cut -b1-4 dates.txt", "output": "2024\n2023" } },
+    { "short": "-s", "long": "--only-delimited", "description": "Skips lines that do not contain the delimiter.", "example": { "command": "cut -d: -s -f1 mixed.txt", "output": "root\nesprit" } },
+    { "long": "--complement", "description": "Inverts the selection: keeps everything except the given fields.", "example": { "command": "cut -d, -f2 --complement customers.csv", "output": "id,city\n1,Tunis" } },
+    { "long": "--output-delimiter", "description": "Separator to use in the output.", "takesValue": true, "valueName": "TEXT", "example": { "command": "cut -d: -f1,7 --output-delimiter=' → ' /etc/passwd", "output": "root → /bin/bash\nesprit → /bin/bash" } }
+  ],
+  "arguments": [
+    { "name": "FILE", "description": "File(s) to process. Without a file: standard input.", "optional": true, "variadic": true }
+  ],
+  "examples": [
+    { "command": "cut -d: -f1 /etc/passwd", "explanation": "Lists the user names (1st field, “:” separator).", "output": "root\ndaemon\nbin" },
+    { "command": "cut -d ',' -f 2,4 customers.csv", "explanation": "Keeps columns 2 and 4 of a simple CSV." },
+    { "command": "cut -c1-10 log.txt", "explanation": "Keeps the first 10 characters of each line." },
+    { "command": "echo $PATH | cut -d: -f1", "explanation": "Prints the first directory in the PATH." }
+  ],
+  "seeAlso": ["awk", "paste", "tr"],
+  "dangerLevel": "safe"
+}

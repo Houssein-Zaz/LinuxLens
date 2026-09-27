@@ -3,6 +3,7 @@ import { Link } from 'react-router';
 import { AuthCard } from '../../components/auth/AuthCard';
 import { FormError, FormSuccess, PasswordField, SubmitButton } from '../../components/auth/FormFields';
 import { useAuth } from '../../hooks/useAuth';
+import { useTr } from '../../i18n';
 import { PASSWORD_MIN_LENGTH, validatePassword } from '../../lib/backend/validation';
 
 /**
@@ -16,16 +17,17 @@ export function ResetPasswordPage() {
   const [error, setError] = useState<string>();
   const [done, setDone] = useState(false);
   const [pending, setPending] = useState(false);
+  const tr = useTr();
 
-  if (loading) return <p className="text-zinc-500">Chargement…</p>;
+  if (loading) return <p className="text-zinc-500">{tr('Chargement…', 'Loading…')}</p>;
 
   if (!user) {
     return (
-      <AuthCard title="Lien invalide ou expiré">
+      <AuthCard title={tr('Lien invalide ou expiré', 'Invalid or expired link')}>
         <p className="text-sm text-zinc-600 dark:text-zinc-400">
-          Ce lien de réinitialisation n’est plus valable.{' '}
+          {tr('Ce lien de réinitialisation n’est plus valable.', 'This reset link is no longer valid.')}{' '}
           <Link to="/mot-de-passe-oublie" className="font-medium text-indigo-600 hover:underline dark:text-indigo-400">
-            Demander un nouveau lien
+            {tr('Demander un nouveau lien', 'Request a new link')}
           </Link>
         </p>
       </AuthCard>
@@ -34,7 +36,7 @@ export function ResetPasswordPage() {
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
-    const invalid = validatePassword(password) ?? (confirm !== password ? 'Les deux mots de passe ne correspondent pas.' : undefined);
+    const invalid = validatePassword(password) ?? (confirm !== password ? tr('Les deux mots de passe ne correspondent pas.', 'The two passwords do not match.') : undefined);
     if (invalid) return setError(invalid);
     setPending(true);
     const result = await backend.auth.updatePassword(password);
@@ -44,26 +46,29 @@ export function ResetPasswordPage() {
   };
 
   return (
-    <AuthCard title="Nouveau mot de passe">
+    <AuthCard title={tr('Nouveau mot de passe', 'New password')}>
       {done ? (
         <FormSuccess>
-          Mot de passe modifié.{' '}
+          {tr('Mot de passe modifié.', 'Password changed.')}{' '}
           <Link to="/compte" className="font-medium underline underline-offset-2">
-            Aller à mon compte
+            {tr('Aller à mon compte', 'Go to my account')}
           </Link>
         </FormSuccess>
       ) : (
         <form onSubmit={submit} className="space-y-4" noValidate>
           <FormError>{error}</FormError>
           <PasswordField
-            label="Nouveau mot de passe"
+            label={tr('Nouveau mot de passe', 'New password')}
             autoComplete="new-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            hint={`Au moins ${PASSWORD_MIN_LENGTH} caractères, dont une lettre et un chiffre.`}
+            hint={tr(
+              `Au moins ${PASSWORD_MIN_LENGTH} caractères, dont une lettre et un chiffre.`,
+              `At least ${PASSWORD_MIN_LENGTH} characters, including a letter and a digit.`,
+            )}
           />
-          <PasswordField label="Confirmer" autoComplete="new-password" value={confirm} onChange={(e) => setConfirm(e.target.value)} />
-          <SubmitButton pending={pending}>Enregistrer</SubmitButton>
+          <PasswordField label={tr('Confirmer', 'Confirm')} autoComplete="new-password" value={confirm} onChange={(e) => setConfirm(e.target.value)} />
+          <SubmitButton pending={pending}>{tr('Enregistrer', 'Save')}</SubmitButton>
         </form>
       )}
     </AuthCard>
