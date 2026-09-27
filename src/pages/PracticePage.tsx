@@ -152,6 +152,8 @@ function Practice({ guest }: { guest: boolean }) {
   const [category, setCategory] = useState<CategoryId | 'all'>(saved.category);
   const [hideSolved, setHideSolved] = useState(saved.hideSolved);
   const [index, setIndex] = useState(0);
+  // Exercices auxquels on a répondu pendant cette visite (bonne ou mauvaise réponse)
+  const [answered, setAnswered] = useState<Set<string>>(() => new Set());
 
   const list = useMemo(() => filterExercises(kind, category), [kind, category]);
   // « Masquer les réussis » ne retire pas l'exercice en cours, pour pouvoir lire la correction
@@ -179,6 +181,7 @@ function Practice({ guest }: { guest: boolean }) {
   };
   const answer = (ex: Exercise) => (correct: boolean, given: string, usedHelp: boolean) => {
     if (correct) setCurrent(ex.id);
+    setAnswered((prev) => (prev.has(ex.id) ? prev : new Set(prev).add(ex.id)));
     if (guest && given.trim() && !tried.has(ex.id)) {
       const next = new Set(tried).add(ex.id);
       setTried(next);
@@ -193,6 +196,8 @@ function Practice({ guest }: { guest: boolean }) {
   };
 
   // Essais épuisés : les exercices déjà faits restent consultables, un nouveau demande un compte
+  // On ne passe à la suite qu'après avoir répondu à l'exercice en cours (ou s'il est déjà réussi)
+  const canAdvance = exercise !== undefined && (answered.has(exercise.id) || solved.has(exercise.id) || tried.has(exercise.id));
   const locked = guest && tried.size >= GUEST_FREE_EXERCISES && exercise !== undefined && !tried.has(exercise.id);
 
   if (!ready) return <p className="text-zinc-500">Chargement…</p>;
@@ -293,11 +298,17 @@ function Practice({ guest }: { guest: boolean }) {
               <button type="button" className={buttonClass.secondary} onClick={() => go(safeIndex - 1)} disabled={visible.length < 2}>
                 ← Précédent
               </button>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap items-center justify-end gap-2">
+                {!canAdvance && visible.length > 1 && (
+                  <span id="practice-next-hint" className="text-sm text-zinc-500 dark:text-zinc-400">
+                    Répondez pour passer à la suite
+                  </span>
+                )}
                 <button
                   type="button"
                   className={buttonClass.secondary}
-                  disabled={visible.length < 2}
+                  disabled={visible.length < 2 || !canAdvance}
+                  aria-describedby={canAdvance ? undefined : 'practice-next-hint'}
                   onClick={() => {
                     let next = safeIndex;
                     while (next === safeIndex) next = Math.floor(Math.random() * visible.length);
@@ -306,7 +317,10 @@ function Practice({ guest }: { guest: boolean }) {
                 >
                   Au hasard
                 </button>
-                <button type="button" className={buttonClass.primary} onClick={() => go(safeIndex + 1)} disabled={visible.length < 2}>
+                <button type="button" className={buttonClass.primary} onClick={() => go(safeIndex + 1)}
+                  disabled={visible.length < 2 || !canAdvance}
+                  aria-describedby={canAdvance ? undefined : 'practice-next-hint'}
+                >
                   Suivant →
                 </button>
               </div>

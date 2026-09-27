@@ -113,6 +113,7 @@ describe('données du compte', () => {
   it('chaque réponse est enregistrée et résumée dans « Mes résultats »', async () => {
     const user = userEvent.setup();
     const backend = await testBackend(true);
+    await backend.data.addProgress(['w-pwd']); // déjà réussi : on peut passer au suivant sans répondre
     const { unmount } = renderApp('/exercices', backend);
     await user.selectOptions(await screen.findByLabelText('Catégorie'), 'files');
     await user.click(screen.getByRole('button', { name: 'Suivant →' }));

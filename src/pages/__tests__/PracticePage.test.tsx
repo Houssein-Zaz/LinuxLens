@@ -36,6 +36,7 @@ describe('PracticePage', () => {
     const { backend } = await renderPage();
     await user.selectOptions(screen.getByLabelText('Catégorie'), 'files');
     // « Liste … format long, fichiers cachés » (2ᵉ exercice débutant de la catégorie)
+    await user.type(screen.getByLabelText('Votre commande'), 'faux{Enter}'); // il faut répondre pour passer à la suite
     await user.click(screen.getByRole('button', { name: 'Suivant →' }));
     expect(screen.getByText(/format long, fichiers cachés compris/)).toBeInTheDocument();
 
@@ -98,7 +99,9 @@ describe('PracticePage', () => {
     const user = userEvent.setup();
     const first = await renderPage();
     await user.selectOptions(screen.getByLabelText('Catégorie'), 'files');
+    await user.type(screen.getByLabelText('Votre commande'), 'pwd{Enter}');
     await user.click(screen.getByRole('button', { name: 'Suivant →' }));
+    await user.type(screen.getByLabelText('Votre commande'), 'ls -la{Enter}');
     await user.click(screen.getByRole('button', { name: 'Suivant →' }));
     const position = within(exercise()).getByText(/^\d+ \/ \d+$/).textContent;
     const prompt = within(exercise()).getByRole('paragraph', { name: '' }).textContent;
@@ -116,6 +119,7 @@ describe('PracticePage', () => {
     await user.click(screen.getByLabelText('Masquer les réussis'));
     await user.type(screen.getByLabelText('Votre commande'), 'pwd{Enter}'); // réussi, reste affiché
     await user.click(screen.getByRole('button', { name: 'Suivant →' }));
+    await user.type(screen.getByLabelText('Votre commande'), 'faux{Enter}'); // répondu, mais pas réussi : reste dans la liste
     await user.click(screen.getByRole('button', { name: 'Suivant →' }));
     expect(within(exercise()).getByText(/^2 \/ \d+$/)).toBeInTheDocument();
     const position = within(exercise()).getByText(/^\d+ \/ \d+$/).textContent;
@@ -124,6 +128,35 @@ describe('PracticePage', () => {
     await renderPage(first.backend);
     expect(screen.getByLabelText('Masquer les réussis')).toBeChecked();
     expect(within(exercise()).getByText(position!)).toBeInTheDocument();
+  });
+
+  it('on ne passe à la question suivante qu’après avoir répondu', async () => {
+    const user = userEvent.setup();
+    await renderPage();
+    const next = screen.getByRole('button', { name: 'Suivant →' });
+    expect(next).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Au hasard' })).toBeDisabled();
+    expect(screen.getByText('Répondez pour passer à la suite')).toBeInTheDocument();
+
+    await user.type(screen.getByLabelText('Votre commande'), 'faux{Enter}'); // une mauvaise réponse suffit
+    expect(next).toBeEnabled();
+    expect(screen.queryByText('Répondez pour passer à la suite')).not.toBeInTheDocument();
+    await user.click(next);
+    expect(within(exercise()).getByText(/^2 \/ \d+$/)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Suivant →' })).toBeDisabled();
+
+    // Revenir en arrière reste possible, et un exercice déjà répondu ne bloque plus
+    await user.click(screen.getByRole('button', { name: '← Précédent' }));
+    expect(screen.getByRole('button', { name: 'Suivant →' })).toBeEnabled();
+  });
+
+  it('QCM : choisir une réponse débloque la suite', async () => {
+    const user = userEvent.setup();
+    await renderPage();
+    await user.click(screen.getByRole('tab', { name: 'Comprendre' }));
+    expect(screen.getByRole('button', { name: 'Suivant →' })).toBeDisabled();
+    await user.click(screen.getAllByRole('radio')[1]!);
+    expect(screen.getByRole('button', { name: 'Suivant →' })).toBeEnabled();
   });
 
   it('position enregistrée illisible : repart du début', async () => {
